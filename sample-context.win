@@ -11,4 +11,4 @@ isc4_path=c:\firebird\isc4.gdb
 user_name=SYSDBA
 user_password=masterkey
 file=c:\job\qmdb\context-win.txt
-temp_directory=c:\temp
+temp_directory=c:\temp\
