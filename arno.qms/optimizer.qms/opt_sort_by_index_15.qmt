@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN (T66 ORDER I_TABLE_66_ASC)
+
+          ID 
+============ 
+
+ -2147483648 
+ -1073741824 
+  -536870912 
+  -268435456 
+  -134217728 
+   -67108864 
+   -33554432 
+   -16777216 
+    -8388608 
+    -4194304 
+    -2097152 
+    -1048576 
+     -524288 
+     -262144 
+     -131072 
+      -65536 
+      -32768 
+      -16384 
+       -8192 
+       -4096 
+
+          ID 
+============ 
+       -2048 
+       -1024 
+        -512 
+        -256 
+        -128 
+         -64 
+         -32 
+         -16 
+          -8 
+          -4 
+          -2 
+          -1 
+           0 
+           1 
+           3 
+           7 
+          15 
+          31 
+          63 
+         127 
+
+          ID 
+============ 
+         255 
+         511 
+        1023 
+        2047 
+        4095 
+        8191 
+       16383 
+       32767 
+       65535 
+      131071 
+      262143 
+      524287 
+     1048575 
+     2097151 
+     4194303 
+     8388607 
+    16777215 
+    33554431 
+    67108863 
+   134217727 
+
+          ID 
+============ 
+   268435455 
+   536870911 
+  1073741823 
+  2147483647 
+      &lt;null&gt; 
+      &lt;null&gt; 
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>ORDER BY ASC NULLS LAST using index</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>ORDER BY X ASC NULLS LAST
+When a index can be used for sorting, use it.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>sort_by_index.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Table_66 (
+  ID INTEGER
+);
+
+SET TERM ^^ ;
+CREATE PROCEDURE PR_FillTable_66
+AS
+DECLARE VARIABLE FillID INTEGER;
+BEGIN
+  FillID = 2147483647;
+  WHILE (FillID &gt; 0) DO
+  BEGIN
+    INSERT INTO Table_66 (ID) VALUES (:FillID);
+    FillID = FillID / 2;
+  END
+  INSERT INTO Table_66 (ID) VALUES (NULL);
+  INSERT INTO Table_66 (ID) VALUES (0);
+  INSERT INTO Table_66 (ID) VALUES (NULL);
+  FillID = -2147483648;
+  WHILE (FillID &lt; 0) DO
+  BEGIN
+    INSERT INTO Table_66 (ID) VALUES (:FillID);
+    FillID = FillID / 2;
+  END
+END
+^^
+SET TERM ; ^^
+  
+COMMIT;
+
+EXECUTE PROCEDURE PR_FillTable_66;
+
+COMMIT;
+
+CREATE ASC INDEX I_Table_66_ASC ON Table_66 (ID);
+CREATE DESC INDEX I_Table_66_DESC ON Table_66 (ID);
+
+COMMIT;
+</text></argument><argument name="source_code"><text>SET PLAN ON;
+SELECT
+  ID
+FROM
+  Table_66 t66
+ORDER BY
+  t66.ID ASC NULLS LAST;</text></argument><argument name="test_id"><text>opt_sort_by_index_15</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
