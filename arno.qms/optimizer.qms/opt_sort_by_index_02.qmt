@@ -1,0 +1,157 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN (T100 ORDER PK_TABLE_100_DESC)
+
+          ID 
+============ 
+
+         100 
+          99 
+          98 
+          97 
+          96 
+          95 
+          94 
+          93 
+          92 
+          91 
+          90 
+          89 
+          88 
+          87 
+          86 
+          85 
+          84 
+          83 
+          82 
+          81 
+
+          ID 
+============ 
+          80 
+          79 
+          78 
+          77 
+          76 
+          75 
+          74 
+          73 
+          72 
+          71 
+          70 
+          69 
+          68 
+          67 
+          66 
+          65 
+          64 
+          63 
+          62 
+          61 
+
+          ID 
+============ 
+          60 
+          59 
+          58 
+          57 
+          56 
+          55 
+          54 
+          53 
+          52 
+          51 
+          50 
+          49 
+          48 
+          47 
+          46 
+          45 
+          44 
+          43 
+          42 
+          41 
+
+          ID 
+============ 
+          40 
+          39 
+          38 
+          37 
+          36 
+          35 
+          34 
+          33 
+          32 
+          31 
+          30 
+          29 
+          28 
+          27 
+          26 
+          25 
+          24 
+          23 
+          22 
+          21 
+
+          ID 
+============ 
+          20 
+          19 
+          18 
+          17 
+          16 
+          15 
+          14 
+          13 
+          12 
+          11 
+          10 
+           9 
+           8 
+           7 
+           6 
+           5 
+           4 
+           3 
+           2 
+           1 
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>ORDER BY DESC using index (unique)</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>ORDER BY X
+When a index can be used for sorting, use it.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>sort_by_index.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Table_100 (
+  ID INTEGER NOT NULL
+);
+
+SET TERM ^^ ;
+CREATE PROCEDURE PR_FillTable_100
+AS
+DECLARE VARIABLE FillID INTEGER;
+BEGIN
+  FillID = 1;
+  WHILE (FillID &lt;= 100) DO
+  BEGIN
+    INSERT INTO Table_100 (ID) VALUES (:FillID);
+    FillID = FillID + 1;
+  END
+END
+^^
+SET TERM ; ^^
+  
+COMMIT;
+
+EXECUTE PROCEDURE PR_FillTable_100;
+
+COMMIT;
+
+CREATE DESC INDEX PK_Table_100_DESC ON Table_100 (ID);
+
+COMMIT;
+</text></argument><argument name="source_code"><text>SET PLAN ON;
+SELECT
+  *
+FROM
+  Table_100 t100
+ORDER BY
+  t100.ID DESC;</text></argument><argument name="test_id"><text>opt_sort_by_index_02</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
