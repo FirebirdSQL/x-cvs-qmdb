@@ -9,7 +9,7 @@
 
            1            1 
            2            2 
-      &lt;null&gt;            0 
+           0       &lt;null&gt; 
 </text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>LEFT OUTER JOIN with full match, but limited in ON and WHERE clause</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>TableX LEFT OUTER JOIN TableY with full match, but TableY results limited in ON clause. Which should result in partial NULL results for TableY. Due the WHERE clause a index for TableX should be used.
 </text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>left_join.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Colors (
   ColorID INTEGER NOT NULL,
