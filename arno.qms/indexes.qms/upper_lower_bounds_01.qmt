@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>COUNT      
+-----------
+1          
+sequential :  []
+indexed    :  [(128, 1)]
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>upper and lower bounds</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>equal comparison should be prefered.
+Lower and Upper bounds are bound by the same value.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>ulbounds.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Table_1000 (
+  ID INTEGER NOT NULL
+);
+
+SET TERM ^^ ;
+CREATE PROCEDURE PR_FillTable_1000
+AS
+DECLARE VARIABLE FillID INTEGER;
+BEGIN
+  FillID = 1;
+  WHILE (FillID &lt;= 1000) DO
+  BEGIN
+    INSERT INTO Table_1000 (ID) VALUES (:FillID);
+    FillID = FillID + 1;
+  END
+END
+^^
+SET TERM ; ^^
+
+COMMIT;
+
+EXECUTE PROCEDURE PR_FillTable_1000;
+
+CREATE UNIQUE ASC INDEX PK_Table_1000 ON Table_1000 (ID); 
+
+COMMIT;
+</text></argument><argument name="source_code"><text>class readsInformation:
+  sequential = []
+  indexed = []
+  sequentialStart = []
+  indexedStart = []
+  systemTables = False
+  #--
+  def start(self):
+    self.sequentialStart = getDatabaseInfo(db_conn, [kdb.isc_info_read_seq_count])[kdb.isc_info_read_seq_count]
+    self.indexedStart = getDatabaseInfo(db_conn, [kdb.isc_info_read_idx_count])[kdb.isc_info_read_idx_count]
+  #--
+  def addSequential(self, relationID, count):
+    read = 0
+    for i in range(len(self.sequentialStart)):
+      if self.sequentialStart[0] == relationID:
+        read = self.sequentialStart[1]
+    self.sequential.append( (relationID, count - read) )    
+  #--
+  def addIndexed(self, relationID, count):
+    read = 0
+    for i in range(len(self.indexedStart)):
+      if self.indexedStart[0] == relationID:
+        read = self.indexedStart[1]
+    self.indexed.append( (relationID, count - read) )    
+  #--
+  def difference(self):
+    self.sequential = []
+    self.indexed = []
+    seqReads = getDatabaseInfo(db_conn, [kdb.isc_info_read_seq_count])[kdb.isc_info_read_seq_count]
+    idxReads = getDatabaseInfo(db_conn, [kdb.isc_info_read_idx_count])[kdb.isc_info_read_idx_count]
+    for i in range(len(seqReads)):
+      if (self.systemTables) or (seqReads[i][0] &gt;= 128):
+        self.addSequential(seqReads[i][0], seqReads[i][1])
+    for i in range(len(idxReads)):
+      if (self.systemTables) or (idxReads[i][0] &gt;= 128):
+        self.addIndexed(idxReads[i][0], idxReads[i][1])
+  #--
+  def show(self):
+    print 'sequential : ',self.sequential
+    print 'indexed    : ',self.indexed
+
+cursor=db_conn.cursor()
+
+ri = readsInformation()
+ri.start()
+
+cursor.execute(&quot;SELECT Count(*) FROM Table_1000 t1000 WHERE t1000.ID &gt; 1 and t1000.ID &gt;= 100 and t1000.ID = 500 and t1000.ID &lt;= 900 and t1000.ID &lt; 1000&quot;)
+printData(cursor)
+
+# Get statistics and put out differences
+ri.difference()
+ri.show()
+
+#SET PLAN ON;
+#SET STATS ON;
+#SELECT B.B_INFO, A.A_VALUE FROM TableB B LEFT JOIN TableA A ON (1 = 0);
+</text></argument><argument name="test_id"><text>upper_lower_bounds_01</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>Python: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
