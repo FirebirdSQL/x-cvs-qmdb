@@ -1,3 +1,40 @@
+########################################################################
+#
+# File:   fbqa.py
+# Date:   30.05.2004
+#
+# Contents:
+#   Common, Test and Resource classes and function for Firebird QA
+#
+# Contributors: Moe Aboulkheir
+#               Pavel Cisar
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation files
+# (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge,
+# publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+# BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+# ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+########################################################################
+
+########################################################################
+# imports
+########################################################################
+
 import sys, os, string, re, difflib, kinterbasdb
 
 import qm
@@ -10,6 +47,10 @@ from   qm.test.result   import *
 from   qm.test.test     import *
 from   qm.test.resource import *
 import qm.web
+
+########################################################################
+# classes
+########################################################################
 
 class SubstitutionField(qm.fields.TupleField):
   """A rule for performing a text substitution.
@@ -68,6 +109,41 @@ class FirebirdTest(Test):
 
         Use the nickname listed in AUTHORS.TXT. For new test authors, don't forget
         to add appropriate record (nickname and e-mail) in this file!"""
+        ),
+   qm.fields.TextField(
+        name="target_version",
+        title="Target Engine",
+        not_empty_text=1,
+        default_value="2",
+        description="""QA ID for version of engine that this test is designed for.
+
+        Each Firebird (final) release has an unique Identification Number assigned by QA,
+	that reflects the feature set of given engine version. It's a sort of version number,
+	but it doesn't match the official version numbers assigned to the release, as purpose
+	of this number is to identify the QA target only.
+
+	This QA version is constructed as a dot-separated release version number, where first number
+	represents major Firebird release (1=1.x, 2=1.5, 3=2.x etc.), and subsequent numbers
+	represents minor releases (branches) from this release (1.1=1.0.1, 1.2=1.0.2, 2.1=1.5.1 etc.).
+	If release is branched from a sub-release, a third QA version number is added, and so on.
+
+	Here is current list of QA IDs:
+
+	1=FB 1.0.0
+
+	1.1=FB 1.0.1
+
+	1.2=FB 1.0.2
+
+	1.3=FB 1.0.3
+
+	2=FB 1.5
+
+	2.1=FB 1.5.1
+
+	3=Vulcan 1.0
+
+	4=reserved for FB 1.6/2.0"""
         ),
     qm.fields.TextField(
         name="bug_id",
@@ -188,11 +264,29 @@ class FirebirdTest(Test):
         default_value="3",
         ),
         
+    qm.fields.EnumerationField(
+        name="populate_method",
+        title="Database Population Method",
+        description="""This field determines how the database will be populated
+            
+        Possible options are "Using SQL Commands", "Using Data Tuple" and "None (manual)".
+        
+        If "Using SQL Commands" is selected, then the field "SQL Commands" must be defined.
+          The contents of that field will be executed as an SQL script (using ISQL) in the context of the 
+         database associated with this test
+         
+        If "Using Data Tuple" is selected, then the fields "Data Tuple" and "SQL Insert Statement" must 
+        be defined.  The "SQL Insert Statement" will be interpreted as a parameterized SQL insert statement 
+        and will be executed using kinterbasdb with the given data tuples values as its parameters.""",
+        enumerals= ["Using Data Tuple", "Using SQL Commands", "None (manual)"],
+        default_value="None (manual)"
+        ),
+            
 
     qm.fields.TextField(
         name="isql_script",
         title="SQL Commands",
-        description="""The SQL commands to use to populate the database
+        description="""The SQL commands to use to populate the database (if that option was selected above)
         
         These commands will be written to a file and executed using ISQL, in the context of the database
         associated with this test.""",
@@ -204,10 +298,9 @@ class FirebirdTest(Test):
     qm.fields.TextField(
         name="data_tuple",
         title="Data Tuple",
-        description="""Data tuple to populate database with
+        description="""Data tuple to populate database with (if that option was selected above)
         
-        The data tuple given in this field will be used to provide the parameters to the SQL insert statement,
-        which must be given below.
+        The data tuple given in this field will be used to provide the parameters to the SQL insert statement.  
         This field needs to be a tuple of tuples or a list of lists.
         Example: ( ("Jane", 23), ("Sam", 56) ) or [ ["Sally", 21], ]""",
         multiline="true",
@@ -217,7 +310,7 @@ class FirebirdTest(Test):
     qm.fields.TextField(
         name="insert_statement",
         title="SQL Insert Statement",
-        description="""The parameterized SQL insert statement to use with the data tuple
+        description="""The parameterized SQL insert statement to use with the data tuple (if that option was selected above)
         
         The variable parameters given in this statement will be provided by the data tuple given above.
         This statement must be parameterized and include the same number of parameters as each tuple in the data tuple.
@@ -277,7 +370,7 @@ class FirebirdTest(Test):
         title="Python Expression",
         description="""The python statement to evaluate
         
-        If "Python: True" or "Python:False" was selected as the type/expected return value of the test statement, then 
+        If "Python: True" or "Python:False" was selected as the type/expected return value of the test statement, then
         after the python source code is executed (if any was given), the value of this statement will be compared against
          the selected True/False value
          
@@ -301,7 +394,6 @@ class FirebirdTest(Test):
         
         If "SQL: String" or "Python: String" was selected as the type/expected return value
         of the test statement, then the output generated by Python or SQL will be compared against the text given here.
-        In the case of SQL commands, the standard error and standard output will be merged (using the "-m" switch)
         
         If any regular expression substitutions are provided below, they will be applied to both the expected and actual
         outputs of the SQL/python expressions.  if any differences exist between the expected/actual outputs, then a diff
@@ -351,6 +443,8 @@ class FirebirdTest(Test):
   def __RunProgram(self, args):
   
     environ= self.__MakeEnvironment()
+    # PC: fallback cause
+    self.__cause= "Unknown cause"
     
     basename   = os.path.split(args[0])[-1]
     qm_exec    = qm.executable.Filter("", -2)
@@ -371,6 +465,11 @@ class FirebirdTest(Test):
       
     
   def __KConnectDB(self):
+    """Use kinterbasdb to connect to database using given options.  if we
+       were instructed to do so, the database will be created first
+    
+       "self.__context" = test's run-time self.__context (dictionary)
+       "result"  = QM result object"""
 
     if self.create_db_method == "Create New":
       try:
@@ -447,6 +546,14 @@ class FirebirdTest(Test):
                                
                                            
   def __ExecISQLCommands(self):
+    """Execute given ISQL commands.  we can most reliably do this by writing
+       the commands to a file first.  this method needs to have arguments passed
+       to it because there is more than one field in the test which might
+       require execution as an ISQL script.
+       
+       "commands" = the commands to be executed (string)
+       "sub_map"  = the map of regex substitutions to perform (dict)"""
+       
       
     script_path= self.__WriteToFile("script.isql", self.source_code)
     
@@ -455,11 +562,9 @@ class FirebirdTest(Test):
       
     output_path= self.__context["temp_directory"] + "output.isql"
     self.__clean_up.append(output_path)
-    
     try:
-      stdout, stderr= self.__RunProgram([self.__context["isql_path"], 
+      stdout, stderr= self.__RunProgram([self.__context["isql_path"],
                                          self.__dsn,
-                                         "-m",
                                          "-user",     self.user_name,
                                          "-password", self.user_password,
                                          "-i",        script_path,
@@ -467,12 +572,14 @@ class FirebirdTest(Test):
                                        
     except:
       self.__result.Fail(cause= self.__cause)
+      exc_info = sys.exc_info()
+      self.__result[Result.EXCEPTION]= "%s: %s" % exc_info[:2]
       
     else:
       if stdout or stderr:
         self.__AnnotateStreams(stdout, stderr, "ISQL")
       else:
-                                            
+
         try:
           isql_output= open(output_path, "r")
         except:
@@ -536,17 +643,20 @@ class FirebirdTest(Test):
   def __AnnotateDiff(self, desc, stdout_e, stdout_a, stdout_e_strp, stdout_a_strp):
     id_str= "FirebirdTest.%s_" % desc # (i.e. FirebirdTest.ISQL_*)
     
-    self.__result[id_str + "stdout_expected"]         = "<pre>\n" + stdout_e + "\n</pre>"
-    self.__result[id_str + "stdout_actual"]           = "<pre>\n" + stdout_a + "\n</pre>"
-    self.__result[id_str + "stdout_expected_stripped"]= "<pre>\n" + stdout_e_strp + "\n</pre>"
-    self.__result[id_str + "stdout_actual_stripped"]  = "<pre>\n" + stdout_a_strp + "\n</pre>"
-    self.__result[id_str + "stripped_diff"]= "<pre>" + string.join( difflib.ndiff( stdout_e_strp.splitlines(),
-                                               stdout_a_strp.splitlines() ), "\n") + "</pre>"
-
+    self.__result[id_str + "stdout_expected"]         = stdout_e
+    self.__result[id_str + "stdout_actual"]           = stdout_a
+    self.__result[id_str + "stdout_expected_stripped"]= stdout_e_strp
+    self.__result[id_str + "stdout_actual_stripped"]  = stdout_a_strp
+    self.__result[id_str + "stripped_diff"]= string.join( difflib.ndiff( stdout_e_strp.splitlines(),
+                                                                         stdout_a_strp.splitlines() ), "\n")
                                                                          
     self.__result.Fail("Expected standard output from %s does not match actual output." % desc)
                                                                       
   def __StringStrip(self, string, isql=True):
+    """Strip command prompts and superfluous whitespace which might cause
+       comparisons to fail on insignificant differences
+       
+       "string" = string to strip (string)"""
        
     if not string:
       return string
@@ -588,7 +698,7 @@ class FirebirdTest(Test):
     
   def __AnnotateStreams(self, stdout, stderr, pname):
     unexp=[]
-                                                                   
+
     if stdout:
       unexp.append("stdout")
       self.__result["FirebirdTest.%s_STDOUT" % pname]= stdout
@@ -721,36 +831,11 @@ class FirebirdTest(Test):
     # qm will generate errors if these are missing:
     context["temp_directory"]
     context["server_location"]
-    context[self.db_path_property]
-    context["isql_path"]
-    context["gbak_path"]
     
     causes=[]
-    
-    # put the user out of their misery if something is awry in the context
-    # file, even if we may not need it for this particular test:
-    
     if not os.access(context["temp_directory"], os.W_OK):
       causes.append("Temporary directory given in context is not writeable")
-      
-    if not os.access(context["isql_path"], os.F_OK):
-      causes.append("ISQL path given in context does not exist")
-      
-    elif not os.access(context["isql_path"], os.X_OK):
-      causes.append("ISQL path given in context is not executable")
-    
-    if not os.access(context["gbak_path"], os.F_OK):
-      causes.append("GBAK path given in context does not exist")
-      
-    elif not os.access(context["gbak_path"], os.X_OK):
-      causes.append("GBAK path given in context is not executable")
-      
-    # isolate context errors
-    
-    if causes:
-      result.SetOutcome(result.ERROR, string.join(causes, ", ") + ".")
-      return
-    
+        
     # universally required fields:
     
     if not self.user_name:
@@ -762,6 +847,9 @@ class FirebirdTest(Test):
     if not self.db_name:
       causes.append("No database specified")
       
+    if not self.db_path_property:
+      causes.append("No database path property specified")
+      
     # we need to exit now if there are any errors, because we need
     # these values to build strings like DSN and DB path which in
     # turn need to be tested
@@ -770,16 +858,30 @@ class FirebirdTest(Test):
       result.SetOutcome(result.ERROR, string.join(causes, ", ") + ".")
       return
       
+    # let qm do the work:
+    context[self.db_path_property]
+        
+    # users leaving off the trailing path delimiter from directory
+    # names in the context file will lead to databases being created
+    # in the wrong directory.  this has the potential to wreak some
+    # havok regarding security, etc.
+    
     if context["server_location"] in ["127.0.0.1", "localhost"]:
       if context[self.db_path_property][-1] != os.sep:
         context[self.db_path_property] += os.sep
         
-    if context["temp_directory"][-1] != os.sep:
-      context["temp_directory"] += os.sep
+      if context["temp_directory"][-1] != os.sep:
+        context["temp_directory"] += os.sep
         
     self.__db_path= context[self.db_path_property] + self.db_name
     
     if self.create_db_method == "Restore From Backup":
+      
+      context["gbak_path"]
+      
+      if self.isql_script:
+        causes.append("SQL commands not applicable to database population method 'Restore From Backup'")
+        result["FirebirdTest.sql_commands"]= self.isql_script
         
       if not self.backup_file_path:
         causes.append("No backup file specified")            
@@ -787,25 +889,61 @@ class FirebirdTest(Test):
       elif not os.access(self.backup_file_path, os.F_OK):
         causes.append("Backup file <i>%s</i> does not exist" % self.backup_file_path)
         
+      if not os.access(context["gbak_path"], os.F_OK):
+        causes.append("GBAK path given in context does not exist")
+        
+      elif not os.access(context["gbak_path"], os.X_OK):
+        causes.append("GBAK path given in context is not executable")
+        
       if os.access(self.__db_path, os.F_OK):
         causes.append("Database <i>%s</i> already exists" % self.__db_path)
       
-    if self.data_tuple:
     
-      try:
-        insert_tuple= eval(self.data_tuple)
-      except:
-        result.NoteException(cause="Exception raised while evaluating data tuple.")
-        return
-      else:
-        if type(insert_tuple) not in [tuple, list]:
-          causes.append("Invalid data tuple given (must be tuple of tuples)")
-        else:
-          self.data_tuple= insert_tuple
-            
-      if not self.insert_statement:
-        causes.append("No SQL insert statement given for data tuple")
+    if self.populate_method == "Using SQL Commands":
       
+      if self.data_tuple:
+        causes.append("Data tuple not applicable for database population method 'Using SQL Commands'")
+        result["FirebirdTest.data_tuple"]=self.data_tuple
+      if self.insert_statement:
+        causes.append("SQL insert statement not applicable for database population method 'Using SQL Commands'")
+        result["FirebirdTest.sql_insert_statement"]= self.insert_statement
+      if self.backup_file_path:
+        causes.append("Back-up file not applicable for database population method 'Using SQL Commands'")
+        result["FirebirdTest.backup_file_path"]= self.backup_file_path
+      
+      if not self.isql_script:
+        causes.append("No SQL commands given")
+      
+      if not os.access(context["isql_path"], os.F_OK):
+        causes.append("ISQL path given in context does not exist")
+        
+      elif not os.access(context["isql_path"], os.X_OK):
+        causes.append("ISQL path given in context is not executable")
+        
+        
+    elif self.populate_method == "Using Data Tuple":
+      if self.isql_script:
+        causes.append("SQL commands not applicable for database population method 'Using Data Tuple'")
+        result["FirebirdTest.sql_commands"]=self.isql_script
+        
+      if self.data_tuple:
+      
+        try:
+          insert_tuple= eval(self.data_tuple)
+        except:
+          result.NoteException(cause="Exception raised while evaluating data tuple.")
+          return
+        else:
+          if type(insert_tuple) not in [tuple, list]:
+            causes.append("Invalid data tuple given (must be tuple of tuples)")
+          else:
+            self.data_tuple= insert_tuple
+              
+      else:
+        causes.append("No data tuple given")
+        
+      if not self.insert_statement:
+        causes.append("No SQL insert statement given")
      
     if self.statement_type_and_result in ["Python: True" or "Python: False"]:
       if not self.test_expr:
@@ -862,59 +1000,59 @@ class FirebirdTest(Test):
     self.__clean_up= []
     
     if self.create_db_method == "Restore From Backup":
-      # we need to add path to db manually because
-      # we wont have a kinterbasdb connection to drop()
       if self.drop_db:
         self.__clean_up.append(self.__db_path)
         
-      if self.__RestoreBackup():
-        # if everything went OK, remove the database
-        # from the list because we're about to connect
-        # using kinterbasdb
-        
+      retval= self.__RestoreBackup()
+      
+      if retval:
         self.__clean_up= []
       else:
-        # otherwise just os.remove() the file
-        
         self.__CleanUp()
         return
       
     self.__db_conn= self.__KConnectDB()
     
     if not self.__db_conn:
-      # __KConnectDB() will have marked the test
-      # appropriately if something messed up
       return
       
-    if self.isql_script:
-      if not self.__ExecISQLCommandsBlind():
+    if self.populate_method == "Using SQL Commands":
+      retval= self.__ExecISQLCommandsBlind()
+      
+      if not retval:
         self.__CleanUp()
         return
-     
-    if self.data_tuple:
-      if not self.__InsertParam():
+        
+    elif self.populate_method == "Using Data Tuple":
+      retval= self.__InsertParam()
+      
+      if not retval:
         self.__CleanUp()
         return
         
     if self.statement_type_and_result in ["Python: True", "Python: False"]:
-      if not self.__ExecPythonBool():
+      retval= self.__ExecPythonBool()
+      
+      if not retval:
         self.__CleanUp()
         return
     
     elif self.statement_type_and_result == "Python: String":
-      if not self.__ExecPython():
+      retval= self.__ExecPython()
+      
+      if not retval:
         self.__CleanUp()
         return
       
     elif self.statement_type_and_result == "SQL: String":
-      if not self.__ExecISQLCommands():
+      retval= self.__ExecISQLCommands()
+    
+      if not retval:
         self.__CleanUp()
         return
-                
-    # if we got here then everything went alright
-    
+        
     if self.drop_db == "true":
-      self.__DropDatabase()
+      retval= self.__DropDatabase()
       
-    self.__CleanUp(drop=False)
+      self.__CleanUp(drop=False)
       

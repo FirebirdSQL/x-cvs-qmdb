@@ -1,13 +1,12 @@
 ########################################################################
 #
 # File:   firebird.py
-# Author: Pavel Cisar
-# Date:   2001-10-12
+# Date:   05.06.2003
 #
 # Contents:
 #   Common, Test and Resource classes and function for Firebird QA
 #
-# Copyright (c) 2002 by Pavel Cisar.  All rights reserved. 
+# Contributors: Pavel Cisar
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
