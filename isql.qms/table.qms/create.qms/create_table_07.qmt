@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE TABLE - unknown datatype (domain)
+
+Dependencies:
+CREATE DATABASE
+</text></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+
+CREATE TABLE test(
+ c1 unk_domain
+);
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
+
+Dynamic SQL Error
+-SQL error code = -607
+-Invalid command
+-Specified domain or source column UNK_DOMAIN does not exist
+</text></argument><argument name="title"><text>CREATE TABLE - unknown datatype (domain)</text></argument><argument name="test_id"><text>skopalik_0175</text></argument><argument name="resources"><set/></argument></extension>

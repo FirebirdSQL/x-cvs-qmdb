@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>ALTER TABLE - ADD CONSTRAINT - PRIMARY KEY
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+</text></argument><argument name="stdout"><text>ID                              INTEGER Not Null
+CONSTRAINT PK:
+  Primary key (ID)
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE TABLE test( id INTEGER NOT NULL);
+
+ALTER TABLE test ADD CONSTRAINT pk PRIMARY KEY(id);
+SHOW TABLE test;
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>ALTER TABLE - ADD CONSTRAINT - PRIMARY KEY</text></argument><argument name="test_id"><text>skopalik_0022</text></argument><argument name="resources"><set/></argument></extension>

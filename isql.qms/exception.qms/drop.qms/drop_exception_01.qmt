@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>DROP EXCEPTION
+
+Dependencies:
+CREATE DATABASE
+CREATE EXCEPTION
+</text></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE EXCEPTION test 'message to show';
+
+DROP EXCEPTION test;
+SHOW EXCEPTION test;
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>There is no exception TEST in this database
+</text></argument><argument name="title"><text>DROP EXCEPTION</text></argument><argument name="test_id"><text>skopalik_0209</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>ALTER TRIGGER - POSITION
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+CREATE TRIGGER
+SHOW TRIGGER
+</text></argument><argument name="stdout"><text>Triggers on Table TEST:
+TG, Sequence: 20, Type: BEFORE UPDATE, Active
+AS
+BEGIN
+  new.id=1;
+END
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE TABLE test( id INTEGER NOT NULL CONSTRAINT unq UNIQUE,
+                   text VARCHAR(32));
+SET TERM ^;
+CREATE TRIGGER tg FOR test BEFORE UPDATE
+AS
+BEGIN
+  new.id=1;
+END ^
+SET TERM ;^
+
+ALTER TRIGGER tg POSITION 20;
+SHOW TRIGGER tg;
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>ALTER TRIGGER - POSITION</text></argument><argument name="test_id"><text>skopalik_0042</text></argument><argument name="resources"><set/></argument></extension>

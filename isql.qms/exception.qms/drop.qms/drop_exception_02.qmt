@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>DROP EXCEPTION
+
+Dependencies:
+CREATE DATABASE
+CREATE EXCEPTION
+CREATE PROCEDURE
+</text></argument><argument name="stdout"><text>Exception Name                  Used by, Type
+=============================== =============================================
+TEST                            A, Stored procedure
+  message to show
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE EXCEPTION test 'message to show';
+SET TERM ^;
+CREATE PROCEDURE a AS
+BEGIN
+  EXCEPTION test;
+END ^
+SET TERM ;^
+
+DROP EXCEPTION test;
+SHOW EXCEPTION test;
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
+
+unsuccessful metadata update
+-cannot delete
+-EXCEPTION TEST
+-there are 1 dependencies
+</text></argument><argument name="title"><text>DROP EXCEPTION</text></argument><argument name="test_id"><text>skopalik_0210</text></argument><argument name="resources"><set/></argument></extension>

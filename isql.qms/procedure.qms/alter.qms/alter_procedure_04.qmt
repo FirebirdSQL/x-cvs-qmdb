@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>BUG !
+
+ALTER PROCEDURE - Simple ALTER with dependency, change input parameters
+
+Dependencies:
+CREATE DATABASE
+CREATE PROCEDURE
+</text></argument><argument name="stdout"><text>          ID
+============
+           2
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+SET TERM ^;
+CREATE PROCEDURE test RETURNS (id INTEGER)AS
+BEGIN
+  id=1;
+END ^
+
+CREATE PROCEDURE testd RETURNS (id INTEGER)AS
+BEGIN
+  EXECUTE PROCEDURE test RETURNING_VALUES :id;
+END ^
+
+ALTER PROCEDURE test(aid INTEGER) RETURNS (id INTEGER)AS
+BEGIN
+  id=aid;
+END ^
+SET TERM ;^
+COMMIT;
+EXECUTE PROCEDURE testd;
+
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>ALTER PROCEDURE - Simple ALTER with dependency, change input parameters</text></argument><argument name="test_id"><text>skopalik_0019</text></argument><argument name="resources"><set/></argument></extension>

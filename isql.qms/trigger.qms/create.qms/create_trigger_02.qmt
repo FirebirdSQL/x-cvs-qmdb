@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE TRIGGER AFTER INSERT
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+</text></argument><argument name="stdout"><text>Triggers on Table TB:
+TEST, Sequence: 0, Type: AFTER INSERT, Active
+AS
+BEGIN
+  new.id=1;
+END
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE TABLE tb(id INT);
+
+SET TERM ^;
+CREATE TRIGGER test FOR tb AFTER INSERT AS
+BEGIN
+  new.id=1;
+END^
+SET TERM ;^
+SHOW TRIGGER test;
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE TRIGGER AFTER INSERT</text></argument><argument name="test_id"><text>skopalik_0178</text></argument><argument name="resources"><set/></argument></extension>

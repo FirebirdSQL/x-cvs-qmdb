@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>DROP DOMAIN - that was use
+
+Dependencies:
+CREATE DATABASE
+CREATE DOMAIN
+CREATE TABLE
+</text></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE DOMAIN test SMALLINT;
+CREATE TABLE tb( id test);
+
+DROP DOMAIN test;
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
+
+unsuccessful metadata update
+-column TEST is used in table TB (local name ID) and cannot be dropped
+</text></argument><argument name="title"><text>DROP DOMAIN - in use</text></argument><argument name="test_id"><text>skopalik_0207</text></argument><argument name="resources"><set/></argument></extension>

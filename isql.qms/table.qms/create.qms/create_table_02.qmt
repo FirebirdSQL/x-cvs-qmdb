@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE TABLE - column properties
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+</text></argument><argument name="stdout"><text>C1                              SMALLINT Not Null
+C2                              INTEGER Nullable DEFAULT 0
+C3                              FLOAT Not Null
+C4                              DOUBLE PRECISION Not Null
+C5                              INTEGER Nullable
+C6                              INTEGER Nullable
+C7                              Computed by: (c1+c2)
+C8                              CHAR(31) Nullable DEFAULT USER
+C9                              VARCHAR(40) Nullable DEFAULT 'data'
+CONSTRAINT INTEG_8:
+  Foreign key (C5)    References FK (ID)
+CONSTRAINT INTEG_7:
+  Primary key (C4)
+CONSTRAINT INTEG_5:
+  Unique key (C3)
+CONSTRAINT INTEG_9:
+  CHECK (c6&gt;c5)
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE TABLE fk(id INT NOT NULL PRIMARY KEY);
+
+CREATE TABLE test(
+ c1 SMALLINT NOT NULL,
+ c2 INTEGER DEFAULT 0,
+ c3 FLOAT NOT NULL UNIQUE,
+ c4 DOUBLE PRECISION NOT NULL PRIMARY KEY,
+ c5 INT REFERENCES fk(id),
+ c6 INT CHECK (c6&gt;c5),
+ c7 COMPUTED (c1+c2),
+ c8 CHAR(31) DEFAULT USER,
+ c9 VARCHAR(40) DEFAULT 'data'
+);
+SHOW TABLE test;
+
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE TABLE - column properties</text></argument><argument name="test_id"><text>skopalik_0170</text></argument><argument name="resources"><set/></argument></extension>

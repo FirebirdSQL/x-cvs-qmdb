@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>DELETE with WHERE
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+INSERT
+</text></argument><argument name="stdout"><text>          ID
+============
+
+          10
+          10
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE TABLE tb(id INT);
+INSERT INTO tb VALUES(10);
+INSERT INTO tb VALUES(10);
+INSERT INTO tb VALUES(20);
+COMMIT;
+
+DELETE FROM tb WHERE id&gt;10;
+SELECT * FROM tb;
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>DELETE with WHERE</text></argument><argument name="test_id"><text>skopalik_0200</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE TABLE - two column with same name
+
+Dependencies:
+CREATE DATABASE
+</text></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+
+CREATE TABLE test(
+ c1 SMALLINT,
+ c1 INTEGER
+);
+
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
+
+unsuccessful metadata update
+-STORE RDB$RELATION_FIELDS failed
+-attempt to store duplicate value (visible to active transactions) in unique index &quot;RDB$INDEX_15&quot;
+</text></argument><argument name="title"><text>CREATE TABLE - two column with same name</text></argument><argument name="test_id"><text>skopalik_0174</text></argument><argument name="resources"><set/></argument></extension>

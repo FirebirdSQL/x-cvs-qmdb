@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>ALTER TRIGGER - POSITION
+Test by checking trigger seqeunce
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+CREATE TRIGGER
+INSERT
+Basic SELECT
+</text></argument><argument name="stdout"><text>TEXT
+================================
+
+tg2 tg1
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE TABLE test( id INTEGER NOT NULL CONSTRAINT unq UNIQUE,
+                   text VARCHAR(32));
+SET TERM ^;
+CREATE TRIGGER tg1 FOR test BEFORE INSERT POSITION 1
+AS
+BEGIN
+  new.text=new.text||'tg1 ';
+END ^
+
+CREATE TRIGGER tg2 FOR test BEFORE INSERT POSITION 10
+AS
+BEGIN
+  new.text=new.text||'tg2 ';
+END ^
+
+SET TERM ;^
+
+ALTER TRIGGER tg2 POSITION 0;
+INSERT INTO test VALUES(0,'');
+COMMIT;
+SELECT text FROM test;
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>ALTER TRIGGER - POSITION</text></argument><argument name="test_id"><text>skopalik_0043</text></argument><argument name="resources"><set/></argument></extension>

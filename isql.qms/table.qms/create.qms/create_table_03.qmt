@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE TABLE - charset + colations + domain
+
+Dependencies:
+CREATE DATABASE
+CREATE DOMAIN
+</text></argument><argument name="stdout"><text>C1                              VARCHAR(40) CHARACTER SET CYRL Nullable
+C2                              VARCHAR(40) CHARACTER SET DOS437 COLLATE DB_DEU437 Nullable
+C3                              BLOB segment 80, subtype TEXT CHARACTER SET DOS437 Nullable
+C4                              (TEST) ARRAY OF [1:40000]
+                                VARCHAR(32765) Nullable
+
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE DOMAIN test VARCHAR(32765)[40000];
+
+CREATE TABLE test(
+ c1 VARCHAR(40) CHARACTER SET CYRL COLLATE CYRL,
+ c2 VARCHAR(40) CHARACTER SET DOS437 COLLATE DB_DEU437,
+ c3 BLOB SUB_TYPE TEXT CHARACTER SET DOS437,
+ c4 test
+);
+SHOW TABLE test;
+
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE TABLE - charset + colations + domain</text></argument><argument name="test_id"><text>skopalik_0171</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE VIEW
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+INSERT
+</text></argument><argument name="stdout"><text>          ID          NUM
+============ ============
+
+           3            5
+          10            5
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE TABLE tb(id INT);
+INSERT INTO tb VALUES(3);
+INSERT INTO tb VALUES(10);
+COMMIT;
+
+CREATE VIEW test (id,num) AS SELECT id,5 FROM tb;
+SELECT * FROM test;
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE VIEW</text></argument><argument name="test_id"><text>skopalik_0191</text></argument><argument name="resources"><set/></argument></extension>

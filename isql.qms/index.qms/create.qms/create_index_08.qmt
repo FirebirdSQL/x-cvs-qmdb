@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE INDEX - Table with data
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+INSERT
+SHOW INDEX
+</text></argument><argument name="stdout"><text>TEST INDEX ON T(A)
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE TABLE t( a INTEGER);
+INSERT INTO t VALUES(0);
+INSERT INTO t VALUES(0);
+INSERT INTO t VALUES(1);
+INSERT INTO t VALUES(2);
+INSERT INTO t VALUES(3);
+INSERT INTO t VALUES(4);
+INSERT INTO t VALUES(null);
+COMMIT;
+
+CREATE INDEX test ON t(a);
+SHOW INDEX test;
+
+DROP DATABASE;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE INDEX - Table with data</text></argument><argument name="test_id"><text>skopalik_0150</text></argument><argument name="resources"><set/></argument></extension>
