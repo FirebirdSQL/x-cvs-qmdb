@@ -56,7 +56,7 @@ import difflib
 # classes
 ########################################################################
 
-class SubstitutionField(qm.fields.TextField):
+class SubstitutionField(qm.fields.TupleField):
     """A rule for performing a text substitution.
 
     A 'SubstitutionField' consists of a regular expression pattern and a
@@ -67,110 +67,17 @@ class SubstitutionField(qm.fields.TextField):
     The syntax for the regular expression and the substitution string is
     that of the standard Python 're' (regular expression) module."""
 
-    class_name = "qm.test.classes.file.SubstitutionField"
-
-    # The pattern and replacement string are encoded together into a
-    # single string, separated by a semicolon.  Semicolons that occur
-    # within the pattern and replacement string are escaped with a
-    # backslash.
-    #
-    # Use 'SplitValue' to extract the pattern and replacement string
-    # from a value of this field.
-
-
     def __init__(self, name, **properties):
         """Create a new 'SubstitutionField'.
 
         By default, the pattern and replacement string are empty."""
 
         # Initialize the base class.
-        apply(qm.fields.TextField.__init__, (self, name, ";"), properties)
-
-
-    def SplitValue(self, value):
-        """Split a value of this field into the pattern and replacement string.
-
-        'value' -- A value for this field.
-
-        returns -- A pair '(pattern, replacement_string)'."""
-
-        # Be lenient about an empty string.
-        if value == "":
-            return ("", "")
-        # Break it in half.
-        elements = string.split(value, ";", 1)
-        # Unescape semicolons in both halves.
-        elements = map(lambda e: string.replace(e, r"\;", ";"), elements) 
-        return elements
-
-
-    def FormatValueAsHtml(self, value, style, name=None):
-        pattern, replacement = self.SplitValue(value)
-        # Since we're generating HTML, escape special characters.
-        pattern = qm.web.escape(pattern)
-        replacement = qm.web.escape(replacement)
-
-        if style in ["new", "edit"]:
-            result = '''
-            <input type="hidden"
-                   name="%(name)s"
-                   value="%(value)s"/>
-            <table border="0" cellpadding="0" cellspacing="4">
-             <tr>
-              <td>Pattern:</td>
-              <td>&nbsp;</td>
-              <td><input type="text"
-                         size="40"
-                         name="pattern"
-                         onchange="update_substitution();"
-                         value="%(pattern)s"/></td>
-             </tr>
-             <tr>
-              <td>Replacement:</td>
-              <td>&nbsp;</td>
-              <td><input type="text"
-                         size="40"
-                         name="substitution"
-                         onchange="update_substitution();"
-                         value="%(replacement)s"/></td>
-             </tr>
-            </table>
-            <script language="JavaScript">
-            function update_substitution()
-            {
-              var pattern = document.form.pattern.value;
-              pattern = pattern.replace(/;/g, "\\;");
-              var substitution = document.form.substitution.value;
-              substitution = substitution.replace(/;/g, "\\;");
-              document.form.%(name)s.value = pattern + ";" + substitution;
-            }
-            </script>
-            ''' % locals()
-            return result
-
-        elif style == "full":
-            return '''
-            <table border="0" cellpadding="2" cellspacing="0">
-             <tr valign="top">
-              <td>Pattern:</td>
-              <td><tt>%s</tt></td>
-             </tr>
-             <tr valign="top">
-              <td>Replacement:</td>
-              <td><tt>%s</tt></td>
-             </tr>
-            </table>
-            ''' % (pattern, replacement)
-
-        else:
-            # For all other styles, use the base class implementation.
-            return qm.fields.TextField.FormatValueAsHtml(
-                self, value, style, name)
-
-
-    def FormatValueAsText(self, value, columns=72):
-        # Don't line-wrap or otherwise futz with the value.
-        return value
+        fields = (qm.fields.TextField(name = "pattern",
+                                      title = "Pattern",),
+                  qm.fields.TextField(name = "replacement",
+                                      title = "Replacement"))
+        qm.fields.TupleField.__init__(self, name, fields, **properties)
 
 
     def GetHelp(self):
@@ -182,10 +89,7 @@ class SubstitutionField(qm.fields.TextField):
         matched groups in the pattern.
 
         The regular expression and substitution syntax are those of
-        Python's standard "'re' regular expression module"
-
-.. "'re' regular expression module" http://www.python.org/doc/1.5.2p2/lib/module-re.html ."""
-
+        Python's standard "'re' regular expression module"."""
 
 
 class ReadThread(Thread):
@@ -210,7 +114,7 @@ class ReadThread(Thread):
             self.data = ""
 	self.f.close()
 
-        
+
 
 class WriteThread(Thread):
     """A 'WriteThread' is a thread that writes to a file."""
@@ -292,7 +196,10 @@ class RunServicesBase:
         stderr_f = None
         result_f = None
         
-        # Try block to clean up temporary files and file descriptors in
+	print 'program:',program
+	print 'arguments:',arguments
+
+	# Try block to clean up temporary files and file descriptors in
         # any eventuality.
         try:
             # Under Windows, use popen to create the child.  It would be
@@ -525,7 +432,7 @@ class FirebirdService(RunServicesBase):
         modified by this method to indicate outcomes other than
         'Result.PASS' or to add annotations."""
 
-        self.RunProgram("\""+self.__context["gbak_path"]+"\"", 
+        self.RunProgram("\""+self.__context["gbak_path"]+"\"",
 			[ self.__context["gbak_path"] ] + [ "-C ", backupfile ] 
                         + arguments + [ database ],
                         "", self.__context, result)
@@ -986,7 +893,7 @@ class FirebirdISQLTestBase(FirebirdTestBase):
             description="""Regular expression substitutions.
 
             Each substitution will be applied to both the expected and
-            actual stdout of the ISQl.  The comparison will be
+            actual stdout of the ISQL.  The comparison will be
             performed after the substitutions have been performed.
 
             You can use substitutions to ignore insignificant
@@ -1016,7 +923,6 @@ class FirebirdISQLTestBase(FirebirdTestBase):
                       qm.error("invalid environment assignment",
                                assignment=assignment)
         return environment
-
 
     def RunProgram(self, program, arguments, context, result):
         """Run the 'program'.
@@ -1141,7 +1047,10 @@ class FirebirdISQLTestBase(FirebirdTestBase):
                 
             # Substitute macros in stdin - if any
             e_stdin = self.stdin
-            for substitution in context.keys():
+	    c = {}
+	    for pair in context.items():
+		c[pair[0]] = pair[1]
+            for substitution in c.keys():
                 pattern = "$("+substitution.upper()+")"
                 replacement = context[substitution]
                 e_stdin = e_stdin.replace(pattern, replacement)
@@ -1267,7 +1176,7 @@ class FirebirdISQLTestBase(FirebirdTestBase):
                 result.Fail("Program did not terminate normally.")
         except:
             result.NoteException()
-            
+
         # Make sure all of the file descriptors we opened are closed.
         for fd in (stdin_r, stdin_w, stdout_r, stdout_w,
                    stderr_r, stderr_w, result_r, result_w):
@@ -1307,9 +1216,9 @@ class FirebirdISQLTestBase(FirebirdTestBase):
         returns -- The string 'text', processed with the substitutions
         configured for this test instance."""
 
-        for substitution in self.substitutions:
-            pattern, replacement = self.SplitValue(substitution)
+        for pattern, replacement in self.substitutions:
             text = re.compile(pattern,re.M).sub(replacement, text)
+#            text = re.sub(pattern, replacement, text)
         return text
         
     
@@ -1337,9 +1246,8 @@ class FirebirdISQLTest(FirebirdISQLTestBase):
             database = context["database_path"]
         else:
             database = ""
-
-        self.RunProgram(self.program, 
-			[ self.program , database , 
+        self.RunProgram(self.program,
+			[ self.program , database ,
                         "-user", context["user_name"], "-password", context["user_password"] ],
                         context, result)
 
