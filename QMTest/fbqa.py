@@ -183,8 +183,10 @@ class FirebirdTest(Test):
         the given parameters.
 
         if "Restore from Backup" is chosen, gbak will be used to restore a database with the given name from
-        the given backup file.  If the database already exists, the test will raise an error.""",
-        enumerals=["Create New", "Connect To Existing", "Restore From Backup"],
+        the given backup file.  If the database already exists, the test will raise an error.
+
+        if "None" is chosen, then test hasn't any assumption about use of any database in test.""",
+        enumerals=["Create New", "Connect To Existing", "Restore From Backup", "None"],
         default_value="Create New"
         ),
 
@@ -497,12 +499,8 @@ class FirebirdTest(Test):
       self.__cause= "Process %s terminated abnormally." % basename
 
 
-  def __KConnectDB(self):
-    """Use kinterbasdb to connect to database using given options.  if we
-       were instructed to do so, the database will be created first
-    
-       "self.__context" = test's run-time self.__context (dictionary)
-       "result"  = QM result object"""
+  def __KCreateDB(self):
+    """Use kinterbasdb to create database using options defined by test."""
     if self.create_db_method == "Create New":
       if self.page_size == "Default":
         createCommand = "CREATE DATABASE '%s' USER '%s' PASSWORD '%s'" % (self.__dsn,
@@ -521,13 +519,18 @@ class FirebirdTest(Test):
       except:
         self.__result.NoteException(cause="Exception raised while creating database.")
         return
-    
+
+  def __KConnectDB(self):
+    """Use kinterbasdb to connect to database using options defined by test.
+
+       "self.__context" = test's run-time self.__context (dictionary)
+       "self.__result"  = QM result object"""
     try:
       conn= kdb.connect(dsn     = self.__dsn,
-                                user    = self.user_name.encode(), 
-                                password= self.user_password.encode(),
-                                charset = self.character_set.encode(),
-                                dialect = int(self.sql_dialect))
+                        user    = self.user_name.encode(),
+                        password= self.user_password.encode(),
+                        charset = self.character_set.encode(),
+                        dialect = int(self.sql_dialect))
     except:
       self.__result.NoteException(cause="Exception raised while connecting to database.")
     else:
@@ -843,19 +846,30 @@ class FirebirdTest(Test):
         print
 
   def __MakeNamespaces(self):
-    global_ns={"context"        : self.__context,
-               "kdb"            : kdb,
-               "printData"      : self.__PythonDataPrinter,
-               "sys"            : sys,
-               "db_conn"        : self.__db_conn}
+    global_ns={"context"           : self.__context,
+               "kdb"               : kdb,
+               "printData"         : self.__PythonDataPrinter,
+               "sys"               : sys,
+               "dsn"               : self.__dsn,
+               "user_name"         : self.user_name,
+               "user_password"     : self.user_password,
+               "page_size"         : self.page_size,
+               "sql_dialect"       : self.sql_dialect,
+               "character_set"     : self.character_set,
+               "db_path_property"  : self.db_path_property,
+#               "server_location"   : context["server_location"],
+#               "database_location" : context[self.db_path_property],
+               "db_conn"           : self.__db_conn}
 
     local_ns={}
 
     return global_ns, local_ns
 
-    
+
   def __DropDatabase(self):
     try:
+      if not self.__db_conn:
+        self.__db_conn= self.__KConnectDB()
       self.__db_conn.drop_database()
     except:
       if self.__result.GetOutcome() == self.__result.PASS: # if the test has passed so far
@@ -885,6 +899,8 @@ class FirebirdTest(Test):
       self.__result["FirebirdTest.temp_files_unable_to_remove"]= string.join(errors, ", ")
           
   def Run(self, context, result):
+    # database connection placeholder
+    self.__db_conn = None
     # qm will generate errors if these are missing:
     context["temp_directory"]
     context["server_location"]
@@ -1067,11 +1083,8 @@ class FirebirdTest(Test):
       else:
         self.__CleanUp()
         return
-
-    self.__db_conn= self.__KConnectDB()
-
-    if not self.__db_conn:
-      return
+    else:
+      self.__KCreateDB()
 
     if self.populate_method == "Using SQL Commands":
       retval= self.__ExecISQLCommandsBlind()
@@ -1081,6 +1094,9 @@ class FirebirdTest(Test):
         return
 
     elif self.populate_method == "Using Data Tuple":
+      self.__db_conn= self.__KConnectDB()
+      if not self.__db_conn:
+        return
       retval= self.__InsertParam()
 
       if not retval:
@@ -1088,6 +1104,10 @@ class FirebirdTest(Test):
         return
 
     if self.statement_type_and_result in ["Python: True", "Python: False"]:
+      if (not self.__db_conn) and (self.create_db_method != "None"):
+        self.__db_conn= self.__KConnectDB()
+        if not self.__db_conn:
+          return
       retval= self.__ExecPythonBool()
 
       if not retval:
@@ -1095,15 +1115,19 @@ class FirebirdTest(Test):
         return
 
     elif self.statement_type_and_result == "Python: String":
+      if (not self.__db_conn) and (self.create_db_method != "None"):
+        self.__db_conn= self.__KConnectDB()
+        if not self.__db_conn:
+          return
       retval= self.__ExecPython()
-      
+
       if not retval:
         self.__CleanUp()
         return
-      
+
     elif self.statement_type_and_result == "SQL: String":
       retval= self.__ExecISQLCommands()
-    
+
       if not retval:
         self.__CleanUp()
         return

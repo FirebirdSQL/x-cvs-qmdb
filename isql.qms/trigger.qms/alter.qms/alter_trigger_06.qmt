@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE extension
-  PUBLIC '-//QM/2.1.2/Extension//EN'
-  'http://www.codesourcery.com/qm/dtds/2.1.2/-//qm/2.1.2/extension//en.dtd'>
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
 <extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>Triggers on Table TEST:
 TG, Sequence: 0, Type: AFTER DELETE, Active
 AS
@@ -26,4 +26,4 @@ BEGIN
 END ^
 SET TERM ;^
 commit;</text></argument><argument name="source_code"><text>ALTER TRIGGER tg AFTER DELETE;
-SHOW TRIGGER tg;</text></argument><argument name="test_id"><text>pcisar_195</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>pcisar:sskopalik</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
+SHOW TRIGGER tg;</text></argument><argument name="test_id"><text>trigger.alter.06</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>pcisar:sskopalik</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>

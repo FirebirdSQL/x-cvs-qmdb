@@ -1,0 +1,2 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdUserResource" kind="resource"><argument name="user_password"><text>test</text></argument><argument name="gid"><integer>0</integer></argument><argument name="user_name"><text>TEST</text></argument><argument name="uid"><integer>0</integer></argument></extension>

@@ -1,19 +1,27 @@
 <?xml version="1.0" ?>
 <!DOCTYPE extension
-  PUBLIC '-//QM/2.1.2/Extension//EN'
-  'http://www.codesourcery.com/qm/dtds/2.1.2/-//qm/2.1.2/extension//en.dtd'>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="environment"><set/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; LENGTH 200
-  FILE &quot;$(DATABASE_LOCATION)TEST.G00&quot; LENGTH 200
-  FILE &quot;$(DATABASE_LOCATION)TEST.G01&quot; LENGTH 200
-  FILE &quot;$(DATABASE_LOCATION)TEST.G02&quot; LENGTH 200;
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>None</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>CAST    RDB$FILE_SEQUENCE       RDB$FILE_START  RDB$FILE_LENGTH
+------------------------------------------------------------    -----------------       --------------  ---------------
+TEST.F00        1       201     200
+TEST.F01        2       401     200
+TEST.F02        3       601     200
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>CREATE DATABASE - Multi file DB</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set><tuple><text>^.*TEST.F0</text><text>TEST.F0</text></tuple><tuple><text>[ ]+</text><text>\t</text></tuple></set></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.0</text></argument><argument name="description"><text>Create database with four files.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>None (manual)</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>database_name</text></argument><argument name="isql_script"><text/></argument><argument name="source_code"><text>dsn = &quot;&quot;.join([context[&quot;server_location&quot;],
+                        context[db_path_property],
+                        &quot;TEST.FDB&quot;])
 
-SELECT cast(RDB$FILE_NAME as varchar(60)),RDB$FILE_SEQUENCE,RDB$FILE_START,RDB$FILE_LENGTH 
-  FROM RDB$FILES;
+file1 = &quot;&quot;.join([context[db_path_property], &quot;TEST.F00&quot;])
+file2 = &quot;&quot;.join([context[db_path_property], &quot;TEST.F01&quot;])
+file3 = &quot;&quot;.join([context[db_path_property], &quot;TEST.F02&quot;])
 
-DROP DATABASE;
-</text></argument><argument name="author"><text>skopalik</text></argument><argument name="stdout"><text>CAST                                                         RDB$FILE_SEQUENCE RDB$FILE_START RDB$FILE_LENGTH
-============================================================ ================= ============== ===============
+createCommand = &quot;CREATE DATABASE '%s' LENGTH 200 USER '%s' PASSWORD '%s' FILE '%s' LENGTH 200 FILE '%s' LENGTH 200 FILE '%s' LENGTH 200&quot; % (dsn, user_name, user_password, file1, file2, file3)
 
-TEST.G00                                                                     1            201             200
-TEST.G01                                                                     2            401             200
-TEST.G02                                                                     3            601             200</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="target_group"><text>.*</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set><text>^.*TEST.G;TEST.G</text><text>\s*;</text></set></argument><argument name="bug_id"><text/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE DATABASE - Multi file DB</text></argument><argument name="test_id"><text>skopalik_0092</text></argument><argument name="resources"><set/></argument><argument name="description"><text>Create database with four files.</text></argument></extension>
+db_conn= kdb.create_database(createCommand, int(sql_dialect))
+
+cursor = db_conn.cursor()
+cursor.execute(&quot;SELECT cast(RDB$FILE_NAME as varchar(60)),RDB$FILE_SEQUENCE,RDB$FILE_START,RDB$FILE_LENGTH FROM RDB$FILES&quot;)
+
+printData(cursor)
+
+db_conn.drop_database()</text></argument><argument name="test_id"><text>database.create.09</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>Python: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>pcisar:sskopalik</text></argument><argument name="drop_db"><enumeral>false</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>

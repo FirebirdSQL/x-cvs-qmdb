@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE extension
-  PUBLIC '-//QM/2.1.2/Extension//EN'
-  'http://www.codesourcery.com/qm/dtds/2.1.2/-//qm/2.1.2/extension//en.dtd'>
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
 <extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>Triggers on Table TB:
 TEST, Sequence: 0, Type: BEFORE INSERT, Active
 AS
@@ -20,4 +20,4 @@ BEGIN
   new.id=1;
 END^
 SET TERM ;^
-SHOW TRIGGER test;</text></argument><argument name="test_id"><text>pcisar_203</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>pcisar:sskopalik</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
+SHOW TRIGGER test;</text></argument><argument name="test_id"><text>trigger.create.01</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>pcisar:sskopalik</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>

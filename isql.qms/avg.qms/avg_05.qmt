@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE extension
-  PUBLIC '-//QM/2.1.2/Extension//EN'
-  'http://www.codesourcery.com/qm/dtds/2.1.2/-//qm/2.1.2/extension//en.dtd'>
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
 <extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>                  AVG
 =====================
 
@@ -12,4 +12,4 @@ INSERT
 Basic SELECT</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>avg_test</text></argument><argument name="isql_script"><text>CREATE TABLE test( id INTEGER NOT NULL);
 INSERT INTO test VALUES(5);
 INSERT INTO test VALUES(5);
-INSERT INTO test VALUES(7);</text></argument><argument name="source_code"><text>SELECT AVG(DISTINCT id) FROM test;</text></argument><argument name="test_id"><text>pcisar_005</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>pcisar:sskopalik</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
+INSERT INTO test VALUES(7);</text></argument><argument name="source_code"><text>SELECT AVG(DISTINCT id) FROM test;</text></argument><argument name="test_id"><text>intfunc.avg.05</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>pcisar:sskopalik</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
