@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN (E ORDER PK_BEGINDATETIME)
+
+            BEGINDATETIME               ENDDATETIME 
+========================= ========================= 
+
+1858-11-15 18:00:00.0000  1858-11-15 20:00:00.0000  
+1858-11-16 12:00:00.0000  1858-11-16 13:00:00.0000  
+1858-11-17 00:00:00.0000  1858-11-17 00:00:00.0000  
+1858-11-18 16:00:00.0000  1858-11-18 17:00:00.0000  
+2004-04-08 02:00:00.0000  2004-04-08 02:09:00.0000  
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>TIMESTAMP in index with values below julian date</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>Datetime values below the julian date (firebird base date '1858-11-17') should be stored in correct order.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>timestamps.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Era (
+  BeginDateTime TIMESTAMP NOT NULL, 
+  EndDateTime TIMESTAMP NOT NULL
+);
+
+COMMIT;
+
+INSERT INTO ERA (BeginDateTime, EndDateTime) VALUES ('1500-01-01', '1550-12-31');
+INSERT INTO ERA (BeginDateTime, EndDateTime) VALUES ('1858-11-17', '1858-11-17');
+INSERT INTO ERA (BeginDateTime, EndDateTime) VALUES ('1858-11-15 18:00', '1858-11-15 20:00');
+INSERT INTO ERA (BeginDateTime, EndDateTime) VALUES ('1858-11-16 12:00', '1858-11-16 13:00');
+INSERT INTO ERA (BeginDateTime, EndDateTime) VALUES ('1858-11-18 16:00', '1858-11-18 17:00');
+INSERT INTO ERA (BeginDateTime, EndDateTime) VALUES ('2004-04-08 02:00', '2004-04-08 02:09');
+
+CREATE UNIQUE ASC INDEX PK_BeginDateTime ON Era (BeginDateTime);
+CREATE UNIQUE ASC INDEX PK_EndDateTime ON Era (EndDateTime);
+
+COMMIT;</text></argument><argument name="source_code"><text>SET PLAN ON;
+SELECT 
+  e.BeginDateTime,
+  e.EndDateTime
+FROM
+  Era e
+WHERE
+  e.BeginDateTime &gt;= '1700-01-01'
+ORDER BY
+  BeginDateTime ASC;
+</text></argument><argument name="test_id"><text>timestamps_01</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>

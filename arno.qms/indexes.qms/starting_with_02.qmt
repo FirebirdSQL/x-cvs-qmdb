@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>O_FIELD                               O_COUNT 
+================================ ============ 
+
+F1 - INDEXED ASC                            3 
+F2 - INDEXED DESC                           3 
+F3 - NOT INDEXED                            3 </text></argument><argument name="character_set"><enumeral>ISO8859_1</enumeral></argument><argument name="title"><text>STARTING WITH charset ISO8859_1</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>STARTING WITH - Select from table with 2 entries
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+Basic SELECT</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>starting_with.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE A_TEST (F1 VARCHAR(5), F2 VARCHAR(5), F3 VARCHAR(5));
+CREATE INDEX IDX_A_TEST_F1 ON A_TEST(F1);
+CREATE DESC INDEX IDX_A_TEST_F2 ON A_TEST(F2);
+COMMIT;
+INSERT INTO A_TEST (F1, F2, F3) VALUES('', '', '');
+INSERT INTO A_TEST (F1, F2, F3) VALUES(NULL, NULL, NULL);
+INSERT INTO A_TEST (F1, F2, F3) VALUES('a', 'a', 'a');
+INSERT INTO A_TEST (F1, F2, F3) VALUES('b', 'b', 'b');
+COMMIT;
+
+SET TERM ^;
+
+CREATE PROCEDURE PR_A_TEST_STARTING_WITH(I_START_VALUE VARCHAR(5))
+RETURNS(O_FIELD VARCHAR(32), O_COUNT integer)
+AS
+BEGIN
+  /* First retrieve results for indexed ASC field */
+  O_FIELD = 'F1 - INDEXED ASC';
+  SELECT COUNT(*) FROM A_TEST 
+  WHERE F1 STARTING WITH :I_START_VALUE
+  INTO :O_COUNT;
+
+  SUSPEND;
+
+  /* Second retrieve results for indexed DESC field */
+  O_FIELD = 'F2 - INDEXED DESC';
+  SELECT COUNT(*) FROM A_TEST 
+  WHERE F2 STARTING WITH :I_START_VALUE
+  INTO :O_COUNT;
+
+  SUSPEND;
+
+  /* Thirth for unindexed field */
+  O_FIELD = 'F3 - NOT INDEXED';
+  SELECT COUNT(*) FROM A_TEST 
+  WHERE F3 STARTING WITH :I_START_VALUE
+  INTO :O_COUNT;
+
+  SUSPEND;
+END^
+
+SET TERM ;^
+
+</text></argument><argument name="source_code"><text>SET PLAN OFF;
+SELECT O_FIELD, O_COUNT FROM PR_A_TEST_STARTING_WITH('');
+</text></argument><argument name="test_id"><text>starting_with_02</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
