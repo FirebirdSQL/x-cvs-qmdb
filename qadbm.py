@@ -94,6 +94,10 @@ def build_test_list(root_dir):
   return test_list
 
 def test_filter(testrec):
+  # Check for valid test format
+  if (testrec[TARGET_PLATFORM] == None) or (testrec[TARGET_VERSION] == None) or \
+       (testrec[AUTHOR] == None):
+    return False
   # Check for platform
   # print testrec
   if (options.platform != None) and (options.platform != "All") and (testrec[TARGET_PLATFORM] != "All"):
