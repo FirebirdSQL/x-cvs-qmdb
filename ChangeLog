@@ -1,3 +1,27 @@
+2004-06-08	pcisar
+	* QMTest/fbqa.py 1.2:
+		* removed obsolete docstrings
+		* added "-m" switch to isql execution call in self.__ExecISQLCommands()
+		* also changed field description for "result string" to note the addition of merged stdout/stderr if using ISQL
+		* isolated errors related to missing context keys (even if not explicitly required for the current test) and missing fields required for all tests at the beginning of Run()
+		* changed test structure so both populate from data tuple and populate with sql commands can be used in one test
+		* replaced
+		
+		 retval = func()
+		 if not retval:
+		       return
+		
+		 with
+		
+		 if not func():
+		       return
+		
+		for dispatches at the end of Run()
+
+	* QMTest/classes.qmc 1.3:
+	* QMTest/fbqa.py 1.1:
+		New test class created by Moe
+
 2003-09-26	pcisar
 	* isql.qms/avg.qms/avg_04.qmt 1.4:
 	* isql.qms/cast.qms/cast_03.qmt 1.3:
