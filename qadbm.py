@@ -1,12 +1,11 @@
 #!/usr/bin/python
 ########################################################################
 #
-# File:   qaver.py
+# File:   qadbm.py
 # Date:   14.06.2004
 #
 # Contents:
-#   Tool for Firebird QA to list and optionally copy tests for specified
-#   version of Firebird engine. 
+#   Multipurpose tool for Firebird QA to manage QA Test Database. 
 #
 #   It depends on new test classes (fbqa.py) with target_version attribute!
 #
@@ -39,15 +38,22 @@
 ########################################################################
 
 import os
+import md5
+import base64
+import StringIO
 import xml.dom
 import xml.dom.minidom
 import shutil
+import xml
+import urllib
 from optparse import OptionParser
 import cmd
 
 ########################################################################
 # constants
 ########################################################################
+
+QADBM_VERSION = "1.1"
 
 FILE = 0
 ID = 1
@@ -60,6 +66,19 @@ CREATE_DB_METHOD = 7
 POPULATE_METHOD = 8
 STATEMENT_TYPE = 9
 
+DIR_CREATE    = "create"
+DIR_REMOVE    = "remove"
+FILE_CREATE   = "get"
+FILE_UPDATE   = "update"
+FILE_REMOVE   = "delete"
+
+OPT_LOCAL     = "local"
+OPT_REMOTE    = "remote"
+OPT_TARGET    = "target"
+OPT_PLATFORM  = "platform"
+OPT_AUTHOR    = "author"
+OPT_DISPLAY   = "display"
+
 ########################################################################
 # classes
 ########################################################################
@@ -68,15 +87,19 @@ class qacmd(cmd.Cmd,object):
   # variables
   prompt = "QADBM>"
   options = {
-    "database":"",
-    "target":"",
-    "platform":"",
-    "author":"",
-    "lines":20
+    OPT_LOCAL:"",
+    OPT_REMOTE:"",
+    OPT_TARGET:"",
+    OPT_PLATFORM:"",
+    OPT_AUTHOR:"",
+    OPT_DISPLAY:20
   }
   testlist = None
   testmap = None
   filtered_testlist = None
+  localRepository = None
+  remoteRepository = None
+  action_list = dict()
   
   def __init__(self,options,**args):
     super(qacmd,self).__init__(**args)
@@ -88,18 +111,160 @@ class qacmd(cmd.Cmd,object):
     """Custom command loop initialization."""
     super(qacmd,self).preloop()
     print """
-  QADBM - Firebird QA Database Manager
+  QADBM - Firebird QA Database Manager v%s
   Written by Pavel Cisar (c) 2004
   Distributed under IDPL license v1.0
-  """
+  """ % QADBM_VERSION
     self.__build_test_list()
+    self.localRepository = self.__buildRepositoryDefinition(self.options[OPT_LOCAL])
     self.__filter_testlist()
     self.__print_db_info()
     print
     print "Type help for list of all commands."
   
-  # helper functions
+# helper functions
   
+  def __buildRepositoryDefinition(self, repositoryDir):
+    doc = minidom.getDOMImplementation().createDocument(None,"fbqa-repository",None)
+    rn = doc.documentElement
+    a = doc.createAttribute("format")
+    a.nodeValue = "1.0"
+    rn.setAttributeNode(a)
+    dirnodes = dict()
+    first = True
+
+    w = os.walk(repositoryDir)
+    for root, dirs, files in w:
+      if first:
+        n = rn
+        first = False
+      else:
+        n = doc.createElement("directory")
+        a = doc.createAttribute("name")
+        path,name = os.path.split(root)
+        a.nodeValue = name
+        n.setAttributeNode(a)
+        dirnodes[root] = n
+        if dirnodes.has_key(path):
+            dirnodes[path].appendChild(n)
+        else:
+            rn.appendChild(n)
+      for file in files:
+        if file != "fbqa-repository.xml":
+          fn = doc.createElement("file")
+
+          a = doc.createAttribute("name")
+          a.nodeValue = file
+          fn.setAttributeNode(a)
+
+          a = doc.createAttribute("md5")
+          md = md5.new()
+          fi = open(os.path.join(root,file),"r")
+          fo = StringIO.StringIO()
+          base64.encode(fi,fo)
+          fi.close()
+          fo.pos = 0
+          for line in fo:
+              md.update(line)
+          fo.close()
+          a.nodeValue = md.hexdigest()
+          fn.setAttributeNode(a)
+          n.appendChild(fn)
+    return doc
+  def __readRepositoryDefinition(self, file):
+    doc = minidom.parse(file)
+    return doc
+  def __buildRepositoryMap(self, map, path, dirNode):
+    for n in dirNode.childNodes:
+      if n.nodeType == xml.dom.Node.ELEMENT_NODE:
+        map[os.path.join(path,n.getAttribute("name"))] = n.getAttribute("md5") 
+        if n.nodeName == "directory":
+          self.__buildRepositoryMap(map,os.path.join(path,n.getAttribute("name")),n)
+  def __compareRepositoryDefinitions(self, localRepository, remoteRepository):
+    localRoot = localRepository.getElementsByTagName("fbqa-repository")
+    remoteRoot = remoteRepository.getElementsByTagName("fbqa-repository")
+    lmap = dict()
+    rmap = dict()
+    actions = list()
+    self.__buildRepositoryMap(lmap,"",localRoot[0])
+    self.__buildRepositoryMap(rmap,"",remoteRoot[0])
+    for k in lmap.keys():
+      if k in rmap:
+        if lmap[k] != rmap[k]:
+          actions.append((FILE_UPDATE,k))
+      else:
+        if lmap[k] == "":
+          actions.append((DIR_REMOVE,k))
+        else:
+          actions.append((FILE_REMOVE,k))
+    for k in rmap.keys():
+      if k not in lmap:
+        if rmap[k] == "":
+          actions.append((DIR_CREATE,k))
+        else:
+          actions.append((FILE_CREATE,k))
+    return actions
+
+  def __buildSyncActionList(self, ignoredActions):
+    action_list = list()
+    try:
+      print "connecting to %s..." % self.options[OPT_REMOTE],
+      remoteFile = urllib.urlopen(os.path.join(self.options[OPT_REMOTE],"fbqa-repository.xml"))
+      print "done"
+      try:
+        print "retreiving repository spec file...",
+        self.remoteRepository = self.__readRepositoryDefinition(remoteFile)
+        print "done"
+      except Exception, e:
+        print "Cannot parse the remote repository spec file"
+    except Exception, e:
+      print "Cannot open the remote repository"
+    print "building action list...",
+    action_list = self.__compareRepositoryDefinitions(self.localRepository,self.remoteRepository)
+    action_list.sort()
+    action_list = [i for i in action_list if i[0] not in ignoredActions]
+    print "done"
+    return action_list
+  def __runUpdateActions(self, action_list):
+    for action, subject in action_list:
+      if action == FILE_REMOVE:
+        s = os.path.join(self.options[OPT_LOCAL],subject)
+        try:
+          print "Removing file %s" % s
+          os.remove(s)
+        except:
+          print "Cannot remove file %s" % s
+      elif action == DIR_REMOVE:
+        s = os.path.join(self.options[OPT_LOCAL],subject)
+        try:
+          print "Removing directory %s" % s
+          os.rmdir(s)
+        except:
+          print "Cannot remove directory %s" % s
+      elif action == DIR_CREATE:
+        s = os.path.join(self.options[OPT_LOCAL],subject)
+        try:
+          print "Creating directory %s" % s
+          os.mkdir(s)
+        except:
+          print "Cannot create directory %s" % s
+      elif (action == FILE_CREATE) or (action == FILE_UPDATE):
+        s = os.path.join(self.options[OPT_LOCAL],subject)
+        rs = os.path.join(self.options[OPT_REMOTE],subject).replace("\\","/")
+        try:
+          if action == FILE_CREATE:
+            print "Getting file %s" % s
+          else:
+            print "Updating file %s" % s
+          urllib.urlretrieve(rs,s)
+        except:
+          print rs
+          print "Cannot get file %s" % s
+    self.localRepository = self.__buildRepositoryDefinition(self.options[OPT_LOCAL])
+    f = file(os.path.join(self.options[OPT_LOCAL],"fbqa-repository.xml"),"w")
+    f.writelines(self.localRepository.toprettyxml())
+    f.close()
+    
   def __get_test_attribute(self,tname,nodelist):
     """Get test attribute value from test XML file.
         tname     Attribute name.
@@ -142,7 +307,7 @@ class qacmd(cmd.Cmd,object):
     tdict = dict()
     tdoc = xml.dom.minidom.parse(testfile)
     fileroot = tdoc.documentElement
-    tdict[FILE] = testfile[len(self.options["database"])+1:]
+    tdict[FILE] = testfile[len(self.options["local"])+1:]
     tdict[ID] = self.__get_test_attribute('test_id',fileroot.childNodes)
     tdict[TARGET_VERSION] = self.__get_test_attribute('target_version',fileroot.childNodes)
     tdict[TARGET_PLATFORM] = self.__get_test_attribute('target_platform',fileroot.childNodes)
@@ -156,12 +321,12 @@ class qacmd(cmd.Cmd,object):
 
   def __filter_testlist(self):
     """Create or empty self.filtered_testlist according to defined filter rules."""
-    if (self.options["author"] != None ) or \
-        (self.options["target"] != None) or \
-        (self.options["platform"] != None):
+    if (self.options[OPT_AUTHOR] != None ) or \
+        (self.options[OPT_TARGET] != None) or \
+        (self.options[OPT_PLATFORM] != None):
       self.filtered_testlist = filter(self.__test_filter,self.testlist)
       # Engine version filter needs special handling
-      if (self.options["target"] != None):
+      if (self.options[OPT_TARGET] != None):
         self.testmap = self.__build_testmap(self.filtered_testlist)
         self.filtered_testlist = filter(self.__map_filter,self.filtered_testlist)
     else:
@@ -174,7 +339,7 @@ class qacmd(cmd.Cmd,object):
     test = self.testmap[testrec[ID]]
     candidate = "0"
     for testversion in test.iterkeys():
-      if self.__compare_versions(self.options["target"],testversion) >= 0:
+      if self.__compare_versions(self.options[OPT_TARGET],testversion) >= 0:
         if self.__compare_versions(candidate,testversion) < 0:
           candidate = testversion
     if (candidate != "0") and (test[candidate][FILE]  != testrec[FILE]):
@@ -182,10 +347,10 @@ class qacmd(cmd.Cmd,object):
     return True
     
   def __build_test_list(self):
-    """Builds list of tests from current working test database."""
-    print "Scanning test database, please wait..."
+    """Builds list of tests from local test repository."""
+    print "Scanning local test repository, please wait..."
     self.testlist = list()
-    w = os.walk(self.options["database"])
+    w = os.walk(self.options["local"])
     for root, dirs, files in w:
       # prune directories that are not test suites
       for dir in dirs:
@@ -221,14 +386,14 @@ class qacmd(cmd.Cmd,object):
          (testrec[AUTHOR] == None):
       return False
     # Check for platform
-    if (self.options["platform"] != None) and \
-        (self.options["platform"] != "All") and \
+    if (self.options[OPT_PLATFORM] != None) and \
+        (self.options[OPT_PLATFORM] != "All") and \
         (testrec[TARGET_PLATFORM] != "All"):
-      if (testrec[TARGET_PLATFORM].find(self.options["platform"]) < 0):
+      if (testrec[TARGET_PLATFORM].find(self.options[OPT_PLATFORM]) < 0):
         return False
     # Check for author
-    if (self.options["author"] != None):
-      if (testrec[AUTHOR].find(self.options["author"]) < 0):
+    if (self.options[OPT_AUTHOR] != None):
+      if (testrec[AUTHOR].find(self.options[OPT_AUTHOR]) < 0):
         return False
     return True
 
@@ -237,8 +402,8 @@ class qacmd(cmd.Cmd,object):
     return cmp(l[ID],r[ID])
 
   def __print_db_info(self):
-    """Prints information about current working test database."""
-    print "Database %s contains %d tests" % (self.options["database"],len(self.testlist))
+    """Prints information about local test repository."""
+    print "Local repository %s contains %d tests" % (self.options["local"],len(self.testlist))
     if self.filtered_testlist != None:
       print "%d tests respects current filter" % len(self.filtered_testlist)
 
@@ -269,35 +434,32 @@ class qacmd(cmd.Cmd,object):
     print """
     Lists QADBM enviroment settings."""
   
-  def do_db(self,s):
-    """DB/DATABASE command."""
+  def do_repository(self,s):
+    """REPOSITORY command."""
     if s == "":
       self.__print_db_info()
     else:
       if os.path.exists(s):
-        self.options["database"] = s
+        self.options["local"] = s
         self.__build_test_list()
         self.__filter_testlist()
         self.__print_db_info()
       else:
         print "Path %s doesn't exists" % s
-  def help_db(self):
+  def help_repository(self):
     print """
-    Display or set the directory with test database.
-    usage: DB | DATABASE [<directory>]
+    Display or set the directory with local test repository.
+    usage: REPOSITORY [<directory>]
     
     Without argument, it will display the current settings,
-    otherwise it sets working test database to specified directory."""
+    otherwise it sets local test repository to specified directory."""
   
-  do_database = do_db
-  help_database = help_db
-
   def do_platform(self,s):
     """PLATFORM command."""
     if s == "":
-      print "Target platform: %s" % self.options["platform"]
+      print "Target platform: %s" % self.options[OPT_PLATFORM]
     else:
-      self.options["platform"] = s
+      self.options[OPT_PLATFORM] = s
       self.__filter_testlist()
     self.__print_db_info()
   def help_platform(self):
@@ -312,14 +474,14 @@ class qacmd(cmd.Cmd,object):
     Multiple values could be specified separated by colon.
     
     This value is used together with TARGET and COPY to create test 
-    database for given platform. """
+    suite for given platform. """
 
   def do_target(self,s):
     """TARGET command."""
     if s == "":
-      print "Target engine version: %s" % self.options["target"]
+      print "Target engine version: %s" % self.options[OPT_TARGET]
     else:
-      self.options["target"] = s
+      self.options[OPT_TARGET] = s
       self.__filter_testlist()
     self.__print_db_info()
   def help_target(self):
@@ -338,7 +500,7 @@ class qacmd(cmd.Cmd,object):
     and last, fourth number represents a build number.
     
     This value is used together with PLATFORM and COPY to create 
-    test database for given target version. """
+    test suite for given target version. """
 
   def do_list(self,s):
     """LIST command."""
@@ -354,22 +516,22 @@ class qacmd(cmd.Cmd,object):
           t[k] = "Unknown"
       print "%-20s %-10s %-42s %-35s %-s" %(t[ID],t[TARGET_VERSION],t[TARGET_PLATFORM],t[TITLE],t[FILE])
       line = line+1
-      if line == self.options["lines"]:
+      if line == self.options[OPT_DISPLAY]:
         key = raw_input("Press enter to continue or q to abort...")
         if key == "q":
           break
         line = 1
   def help_list(self):
     print """
-    List tests from test database.
+    List tests from local test repository.
     usage: LIST [ALL]
     
     This command lists all tests selected for processing, 
-    or all tests in database.
+    or all tests in local repository.
     
     If any filter is set (use ENV command to check for current filters), 
     then only selected tests are listed. The ALL clause forces to list all 
-    tests in database even if any filter is defined."""
+    tests in local repository even if any filter is defined."""
 
   def do_copy(self,s):
     """COPY command."""
@@ -389,17 +551,16 @@ class qacmd(cmd.Cmd,object):
     usage: COPY <directory>
     
     This command will copy selected (or all if no filter rule is defined) tests 
-    from current working test database to specified directory. The original 
-    subdirectory (test suites) structure is preserved. Any test file that already 
-    exists at target location is replaced with one from test database.
+    from local test repository to specified directory. The original subdirectory
+    (test suites) structure is preserved. Any test file that already 
+    exists at target location is replaced with one from local test repository.
     
     Any test file or suite that exists in target location and doesn't exists 
-    in test database is left intact!
+    in local test repository is left intact!
     
     This command is used together with PLATFORM and TARGET to create test 
-    database for specific platform and target engine version. """
+    suite for specific platform and target engine version. """
 
-  # create command
   def do_create(self,s):
     """CREATE command."""
     if s == "":
@@ -407,75 +568,69 @@ class qacmd(cmd.Cmd,object):
     if os.path.isdir(s):
       shutil.rmtree(s)
     os.mkdir(s)
-    shutil.copytree(os.path.join(self.options["database"],"QMTest"),os.path.join(s,"QMTest"))
-    shutil.copytree(os.path.join(self.options["database"],"resources.qms"),os.path.join(s,"resources.qms"))
+    shutil.copytree(os.path.join(self.options["local"],"QMTest"),os.path.join(s,"QMTest"))
+    shutil.copytree(os.path.join(self.options["local"],"resources.qms"),os.path.join(s,"resources.qms"))
   def help_create(self):
     print """
-    Create new QMTest test database from current one.
+    Create new QMTest test suite from local test repository.
     usage: CREATE <directory>
     
     This command will create a target directory with copy of QMTest 
-    (i.e. QMTest extensions) and resources.qms directory from current 
-    working database to target directory.
+    (i.e. QMTest extensions) and resources.qms directory from local 
+    test repository to target directory.
     
     IMPORTANT: If the target directory already exists, it's removed 
     including all subdirectories and files!
     
-    This command is used together with COPY to create test database 
+    This command is used together with COPY to create test suite 
     for specific platform and target engine version. """
+  def do_update(self,s):
+    """UPDATE command."""
+    action_list = self.__buildSyncActionList((DIR_REMOVE,FILE_REMOVE))
+    print len(action_list), "actions needed to synchronize local repository:"
+    self.__runUpdateActions(action_list)
+  def help_update(self):
+    print """
+    Performs update to local test repository from remote repository.
+    usage: UPDATE
+    
+    This command will compare contents of local and remote repositories,  
+    and downloads new or updated tests from remote repository.
+    
+    IMPORTANT: Files and directories that are in local repository only are
+    not deleted! It's intentional to preserve tests you may wrote, but which
+    weren't uploaded yet to remote repository. To delete all files and directories
+    from local repository that are not also present in remote one, use the
+    CLEAN command.
+    """
+  def do_clean(self,s):
+    """CLEAN command."""
+    action_list = self.__buildSyncActionList((DIR_CREATE,FILE_CREATE,FILE_UPDATE))
+    print len(action_list), "actions needed to cleanup local repository:"
+    self.__runUpdateActions(action_list)
+  def help_clean(self):
+    print """
+    Performs cleanup of local test repository.
+    usage: CLEAN
+    
+    This command will compare contents of local and remote repositories,  
+    and delete all files and directories from local repository that don't
+    exists in remote repository.
+    
+    IMPORTANT: Files and directories that exists in both repositories are
+    not deleted, even if their content differ! Use UPDATE command to update
+    local repository from remote one.
+    """
+
 
 
 ########################################################################
 # program
 ########################################################################
-
+    
 def main(options, args):
   cmd = qacmd(options)
   cmd.cmdloop()
-##~   if options.verbose and not options.quiet:
-##~     print "FB version :",options.target
-##~     print "Platform   :",options.platform
-##~     print "Author     :",options.author
-##~     print "Source     :",os.path.abspath(options.source)
-##~     if (options.copy != None) and (options.target != None):
-##~       print "Copy to    :",os.path.abspath(options.copy)
-##~     if options.target == None:
-##~       print "List       :",options.info
-##~     print ""
-##~   testlist = build_test_list(options.source)
-##~ 
-##~   testlist = filter(test_filter,testlist)
-##~   if (options.target != None):
-##~     testmap = build_test_map(testlist)
-##~     for key, test in testmap.iteritems():
-##~       candidate = "0"
-##~       for testid in test.iterkeys():
-##~         if compare_versions(options.target,testid) >= 0:
-##~           if compare_versions(candidate,testid) < 0:
-##~             candidate = testid
-##~       if candidate != "0":
-##~         if not options.quiet:
-##~           if options.verbose:
-##~             print "Test:",key.ljust(20),"Target:",candidate.ljust(5),test[candidate]
-##~           else:
-##~             print test[candidate]
-##~         if options.copy != None:
-##~           shutil.copy(test[candidate],options.copy)
-##~   else:
-##~     testlist.sort(cmpByID)
-##~     for t in testlist:
-##~       s = ""
-##~       if ("I" in options.info):
-##~         s = s + t[ID].ljust(20)
-##~       if ("V" in options.info):
-##~         s = s + t[TARGET_VERSION].ljust(10)
-##~       if ("P" in options.info):
-##~         s = s + t[TARGET_PLATFORM].ljust(25)
-##~       if ("T" in options.info):
-##~         s = s + t[TITLE].ljust(25)
-##~       if ("F" in options.info):
-##~         s = s + t[FILE]
-##~       print s
 
 if __name__ == "__main__":
 
@@ -483,9 +638,9 @@ if __name__ == "__main__":
   parser.add_option("-t","--target",help="FILTER. Target engine version")
   parser.add_option("-p","--platform",help="FILTER. Target platform. Could be: All, Windows, Linux, HP-UX, FreeBSD, Solaris or Sinix-Z",default="All")
   parser.add_option("-a","--author",help="FILTER. Test author")
-  parser.add_option("-d","--database",help="Directory with tests, default is current directory",default=os.getcwd())
-  parser.add_option("-l","--lines",help="Numeber of lines displayed by LIST command at once",default=20,type="int")
-#  parser.add_option("-i","--info",default="IVPF", help="FILTER. Print information about test. F=file, I=id, V=version, P=platform, T=title")
+  parser.add_option("-l","--local",help="Directory with local test repository, default is current directory",default=os.getcwd())
+  parser.add_option("-r","--remote",help="URL to remote test repository, default is http://firebirdsql.sf.net/qa/",default="http://localhost/fb-local/qa/")
+  parser.add_option("-d","--display",help="Numeber of lines displayed by LIST command at once",default=20,type="int")
 
   options, args = parser.parse_args()
 
