@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN (ST INDEX (I_F1_ASC))
+
+          F1           F2           F3 
+============ ============ ============ 
+
+         200          200          200 
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>Best match index selection (single segment)</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>Check if it will select the indexes which can be used.
+Index selectivity difference factor 20 and 200.
+(Indexes with selectivity more than 10x the best are ignored)
+See SELECTIVITY_THRESHOLD_FACTOR in opt.cpp
+
+selectivity = (1 / (count - duplicates));
+
+best = 0.001
+999 / 20 = 49, 0..49 = 50 different values, = 0.02
+999 / 200 = 4, 0..4 = 5 different values, = 0.2
+</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>idx_selection.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE SelectionTest (
+  F1 INTEGER NOT NULL,
+  F2 INTEGER NOT NULL,
+  F3 INTEGER NOT NULL
+);
+
+SET TERM ^^ ;
+CREATE PROCEDURE PR_SelectionTest
+AS
+DECLARE VARIABLE FillID INTEGER;
+BEGIN
+  FillID = 1;
+  WHILE (FillID &lt;= 999) DO
+  BEGIN
+    INSERT INTO SelectionTest 
+      (F1, F2, F3) 
+    VALUES 
+      (:FILLID,
+       (:FILLID / 20) * 20, 
+       (:FILLID / 200) * 200);
+    FillID = FillID + 1;
+  END
+END
+^^
+SET TERM ; ^^
+
+COMMIT;
+
+/* Fill table with data */
+EXECUTE PROCEDURE PR_SelectionTest;
+
+COMMIT;
+
+/* Create indexes */
+CREATE ASC INDEX I_F1_ASC ON SelectionTest (F1);
+CREATE ASC INDEX I_F2_ASC ON SelectionTest (F2);
+CREATE ASC INDEX I_F3_ASC ON SelectionTest (F3);
+
+COMMIT;
+</text></argument><argument name="source_code"><text>SET PLAN ON;
+SELECT
+  st.F1, st.F2, st.F3
+FROM
+  SelectionTest st
+WHERE
+  st.F1 = 200 and
+  st.F2 = 200 and
+  st.F3 = 200;
+
+/*
+SELECT
+  i.RDB$INDEX_NAME AS INDEX_NAME,
+  CAST(i.RDB$STATISTICS AS NUMERIC(18,5)) AS SELECTIVITY
+FROM
+  RDB$INDICES i
+WHERE
+  i.RDB$RELATION_NAME = 'SELECTIONTEST';
+*/</text></argument><argument name="test_id"><text>opt_index_selection_04</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
