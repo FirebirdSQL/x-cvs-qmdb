@@ -13,10 +13,25 @@ insert into test values (NULL);
 
 select * from test where upper(a) like 'A%';
 
+delete from test;
+
+commit;
+
+insert into test values (NULL);
+insert into test values ('a');
+
+select * from test where upper(a) like 'A%';
+
+delete from test;
+
 commit;
 
 DROP DATABASE;
 </text></argument><argument name="author"><text>skidder</text></argument><argument name="stdout"><text>A
+==========
+a
+
+A
 ==========
 a
 </text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="target_group"><text>.*</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="bug_id"><text/></argument><argument name="stderr"><text/></argument><argument name="title"><text>LIKE works with UPPER</text></argument><argument name="test_id"><text/></argument><argument name="resources"><set/></argument><argument name="description"><text>Test for the Firebird 2 issue found by Pavel Katalymov at BroadView</text></argument></extension>
