@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN SORT (JOIN (F INDEX (FK_FLOWERS_COLORS), C INDEX (PK_COLORS)))
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>Try to deliver HAVING CLAUSE conjunctions to the WHERE clause</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>2.0</text></argument><argument name="description"><text>Comparisons which doesn't contain (anywhere hiding in the expression) aggregate-functions should be delivered to the where clause. The underlying aggregate stream could possible use it for a index and speed it up.
+</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>agg_distribution.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Colors (
+  ColorID INTEGER NOT NULL,
+  ColorName VARCHAR(20)
+);
+
+CREATE TABLE Flowers (
+  FlowerID INTEGER NOT NULL,
+  FlowerName VARCHAR(30),
+  ColorID INTEGER
+);
+
+COMMIT;
+
+/* Value 0 represents -no value- */
+INSERT INTO Colors (ColorID, ColorName) VALUES (0, 'Not defined');
+INSERT INTO Colors (ColorID, ColorName) VALUES (1, 'Red');
+INSERT INTO Colors (ColorID, ColorName) VALUES (2, 'White');
+INSERT INTO Colors (ColorID, ColorName) VALUES (3, 'Blue');
+INSERT INTO Colors (ColorID, ColorName) VALUES (4, 'Yellow');
+INSERT INTO Colors (ColorID, ColorName) VALUES (5, 'Black');
+INSERT INTO Colors (ColorID, ColorName) VALUES (6, 'Purple');
+
+/* insert some data with references */
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (1, 'Red Rose', 1);
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (2, 'White Rose', 2);
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (3, 'Blue Rose', 3);
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (4, 'Yellow Rose', 4);
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (5, 'Black Rose', 5);
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (6, 'Red Tulip', 1);
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (7, 'White Tulip', 2);
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (8, 'Yellow Tulip', 4);
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (9, 'Blue Gerbera', 3);
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (10, 'Purple Gerbera', 6);
+
+/* Normally these indexes are created by the primary/foreign keys,
+   but we don't want to rely on them for this test */
+CREATE UNIQUE ASC INDEX PK_Colors ON Colors (ColorID);
+CREATE UNIQUE ASC INDEX PK_Flowers ON Flowers (FlowerID);
+CREATE ASC INDEX FK_Flowers_Colors ON Flowers (ColorID);
+
+COMMIT;
+</text></argument><argument name="source_code"><text>SET PLAN ON;
+SELECT
+  f.ColorID,
+  c.ColorName,
+  Count(*)
+FROM
+  Flowers f
+  LEFT JOIN Colors c ON (c.ColorID = f.ColorID)
+GROUP BY
+  f.ColorID, c.ColorName
+HAVING
+  f.ColorID IS NULL;</text></argument><argument name="test_id"><text>opt_aggregate_distribution_12</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
