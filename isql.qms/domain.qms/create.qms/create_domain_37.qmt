@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>Domain creation based on VARCHAR datatype with NOT NULL specification.</text>
+ </argument>
+ <argument name='stdout'>
+  <text>TEST                            VARCHAR(32) Not Null
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+
+CREATE DOMAIN test VARCHAR(32) NOT NULL;
+SHOW DOMAIN test;
+
+DROP DATABASE;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>CREATE DOMAIN - NOT NULL</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0131</text>
+ </argument>
+</test>

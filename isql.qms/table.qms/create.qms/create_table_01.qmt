@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>CREATE TABLE - types
+
+Dependencies:
+CREATE DATABASE
+</text>
+ </argument>
+ <argument name='stdout'>
+  <text>C1                              SMALLINT Nullable
+C2                              INTEGER Nullable
+C3                              FLOAT Nullable
+C4                              DOUBLE PRECISION Nullable
+C5                              DATE Nullable
+C6                              TIME Nullable
+C7                              TIMESTAMP Nullable
+C8                              DECIMAL(18, 4) Nullable
+C9                              NUMERIC(1, 1) Nullable
+C10                             CHAR(800) Nullable
+C11                             CHAR(9000) Nullable
+C12                             VARCHAR(1600) Nullable
+C13                             VARCHAR(12000) Nullable
+C14                             CHAR(12) CHARACTER SET ISO8859_1 Nullable
+C15                             CHAR(20) CHARACTER SET ISO8859_1 Nullable
+C16                             CHAR(200) CHARACTER SET ISO8859_1 Nullable
+C17                             VARCHAR(1600) CHARACTER SET ISO8859_1 Nullable
+C18                             VARCHAR(16000) CHARACTER SET ISO8859_1 Nullable
+C19                             VARCHAR(16000) CHARACTER SET ISO8859_1 Nullable
+C20                             BLOB segment 80, subtype UNKNOWN Nullable
+C21                             BLOB segment 80, subtype TEXT Nullable
+C22                             BLOB segment 512, subtype UNKNOWN Nullable
+C23                             BLOB segment 1024, subtype TEXT Nullable
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+
+/*
+Tested command:
+*/
+CREATE TABLE test(
+ c1 SMALLINT,
+ c2 INTEGER,
+ c3 FLOAT,
+ c4 DOUBLE PRECISION,
+ c5 DATE,
+ c6 TIME,
+ c7 TIMESTAMP,
+ c8 DECIMAL(18,4),
+ c9 NUMERIC(1,1),
+ c10 CHAR(800),
+ c11 CHARACTER(9000),
+ c12 CHARACTER VARYING(1600),
+ c13 VARCHAR(12000),
+ c14 NCHAR (12),
+ c15 NATIONAL CHARACTER(20),
+ c16 NATIONAL CHAR(200),
+ c17 NCHAR VARYING(1600),
+ c18 NATIONAL CHARACTER VARYING(16000),
+ c19 NATIONAL CHAR VARYING(16000),
+ c20 BLOB,
+ c21 BLOB SUB_TYPE 1,
+ c22 BLOB SEGMENT SIZE 512,
+ c23 BLOB (1024,1)
+);
+SHOW TABLE test;
+
+DROP DATABASE;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>CREATE TABLE - types</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0169</text>
+ </argument>
+</test>

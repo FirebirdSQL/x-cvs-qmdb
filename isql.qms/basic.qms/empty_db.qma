@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE resource PUBLIC "-//Software Carpentry//QMTest Resource V0.1//EN" "http://www.software-carpentry.com/qm/xml/resource.dtd">
+<resource>
+ <class>firebird.FirebirdDatabaseResource</class>
+ <argument name='sql_dialect'>
+  <enumeral>3</enumeral>
+ </argument>
+ <argument name='user_password'>
+  <text>masterkey</text>
+ </argument>
+ <argument name='backup_file'>
+  <text/>
+ </argument>
+ <argument name='database_path_property'>
+  <text>database_path</text>
+ </argument>
+ <argument name='database_name'>
+  <text>empty_db</text>
+ </argument>
+ <argument name='init_script'>
+  <text/>
+ </argument>
+ <argument name='user_name'>
+  <text>SYSDBA</text>
+ </argument>
+ <argument name='character_set'>
+  <enumeral>NONE</enumeral>
+ </argument>
+ <argument name='page_size'>
+  <enumeral>4096</enumeral>
+ </argument>
+</resource>

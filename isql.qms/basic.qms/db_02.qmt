@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>Check the correct content of RDB$CHARACTER_SETS for empty database</text>
+ </argument>
+ <argument name='stdout'>
+  <text>RDB$CHARACTER_SET_NAME          RDB$FORM_OF_USE                 RDB$NUMBER_OF_CHARACTERS RDB$DEFAULT_COLLATE_NAME        RDB$CHARACTER_SET_ID RDB$SYSTEM_FLAG   RDB$DESCRIPTION RDB$FUNCTION_NAME               RDB$BYTES_PER_CHARACTER 
+=============================== =============================== ======================== =============================== ==================== =============== ================= =============================== ======================= 
+
+NONE                            &lt;null>                                            &lt;null> NONE                                               0               1            &lt;null> &lt;null>                                                1 
+OCTETS                          &lt;null>                                            &lt;null> OCTETS                                             1               1            &lt;null> &lt;null>                                                1 
+ASCII                           &lt;null>                                            &lt;null> ASCII                                              2               1            &lt;null> &lt;null>                                                1 
+UNICODE_FSS                     &lt;null>                                            &lt;null> UNICODE_FSS                                        3               1            &lt;null> &lt;null>                                                3 
+SJIS_0208                       &lt;null>                                            &lt;null> SJIS_0208                                          5               1            &lt;null> &lt;null>                                                2 
+EUCJ_0208                       &lt;null>                                            &lt;null> EUCJ_0208                                          6               1            &lt;null> &lt;null>                                                2 
+DOS437                          &lt;null>                                            &lt;null> DOS437                                            10               1            &lt;null> &lt;null>                                                1 
+DOS850                          &lt;null>                                            &lt;null> DOS850                                            11               1            &lt;null> &lt;null>                                                1 
+DOS865                          &lt;null>                                            &lt;null> DOS865                                            12               1            &lt;null> &lt;null>                                                1 
+ISO8859_1                       &lt;null>                                            &lt;null> ISO8859_1                                         21               1            &lt;null> &lt;null>                                                1 
+ISO8859_2                       &lt;null>                                            &lt;null> ISO8859_2                                         22               1            &lt;null> &lt;null>                                                1 
+DOS852                          &lt;null>                                            &lt;null> DOS852                                            45               1            &lt;null> &lt;null>                                                1 
+DOS857                          &lt;null>                                            &lt;null> DOS857                                            46               1            &lt;null> &lt;null>                                                1 
+DOS860                          &lt;null>                                            &lt;null> DOS860                                            13               1            &lt;null> &lt;null>                                                1 
+DOS861                          &lt;null>                                            &lt;null> DOS861                                            47               1            &lt;null> &lt;null>                                                1 
+DOS863                          &lt;null>                                            &lt;null> DOS863                                            14               1            &lt;null> &lt;null>                                                1 
+CYRL                            &lt;null>                                            &lt;null> CYRL                                              50               1            &lt;null> &lt;null>                                                1 
+WIN1250                         &lt;null>                                            &lt;null> WIN1250                                           51               1            &lt;null> &lt;null>                                                1 
+WIN1251                         &lt;null>                                            &lt;null> WIN1251                                           52               1            &lt;null> &lt;null>                                                1 
+WIN1252                         &lt;null>                                            &lt;null> WIN1252                                           53               1            &lt;null> &lt;null>                                                1 
+
+RDB$CHARACTER_SET_NAME          RDB$FORM_OF_USE                 RDB$NUMBER_OF_CHARACTERS RDB$DEFAULT_COLLATE_NAME        RDB$CHARACTER_SET_ID RDB$SYSTEM_FLAG   RDB$DESCRIPTION RDB$FUNCTION_NAME               RDB$BYTES_PER_CHARACTER 
+=============================== =============================== ======================== =============================== ==================== =============== ================= =============================== ======================= 
+WIN1253                         &lt;null>                                            &lt;null> WIN1253                                           54               1            &lt;null> &lt;null>                                                1 
+WIN1254                         &lt;null>                                            &lt;null> WIN1254                                           55               1            &lt;null> &lt;null>                                                1 
+NEXT                            &lt;null>                                            &lt;null> NEXT                                              19               1            &lt;null> &lt;null>                                                1 
+KSC_5601                        &lt;null>                                            &lt;null> KSC_5601                                          44               1            &lt;null> &lt;null>                                                2 
+BIG_5                           &lt;null>                                            &lt;null> BIG_5                                             56               1            &lt;null> &lt;null>                                                2 
+GB_2312                         &lt;null>                                            &lt;null> GB_2312                                           57               1            &lt;null> &lt;null>                                                2 
+
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>select * from RDB$CHARACTER_SETS;
+commit;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>pcisar</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>Empty DB - RDB$CHARACTER_SETS</text>
+ </argument>
+ <argument name='test_id'>
+  <text>pcisar_0002</text>
+ </argument>
+ <resource>isql.basic.empty_db</resource>
+</test>

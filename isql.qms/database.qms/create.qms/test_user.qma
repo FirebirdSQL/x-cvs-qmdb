@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE resource PUBLIC "-//Software Carpentry//QMTest Resource V0.1//EN" "http://www.software-carpentry.com/qm/xml/resource.dtd">
+<resource>
+ <class>firebird.FirebirdUserResource</class>
+ <argument name='user_password'>
+  <text>test</text>
+ </argument>
+ <argument name='gid'>
+  <integer>0</integer>
+ </argument>
+ <argument name='user_name'>
+  <text>TEST</text>
+ </argument>
+ <argument name='uid'>
+  <integer>0</integer>
+ </argument>
+</resource>

@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>Check for correct output of SHOW SYSTEM TABLES on empty database. 
+ </text>
+ </argument>
+ <argument name='stdout'>
+  <text>       RDB$CHARACTER_SETS                     RDB$CHECK_CONSTRAINTS          
+       RDB$COLLATIONS                         RDB$DATABASE                   
+       RDB$DEPENDENCIES                       RDB$EXCEPTIONS                 
+       RDB$FIELDS                             RDB$FIELD_DIMENSIONS           
+       RDB$FILES                              RDB$FILTERS                    
+       RDB$FORMATS                            RDB$FUNCTIONS                  
+       RDB$FUNCTION_ARGUMENTS                 RDB$GENERATORS                 
+       RDB$INDEX_SEGMENTS                     RDB$INDICES                    
+       RDB$LOG_FILES                          RDB$PAGES                      
+       RDB$PROCEDURES                         RDB$PROCEDURE_PARAMETERS       
+       RDB$REF_CONSTRAINTS                    RDB$RELATIONS                  
+       RDB$RELATION_CONSTRAINTS               RDB$RELATION_FIELDS            
+       RDB$ROLES                              RDB$SECURITY_CLASSES           
+       RDB$TRANSACTIONS                       RDB$TRIGGERS                   
+       RDB$TRIGGER_MESSAGES                   RDB$TYPES                      
+       RDB$USER_PRIVILEGES                    RDB$VIEW_RELATIONS             
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>show system ;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>pcisar</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>ISQL - SHOW SYSTEM TABLES</text>
+ </argument>
+ <argument name='test_id'>
+  <text>pcisar_034</text>
+ </argument>
+ <resource>isql.basic.empty_db</resource>
+</test>

@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>Simple domain creation based on NATIONAL CHARACTER datatype.</text>
+ </argument>
+ <argument name='stdout'>
+  <text>TEST                            CHAR(32767) CHARACTER SET ISO8859_1 Nullable
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+
+CREATE DOMAIN test NATIONAL CHARACTER(32767);
+SHOW DOMAIN test;
+
+DROP DATABASE;
+
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>CREATE DOMAIN - NATIONAL CHARACTER</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0116</text>
+ </argument>
+</test>

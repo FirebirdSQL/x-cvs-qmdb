@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>CREATE INDEX
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+SHOW INDEX</text>
+ </argument>
+ <argument name='stdout'>
+  <text>TEST INDEX ON T(A)
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+CREATE TABLE t( a INTEGER);
+
+CREATE INDEX test ON t(a);
+SHOW INDEX test;
+
+DROP DATABASE;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>CREATE INDEX</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0143</text>
+ </argument>
+</test>

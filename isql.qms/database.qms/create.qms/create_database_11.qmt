@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>Database with four files. Additional files specified by STARTING AT.
+</text>
+ </argument>
+ <argument name='stdout'>
+  <text>CAST                                                         RDB$FILE_SEQUENCE RDB$FILE_START RDB$FILE_LENGTH
+============================================================ ================= ============== ===============
+
+TEST.G00                                                   1            201             400
+TEST.G01                                                   2            601             400
+TEST.G02                                                   3           1001               0
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" 
+  FILE "$(DATABASE_LOCATION)test.g00" STARTING AT PAGE 201
+  FILE "$(DATABASE_LOCATION)test.g01" STARTING AT PAGE 601
+  FILE "$(DATABASE_LOCATION)test.g02" STARTING AT PAGE 1001;
+
+SELECT cast(RDB$FILE_NAME as varchar(60)),RDB$FILE_SEQUENCE,RDB$FILE_START,RDB$FILE_LENGTH 
+  FROM RDB$FILES;
+
+DROP DATABASE;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set>
+   <text>^.*TEST.G;TEST.G</text>
+   <text>\s+;</text>
+  </set>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>CREATE DATABASE - Multi file DB - starting</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0093</text>
+ </argument>
+</test>

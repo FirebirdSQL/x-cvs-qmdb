@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>ALTER TRIGGER - ACTIVE
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+CREATE TRIGGER
+SHOW TRIGGER</text>
+ </argument>
+ <argument name='stdout'>
+  <text>Triggers on Table TEST:
+TG, Sequence: 0, Type: BEFORE INSERT, Active
+AS
+BEGIN
+  new.id=1;
+END
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+CREATE TABLE test( id INTEGER NOT NULL CONSTRAINT unq UNIQUE,
+                   text VARCHAR(32));
+SET TERM ^;
+CREATE TRIGGER tg FOR test INACTIVE BEFORE INSERT 
+AS
+BEGIN
+  new.id=1;
+END ^
+SET TERM ;^
+
+/*
+Tested command:
+*/
+ALTER TRIGGER tg ACTIVE;
+SHOW TRIGGER tg;
+
+DROP DATABASE;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>ALTER TRIGGER - ACTIVE</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0031</text>
+ </argument>
+</test>

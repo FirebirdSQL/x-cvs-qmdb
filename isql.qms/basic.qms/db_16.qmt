@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>Check for correct content of RDB$INDICES in empty database.</text>
+ </argument>
+ <argument name='stdout'>
+  <text>RDB$INDEX_NAME                  RDB$RELATION_NAME               RDB$INDEX_ID RDB$UNIQUE_FLAG   RDB$DESCRIPTION RDB$SEGMENT_COUNT RDB$INDEX_INACTIVE RDB$INDEX_TYPE RDB$FOREIGN_KEY                 RDB$SYSTEM_FLAG RDB$EXPRESSION_BLR RDB$EXPRESSION_SOURCE          RDB$STATISTICS 
+=============================== =============================== ============ =============== ================= ================= ================== ============== =============================== =============== ================== ===================== ======================= 
+
+RDB$INDEX_0                     RDB$RELATIONS                              1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_1                     RDB$RELATIONS                              2               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_2                     RDB$FIELDS                                 1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_3                     RDB$RELATION_FIELDS                        1               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_4                     RDB$RELATION_FIELDS                        2               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_5                     RDB$INDICES                                1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_6                     RDB$INDEX_SEGMENTS                         1               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_7                     RDB$SECURITY_CLASSES                       1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_8                     RDB$TRIGGERS                               1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_9                     RDB$FUNCTIONS                              1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_10                    RDB$FUNCTION_ARGUMENTS                     1               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_11                    RDB$GENERATORS                             1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_12                    RDB$RELATION_CONSTRAINTS                   1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_13                    RDB$REF_CONSTRAINTS                        1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_14                    RDB$CHECK_CONSTRAINTS                      1               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_15                    RDB$RELATION_FIELDS                        3               1            &lt;null>                 2                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_16                    RDB$FORMATS                                1               0            &lt;null>                 2                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_17                    RDB$FILTERS                                1               0            &lt;null>                 2                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_18                    RDB$PROCEDURE_PARAMETERS                   1               1            &lt;null>                 2                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_19                    RDB$CHARACTER_SETS                         1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+
+RDB$INDEX_NAME                  RDB$RELATION_NAME               RDB$INDEX_ID RDB$UNIQUE_FLAG   RDB$DESCRIPTION RDB$SEGMENT_COUNT RDB$INDEX_INACTIVE RDB$INDEX_TYPE RDB$FOREIGN_KEY                 RDB$SYSTEM_FLAG RDB$EXPRESSION_BLR RDB$EXPRESSION_SOURCE          RDB$STATISTICS 
+=============================== =============================== ============ =============== ================= ================= ================== ============== =============================== =============== ================== ===================== ======================= 
+RDB$INDEX_20                    RDB$COLLATIONS                             1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_21                    RDB$PROCEDURES                             1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_22                    RDB$PROCEDURES                             2               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_23                    RDB$EXCEPTIONS                             1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_24                    RDB$EXCEPTIONS                             2               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_25                    RDB$CHARACTER_SETS                         2               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_26                    RDB$COLLATIONS                             2               1            &lt;null>                 2                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_27                    RDB$DEPENDENCIES                           1               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_28                    RDB$DEPENDENCIES                           2               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_29                    RDB$USER_PRIVILEGES                        1               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_30                    RDB$USER_PRIVILEGES                        2               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_31                    RDB$INDICES                                2               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_32                    RDB$TRANSACTIONS                           1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_33                    RDB$VIEW_RELATIONS                         1               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_34                    RDB$VIEW_RELATIONS                         2               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_35                    RDB$TRIGGER_MESSAGES                       1               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_36                    RDB$FIELD_DIMENSIONS                       1               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_37                    RDB$TYPES                                  1               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_38                    RDB$TRIGGERS                               2               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+RDB$INDEX_39                    RDB$ROLES                                  1               1            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+
+RDB$INDEX_NAME                  RDB$RELATION_NAME               RDB$INDEX_ID RDB$UNIQUE_FLAG   RDB$DESCRIPTION RDB$SEGMENT_COUNT RDB$INDEX_INACTIVE RDB$INDEX_TYPE RDB$FOREIGN_KEY                 RDB$SYSTEM_FLAG RDB$EXPRESSION_BLR RDB$EXPRESSION_SOURCE          RDB$STATISTICS 
+=============================== =============================== ============ =============== ================= ================= ================== ============== =============================== =============== ================== ===================== ======================= 
+RDB$INDEX_40                    RDB$CHECK_CONSTRAINTS                      2               0            &lt;null>                 1                  0         &lt;null> &lt;null>                                        1             &lt;null>                &lt;null>                  &lt;null> 
+
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>select * from RDB$INDICES;
+commit;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>pcisar</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>Empty DB - RDB$INDICES</text>
+ </argument>
+ <argument name='test_id'>
+  <text>pcisar_0016</text>
+ </argument>
+ <resource>isql.basic.empty_db</resource>
+</test>

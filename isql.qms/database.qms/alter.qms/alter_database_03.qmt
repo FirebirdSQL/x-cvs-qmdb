@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>Add same file twice must fail</text>
+ </argument>
+ <argument name='stdout'>
+  <text/>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Negative</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+ALTER DATABASE ADD FILE '$(DATABASE_LOCATION)test.g00' STARTING 10000;
+
+ALTER DATABASE ADD FILE '$(DATABASE_LOCATION)test.g00' STARTING 20000;
+
+DROP DATABASE;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text>Statement failed, SQLCODE = -607
+
+unsuccessful metadata update
+-Cannot add file with the same name as the database or added files
+</text>
+ </argument>
+ <argument name='title'>
+  <text>ALTER DATABASE ADD FILE</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0003</text>
+ </argument>
+</test>

@@ -1,0 +1,24 @@
+<?xml version='1.0'?>
+<!DOCTYPE class-directory PUBLIC "-//Software Carpentry//QMTest Class Directory V0.1//EN" "http://www.software-carpentry.com/qm/xml/class-directory.dtd">
+
+<class-directory>
+
+<!-- Test classes  
+
+<class kind="test">firebird.FirebirdExecTest</class>
+<class kind="test">firebird.FirebirdShellCommandTest</class>
+<class kind="test">firebird.FirebirdShellScriptTest</class>
+
+
+-->
+
+<class kind="test">firebird.FirebirdISQLTest</class>
+
+
+<!-- Resource classes -->
+
+<class kind="resource">firebird.FirebirdDatabaseResource</class>
+<class kind="resource">firebird.FirebirdInitScriptResource</class>
+<class kind="resource">firebird.FirebirdUserResource</class>
+
+</class-directory>

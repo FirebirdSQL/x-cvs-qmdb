@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>Dependencies:
+CREATE DATABASE
+CREATE TABLE
+INSERT
+SELECT
+</text>
+ </argument>
+ <argument name='stdout'>
+  <text>AVG
+=====================
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Negative</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+CREATE TABLE test( id INTEGER NOT NULL);
+INSERT INTO test VALUES(2100000000);
+INSERT INTO test VALUES(2100000000);
+INSERT INTO test VALUES(2100000000);
+INSERT INTO test VALUES(2100000000);
+
+SELECT AVG(2100000000*id) FROM test;
+
+DROP DATABASE;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text>Statement failed, SQLCODE = -901
+
+Integer overflow.  The result of an integer operation caused the most significant bit of the result to carry.
+</text>
+ </argument>
+ <argument name='title'>
+  <text>AVG - Integer OverFlow</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0053</text>
+ </argument>
+</test>

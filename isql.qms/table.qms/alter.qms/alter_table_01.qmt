@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>ALTER TABLE - ADD column
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+</text>
+ </argument>
+ <argument name='stdout'>
+  <text>ID                              INTEGER Nullable
+TEXT                            VARCHAR(32) Nullable
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+CREATE TABLE test( id INTEGER);
+
+/*
+Tested command:
+*/
+ALTER TABLE test ADD text varchar(32);
+SHOW TABLE test;
+
+DROP DATABASE;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>ALTER TABLE - ADD column</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0020</text>
+ </argument>
+</test>

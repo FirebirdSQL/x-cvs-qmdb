@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>ALTER INDEX - INACTIVE
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+CREATE INDEX
+Basic SELECT</text>
+ </argument>
+ <argument name='stdout'>
+  <text>RDB$INDEX_NAME                  RDB$INDEX_INACTIVE
+=============================== ==================
+
+I                                                1
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+CREATE TABLE t( a INTEGER);
+CREATE INDEX i ON t(a);
+
+ALTER INDEX i INACTIVE;
+COMMIT;
+SELECT RDB$INDEX_NAME, RDB$INDEX_INACTIVE FROM RDB$INDICES WHERE RDB$INDEX_NAME='I';
+
+DROP DATABASE;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>ALTER INDEX - INACTIVE</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0011</text>
+ </argument>
+</test>

@@ -1,0 +1,13 @@
+database_location=c:\job\qmdb\db\
+server_location=localhost:
+gsec_path=c:\firebird\bin\gsec.exe
+drop_gdb_path=c:\firebird\bin\drop_gdb.exe
+gfix_path=c:\firebird\bin\gfix.exe
+gbak_path=c:\firebird\bin\gbak.exe
+gpre_path=c:\firebird\bin\gpre.exe
+isql_path=c:\firebird\bin\isql.exe
+gstat_path=c:\firebird\bin\gstat.exe
+isc4_path=c:\firebird\isc4.gdb
+user_name=SYSDBA
+user_password=masterkey
+file=c:\job\qmdb\context-win.txt

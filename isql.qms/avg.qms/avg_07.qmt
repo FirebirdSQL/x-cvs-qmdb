@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>Dependencies:
+CREATE DATABASE
+CREATE TABLE
+INSERT
+SELECT
+</text>
+ </argument>
+ <argument name='stdout'>
+  <text>                  AVG
+=====================
+
+                   13
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+CREATE TABLE test( id INTEGER);
+INSERT INTO test VALUES(12);
+INSERT INTO test VALUES(13);
+INSERT INTO test VALUES(14);
+INSERT INTO test VALUES(NULL);
+
+SELECT AVG(id) FROM test;
+
+DROP DATABASE;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>AVG - Integer with NULL</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0054</text>
+ </argument>
+</test>

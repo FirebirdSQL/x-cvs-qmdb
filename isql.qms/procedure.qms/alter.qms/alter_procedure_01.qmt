@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
+<test>
+ <class>firebird.FirebirdISQLTest</class>
+ <argument name='target_group'>
+  <text>.*</text>
+ </argument>
+ <argument name='description'>
+  <text>ALTER PROCEDURE - Simple ALTER
+
+Dependencies:
+CREATE DATABASE
+CREATE PROCEDURE
+</text>
+ </argument>
+ <argument name='stdout'>
+  <text>          ID
+============
+           2
+</text>
+ </argument>
+ <argument name='test_type'>
+  <enumeral>Positive</enumeral>
+ </argument>
+ <argument name='stdin'>
+  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+SET TERM ^;
+CREATE PROCEDURE test RETURNS (id INTEGER)AS
+BEGIN
+  id=1;
+END ^
+
+/*
+Tested command:
+*/
+ALTER PROCEDURE test RETURNS (id INTEGER)AS
+BEGIN
+  id=2;
+END ^
+SET TERM ;^
+EXECUTE PROCEDURE test;
+
+DROP DATABASE;
+</text>
+ </argument>
+ <argument name='exit_code'>
+  <integer>0</integer>
+ </argument>
+ <argument name='substitutions'>
+  <set/>
+ </argument>
+ <argument name='environment'>
+  <set/>
+ </argument>
+ <argument name='author'>
+  <text>skopalik</text>
+ </argument>
+ <argument name='stderr'>
+  <text/>
+ </argument>
+ <argument name='title'>
+  <text>ALTER PROCEDURE - Simple ALTER</text>
+ </argument>
+ <argument name='test_id'>
+  <text>skopalik_0016</text>
+ </argument>
+</test>
