@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>522296</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+There's more to this than meets the eye. This is the 
+continuation of the saga started in
+[ #518350 ] substring loses blob's charset
+
+JRD rejects sorting by a substring() expression either 
+through numeric position (specified by DSQL) or by 
+sorting a view that includes a call to substring(). 
+The compiler in JRD has to do the same trick that 
+DSQL, recognizing when a blob is the input to mark the 
+output as varchar. It should check bounds, too.</text></argument><argument name="title"><text>JRD rejects sort by substring expression</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_522296</text></argument><argument name="resources"><set/></argument></extension>

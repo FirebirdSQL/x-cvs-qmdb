@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>436462</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : robocop
+----------------------
+     This was reported in the Borland newsgroups.  
+I've confirmed this (without involving IBO) with IB 
+6.0.1.6 Open Edition, but I haven't tried it on 
+Firebird.  Posted here at Jason Wharton's request.
+
+     -Craig
+
+--------------------------------------------
+
+Subject: 
+            Strange VIEW behavior - BUG or what?
+       Date: 
+            Mon, 25 Jun 2001 08:11:02 -0300
+       From: 
+            &quot;Fabiano Bonin&quot; &lt;fabiano@leonilda.com.br&gt;
+ Newsgroups: 
+            borland.public.interbase.general
+
+
+
+
+I'm having troubles with updatable views that have 
+before update
+triggers.
+When i update just one record (using the PK), it 
+returns 3 rows
+affected.
+When i update this view using IBO it gives the 
+error: 'MULTIPLE ROWS
+AFFECTED', because the number of rows affected is 
+giving 3 rows!
+PS: I can't put the before update in the table, 
+because i have several
+view
+on one table and i expect that each view have an 
+specific behavior.
+Try this:
+
+/* CREATE A TABLE */
+create table test (
+  test_id integer not null primary key,
+  name varchar(30),
+  address varchar(30) );
+
+/* CREATE A VIEW */
+create view v_test as
+select test_id, name, address from test;
+
+/* INSERT A RECORD */
+insert into v_test values (1, 'name1', 'address1');
+/* ROWS AFFECTED: 1 */
+
+/* UPDATE THIS RECORD */
+update v_test set name = 'name1' where test_id = 1;
+/* ROWS AFFECTED: 1 */
+
+/* CREATE A TRIGGER FOR THE VIEW */
+set term !! ;
+create trigger trg_v_test for v_test
+before update
+as
+begin
+  new.name = 'name1';
+end !!
+set term ; !!
+
+/* UPDATE THE RECORD AGAIN - SAME AS ABOVE*/
+update v_test set name = 'name1' where test_id = 1;
+/* ROWS AFFECTED: 3 !!!!!!!!!!!!!!!!!!!!!!! */
+----------------------
+User: nobody
+Logged In: NO 
+
+now ROWS AFFECTED: 2
+version WI RC2 build 679
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Tricky code has been injected into exe.c to account only 
+for virtual operations when dealing with views.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Insertions, deletions and updates should be counted when
+they really happen with calls to VIO from EXE, not when the 
+commands are exercised against VIEWs that have no real 
+storage. Otherwise we count up to thrice the real number of 
+operations. In the future, we could count optionally the 
+exact number of operations made by the view's triggers.</text></argument><argument name="title"><text>Rows affected incorrect with trigger</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_436462</text></argument><argument name="resources"><set/></argument></extension>

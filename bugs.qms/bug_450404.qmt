@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>450404</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+I think example should be enough clear: when isql is 
+invoked and the role is passed in the command line, it 
+always uppercases the role:
+
+H:\ibdev\fbbuild\interbase\dsql&gt;isql 
+c:/proy/fbtest.gdb -u cvc -p pw -r &quot;for cvc&quot;
+Database:  c:/proy/fbtest.gdb, User: cvc, Role: FOR CVC
+SQL&gt;
+
+As you can see, isql puts the message with the role in 
+uppercase and indeed the engine received it 
+uppercased. Notice that double quotes weren't 
+interpreted as &quot;don't change the input parameter&quot;.
+
+However, when doing the connection as a command, the 
+role is processed correctly:
+
+H:\ibdev\fbbuild\interbase\dsql&gt;isql
+Use CONNECT or CREATE DATABASE to specify a database
+SQL&gt; connect c:/proy/fbtest.gdb user cvc password pw 
+role &quot;for cvc&quot;;
+Database:  c:/proy/fbtest.gdb, User: cvc, Role: for cvc
+SQL&gt;
+
+Now, isql reflects the unchanged role and the engine 
+receives it correctly.
+
+Whether this anomaly exists for some purpose I don't 
+know, but I consider it a bug. Both ways to work with 
+isql should be equivalent when facing identifiers 
+surrounded by double quotes.
+
+C.</text></argument><argument name="title"><text>isql uppercases role in the command line</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_450404</text></argument><argument name="resources"><set/></argument></extension>

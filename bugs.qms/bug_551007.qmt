@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>551007</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : UDF/Built-In Functions
+Group        : None
+Status       : Closed
+Resolution   : None
+Submitted By : lango
+Assigned to  : nobody
+----------------------
+  I created a function (using the delphi for that) 
+that formats values of the type it dates and a Pchar 
+comes back with the formatted value.
+
+  The function works perfectly in any select that I do 
+in the database, unless the select uses some function 
+native totalizadora of the database.
+  When I try to do a select below similar to the 
+example, I lose the connection with the database: 
+*-----------*
+select
+  count (id_parcela), formatdate ('mmmm/yyyy', 
+dt_movimento) month_year
+from
+  my_table
+group by
+  formatdate ('mmmm/yyyy', dt_movimento)
+
+*-----------*
+id_parcela = integer
+dt_movimento = date
+
+  I only receive the following message: &quot; connection 
+lost to database &quot; 
+
+  That is a limitation of Interbase/FireBird or is a 
+bug really? 
+
+  If it goes a limitation of Interbase/Firebird I 
+believe that the connection loss should not happen. 
+----------------------
+User: helebor
+Logged In: YES 
+user_id=60469
+
+
+When you write a UDF that doesn't handle memory correctly, you can expect it to crash the server.  It is not a bug 
+in the database software.
+
+Please don't use the bug tracker as a means to try to get corrective technical support.  We get unhappy about this 
+because it wastes people's time and clutters up our system.  We have the ib-support list for troubleshooting your 
+problems.  Joining instructions can be found at firebirdsql.org.
+
+Helen
+----------------------
+User: pavlov_v
+Logged In: YES 
+user_id=589315
+
+I use similar UDF for formating DATE and everything works fine
+on IB6.0 and FB1.0.
+perhaps the problem is in your UDF.</text></argument><argument name="title"><text>Count (field) + UDF funcion = Loses con.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_551007</text></argument><argument name="resources"><set/></argument></extension>

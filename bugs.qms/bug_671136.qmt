@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>671136</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Group        : None
+Status       : Deleted
+Resolution   : None
+Submitted By : lisov
+Assigned to  : nobody
+----------------------
+When you create triggers on simple view and do not
+want default action take place, you join base table
+with rdb$database or something to make view read-only.
+BUT - after some time I get the message:
+&quot;The object of the insert, update or delete statement
+is a view for which requested operation is not
+permitted. 
+cannot update read-only view V_OBJECT_DOCUMENT&quot;
+I get this error when I try to SELECT, not only
+insert/update/delete from v_object_document or any
+other view dependent on it; also, when I try to change
+metadata or do a backup - actually, DB becomes
+unaccessible!
+I've encountered this bug in FB 1.0.2.908 on Windows 
+2000 Professional. 
+
+so here's script:
+
+/* Table: T_OBJECT_LINKS */
+CREATE TABLE T_OBJECT_LINKS (
+    LINK_TYPE_ID integer NOT NULL,
+    OBJECT_ID_LEFT integer NOT NULL,
+    OBJECT_ID_RIGHT integer NOT NULL);
+/* Indices definition */
+CREATE UNIQUE INDEX AK_OBJECT_LINKS ON 
+T_OBJECT_LINKS
+(LINK_TYPE_ID, OBJECT_ID_LEFT, 
+OBJECT_ID_RIGHT);
+
+/* View: V_OBJECT_DOCUMENT */
+CREATE VIEW V_OBJECT_DOCUMENT(
+    OBJECT_ID,
+    DOCUMENT_ID)
+AS
+select Object_ID_Left, Object_ID_Right
+from T_Object_Links, rdb$database
+where T_object_links.Link_type_id = -5001
+;
+
+SET TERM ^ ;
+
+/* Triggers definition */
+/* Trigger: TBD_V_OBJECT_DOCUMENT */
+CREATE TRIGGER TBD_V_OBJECT_DOCUMENT FOR
+V_OBJECT_DOCUMENT
+ACTIVE BEFORE DELETE POSITION 0
+as
+begin
+  /* delete from t object links */
+   delete from T_Object_Links
+   where T_object_links.Link_type_id = -5001
+     and T_object_links.Object_id_left = old.Object_id
+     and T_object_links.Object_id_right =
+old.Document_id;
+end
+^
+
+/* Trigger: TBI_V_OBJECT_DOCUMENT */
+CREATE TRIGGER TBI_V_OBJECT_DOCUMENT FOR
+V_OBJECT_DOCUMENT
+ACTIVE BEFORE INSERT POSITION 0
+as
+begin
+end
+ /* insert into t object links */
+  if (not (EXISTS (
+      select * from T_object_links
+      where T_object_links.Link_type_id = -5001
+       and T_object_links.Object_id_left =
+new.Object_id
+       and T_object_links.Object_id_right =
+new.Document_id
+      ))) then
+  begin
+     insert into T_Object_Links
+      (Link_Type_ID, Object_ID_left, Object_ID_Right)
+     values
+      (-5001, new.Object_id, new.Document_id);
+  end
+end^
+
+-----
+DB was created with IB 6.0.1.6, then after some time 
+this error appeared, and I moved to FB, but no result. 
+Error may disappear if I query some other independent
+view and then v_object_document again, but it's
+undefinite, and when I close connection and reconnect it 
+throws error again!</text></argument><argument name="title"><text>read-only view with triggers becomes unupdatable</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_671136</text></argument><argument name="resources"><set/></argument></extension>

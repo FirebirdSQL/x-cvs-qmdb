@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>671718</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Initial Bug
+Status       : Closed
+Resolution   : Fixed
+Submitted By : ultimo
+Assigned to  : nobody
+----------------------
+When I backup and after restore a database I obtain this 
+error on access:
+
+This user does not have privilege to perform this 
+operation on this object.
+no permission for read/select access to TABLE 
+RDB$ROLES.
+
+The sql statemen:
+
+select RDB$ROLE_NAME, RDB$OWNER_NAME 
+FROM RDB$ROLES ORDER BY RDB$ROLE_NAME
+
+I make all with a user that NOT is SYSDBA</text></argument><argument name="title"><text>Error when access a restored database</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_671718</text></argument><argument name="resources"><set/></argument></extension>

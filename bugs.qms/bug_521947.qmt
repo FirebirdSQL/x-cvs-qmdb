@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>521947</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : odahan
+Assigned to  : nobody
+----------------------
+Firebird 1 rc2 :
+
+Step 1:
+Following query doesn't work (between can't be used 
+against datatype...) :
+
+SELECT COUNT(*) FROM ODDSKCAT1 O WHERE (SELECT COUNT
+(*) FROM ODDSKCAT2 O2 WHERE O2.DISKID=O.DISKID) 
+BETWEEN 21 AND 100
+
+
+Step 2 : 
+query is corrected as follow (adding a cast) :
+
+SELECT COUNT(*) FROM ODDSKCAT1 O WHERE CAST( (SELECT 
+COUNT(*) FROM ODDSKCAT2 O2 WHERE O2.DISKID=O.DISKID) 
+AS INTEGER) BETWEEN 21 AND 100
+
+... Step 3 : Run and ... Crash server (AV message then 
+the server is killed by Windows). The crash is 
+immediate (no wait, so I thing the problem is in 
+parsing the query).
+
+Database context : about 130 Mb gdb file, 3 tables, 
+the biggest is oddskcat2. 
+DISKID field is an Integer, primary key of table 
+ODDSKCAT1, a unique index on this field exists in 
+ODDSKCAT2.
+OS: Windows 95 osr2
+
+2 Questions : 
+1/ why the first syntax is not understood ?
+2/ why a so hard crash with the &quot;cast&quot; ?
+
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+1.- The &quot;between&quot; treatment is tricky. We probably will 
+consider this limitation as designed.
+2.- The engine isn't prepared to deal with the sub-
+expression in such combination. It should allow or reject 
+it instead of crashing.</text></argument><argument name="title"><text>server crash on simple query</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_521947</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>476708</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : tomaszkustra
+Assigned to  : robocop
+----------------------
+Firebird 1.0.0.338 Win32 - server crash when 
+in &quot;select&quot; statment in &quot;where&quot; section are BLOB 
+fields.
+On IB6.01 it raises exception, but not crash.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Follow this link
+http://cvs.sourceforge.net/cgi-
+bin/viewcvs.cgi/firebird/interbase/jrd/cvt2.c
+
+This issue was already closed on 26-September-2001. 
+Revision is 1.3.</text></argument><argument name="title"><text>&quot;Blob&quot; fileld in &quot;where&quot; = server crash </text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_476708</text></argument><argument name="resources"><set/></argument></extension>

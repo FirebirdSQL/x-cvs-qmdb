@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>446256</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Feature v1.5
+Status       : Open
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : alexpeshkoff
+----------------------
+Allow for Stored Procedures to support dynamic 
+elements -- tablename, columnnames....
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Alex et all,
+
+I realize that it doesn't make sense all tracker items are being 
+tracked as &quot;bugs&quot;.  However, This is due the general design 
+of the SF tracker feature this is necessary, in order to ease 
+the tracking of these issues/bug/features.
+
+Accordingly, please limit the change to the header 
+information.  If you have any question about a bug/entry 
+please post to the devel list and it can be discussed there 
+first (working with the SF tools is a pain in the ***)
+
+
+Sean
+----------------------
+User: nobody
+Logged In: NO 
+
++1
+----------------------
+User: nobody
+Logged In: NO 
+
+Hello,
+I would also like to see Dynamic SQL in stored procedures.  
+SQL Server and Oracle support this language extension and 
+it would be great to see this supported.</text></argument><argument name="title"><text>Dynamic SQL in Stored Procedures</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_446256</text></argument><argument name="resources"><set/></argument></extension>

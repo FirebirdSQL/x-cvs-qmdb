@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>479483</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : pcisar
+Assigned to  : awharrison
+----------------------
+Commands like
+
+delete from table where col in (select col first 5 
+from table);
+
+doesn't delete up to five rows, but whole table. 
+Obviously subselect is executed for each row in master 
+table, but it should not when FIRST is in game.
+
+----------------------
+User: nobody
+Logged In: NO 
+
+yea, there is big problem with correlated subqueries in IB
+(and also firebird). some cases are described in PLANalyzer
+help, but it is not complete and there is more situations,
+where IB takes subquery as correlated, even it may not.</text></argument><argument name="title"><text>Bad treatment of FIRST/SKIP in subselect</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_479483</text></argument><argument name="resources"><set/></argument></extension>

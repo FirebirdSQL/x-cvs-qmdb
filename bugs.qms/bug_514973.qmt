@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>514973</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : seanleyne
+Assigned to  : mggrover
+----------------------
+When performing a SELECT or index rebuild (also a db 
+restore).  If the temporary/sort file grows larger 
+than 2GB the process dies.</text></argument><argument name="title"><text>Sort/Temporary files &gt; 2GB Fail</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_514973</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,154 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>412417</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : kdv
+Assigned to  : robocop
+----------------------
+Altering CHAR to VARCHAR column adds 2 bytes to field length.
+
+How to reproduce:
+
+CREATE TABLE TEST( N CHAR(40));
+
+then
+
+ALTER TABLE TEST ALTER N TYPE VARCHAR(40);
+
+after that RDB$FIELD_LENGTH will be 42, not 40 as it should be.
+RDB$CHARACTER_LENGTH is Ok, i.e. it stays 40 after ALTER.
+
+The '40' is not a magic number - same addition of 2 bytes will be for any altering
+from char to varchar. For example, altering char(40) to varchar(50) will give
+the resulting varchar field 52 characters length.
+
+Tested with FireBird 0.9.4 for Windows (NT 4.0 SP6a workstation). Dialect 3 database.
+
+p.s. real varchar storage size is 2 bytes greater than char. But, column length definition
+(RDB$FIELD_LENGTH) does not store physical field lenght - it stores column length.
+So, altering char to varchar must keep the same column size.
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+I consider it fixed unless a new bug example is posted.
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+This is a robust bug, IE one hard to track and harder to 
+solve. When an ALTER DOMAIN, ALTER TABLE or ALTER PROCEDURE 
+is issued, a varchar field's length can be decremented up 
+to 4 times and incremented other 4 times by sizeof(UCHAR). 
+This nonsense makes really difficult to come up with a 
+definitive solution, with DDL.C, DYN_MOD.E and MET.E 
+conspiring to keep the bug alive. Miss one call in a pair 
+and your field, parameter or BLR message will be stuffed 
+with the wrong length.
+My first fix was to change DDL, then Pandora Box (aka 
+DYN_MOD) kept failing because it missed sometimes the same 
+number of increments and decrements for varchar's length. 
+Then I decided to change DYN_MOD. There was no reliable way 
+to detect how many modifications the length had undergo, so 
+after trial and error I created a new field in dyn_fld 
+structure to hold the raw field size. The issue noted by 
+Mark after his previous fix is due to the fact that
+check_update_fld_type()
+doesn't receive always the varchar with the 2 bytes for 
+length added. I tried to make sure it will be always the 
+case. The new field dyn_fld.dyn_charbytelen tried to serve 
+as a sentry to guarantee the right comparison to happen. 
+Previously, a varchar field not decremented yet was 
+compared against a char field so it was possible to turn 
+char(10) into varchar(8). Apart from check_update_fld_type
+(), there are three functions that control field 
+modifications:
+- DYN_modify_global_field(), for SQL domains, called from 
+DDL's modify_domain().
+- DYN_modify_local_fields(), for table fields that were 
+defined with native data types and for proc params.
+- DYN_modify_sql_field(), for table fields and procedure 
+parameters (but also for domains, according to DDL.c's 
+modify_field() in the header. I think it may be wrong).
+   This sordid landscape makes almost impossible to figure 
+out the right fix. The threee functions should be fixed 
+(even when they have common code copy/pasted) and tested 
+with all paths that lead to them.
+   After changing DDL and DYN_MOD, all table operations 
+seemed to work okay. Domains were working, too. However, 
+Frank discovered that procedures had the right parameters, 
+but the generation of the BLR messages used in the body of 
+the procedures to handle operations on parameters were of 
+the wrong length (two bytes less than needed) for varchars. 
+Hence, the cause of &quot;string truncation or numeric overflow&quot; 
+was evident only to those watching a proc's BLR.
+   I was going to fix the path for procedures when I 
+discovered that there are other functions participating in 
+this orgy (sorry for improper language but it's the best 
+definition I could find) with varchars. It turns out that 
+if I was going to keep my fix to DDL, all functions in the 
+DSQL dir should be forbidden to increment or decrement 
+varchar's length but since MET.C (do not confuse it with 
+METD.E in JRD) does the same trick, changing all of the 
+places requires time and extreme care. Hence, I decided to 
+rollback my change to DDL (but to keep the fix to the wrong 
+condition in an assert() call) and pray for the 
+verification code I wrote in DYN to catch the 
+inconsistencies. Also, the last step in the 3 
+aforementioned DYN_modify functions is to write the 
+varchar's length in rdb$field_length and at that point was 
+almost impossible to tell if the length was incremented or 
+decremented in two bytes, I decided to write instead the 
+new field dyn_fld.dyn_charbytelen in the case of string 
+data types. So far so good. The engine seems to be logging 
+the right length and procedures are working again. 
+Modifying domains, tables and procedure parameters (back 
+and forth between char/varchar) preserves the length, too. 
+I can select from procedures whose parameters are char(N) 
+or varchar(N) and give them N characters as input without 
+error. You can't change fields defined as char(10) to 
+varchar(8) either directly (native type) or through a 
+domain. The engine also stopped me from shrinking char and 
+varchar domains when they are used in a table. Now, char(N) 
+to varchar(N-2) seems to be banned as expected unless you 
+fiddle with system tables directly.
+   Frank and Dmitry, would you do a paranoid test on table 
+fields and procedure parameters alteration? Nobody can tell 
+in advance where the bug may hide now. (Do we purchase 
+insecticide?)
+
+C.
+
+----------------------
+User: skywalker
+Logged In: YES 
+user_id=57768
+
+I have made the changes described by ann in firebird-devel
+to the dyn_mod.e file.  
+A change was requried to both the domain, and a similar bug
+in the field (later in the same file) was also change.
+I've done the changes, but not tested this bug as yet.
+
+
+----------------------
+User: kdv
+Logged In: YES 
+user_id=12130
+
+New interesting things were found:
+altering varchar domain to the bigger size also adds 2 bytes:
+CREATE DOMAIN TEST_DOM AS  VARCHAR(50);
+ALTER DOMAIN TEST_DOM TYPE VARCHAR(120);
+
+as a result TEST_DOM will be VARCHAR(122).
+
+Also it is very strange that you can alter char(x) to varchar(x-2) !!!
+This will fix the problem, but very interesting - seems that new field length checking is made _after_
+altering column. Wery strange behavior...</text></argument><argument name="title"><text>altering from CHAR to VARCHAR</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_412417</text></argument><argument name="resources"><set/></argument></extension>

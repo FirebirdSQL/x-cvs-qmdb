@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>458888</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : prenosil
+Assigned to  : robocop
+----------------------
+First, here is quote from Diane Brown:
+=====
+InterBase's implementation of REFERENCES doesn't quite
+follow SQL92 rules. In SQL92, the REFERENCES privilege
+is required only to create (or alter) a constraint
+(such as a foreign key or check constraint)
+that refers to another table.
+In SQL92, the REFERENCES privilege is not required
+at 'run-time' in order to insert or update data
+in the table that has that constraint, so is not
+typically a privilege you would grant to most users.
+=====
+or another one:
+=====
+In SQL92, REFERENCE is a privilege (along with SELECT,
+INSERT, UPDATE, etc.) that can be granted to
+or revoked from other users.  The REFERENCE privilege
+controls what kinds of constraints someone can define,
+rather than what kind of data he can see or update
+directly.   
+=====
+
+Current FB/IB behaviour is quite different and buggy.
+
+So options are either
+- change implementation to conform SQL standard, or
+- stick with current style and fix bugs.
+
+
+Here is script to demonstrate the bug:
+==========
+CREATE DATABASE 'C:\TEST.GDB'
+  USER 'SYSDBA' PASSWORD 'masterkey';
+SET AUTODDL ON;
+CREATE TABLE TAB (I INTEGER);
+
+SET TERM ^ ;
+
+CREATE TRIGGER TR FOR TAB BEFORE UPDATE AS
+BEGIN
+  NEW.I = 10 * NEW.I;
+END^
+
+CREATE PROCEDURE PROC AS
+BEGIN
+  UPDATE TAB SET I=456;
+END^
+
+SET TERM ; ^
+
+GRANT ALL     ON TAB            TO PROCEDURE PROC;
+GRANT EXECUTE ON PROCEDURE PROC TO PUBLIC;
+
+
+CONNECT 'C:\TEST.GDB' USER 'test' PASSWORD 'test';
+EXECUTE PROCEDURE PROC;
+
+/* now you get:
+Statement failed, SQLCODE = -551 
+no permission for references access to table TAB
+*/
+==========
+
+In short - user has rights to execute procedure,
+the procedure has all rights on table,
+the table has trigger.
+
+The error will not raise if you add this privilege:
+  GRANT REFERENCES ON TAB TO TRIGGER TR;
+(but there is no pk-fk relationship in this database,
+so these problems with REFERENCES privilege
+just do not make any sense)
+
+One more interesting thing - unlike other privileges,
+GRANT/REVOKE REFERENCES is not effective immediately,
+but you need to re-connect.
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+References check relegated to DDL time.
+No security check made when triggers touch their own table.
+(In some situations, no right is effective immediately, so 
+references is the tip of the iceberg here.)</text></argument><argument name="title"><text>REFERENCES privilege</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_458888</text></argument><argument name="resources"><set/></argument></extension>

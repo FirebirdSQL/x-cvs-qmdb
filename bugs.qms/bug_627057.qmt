@@ -1,0 +1,459 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>627057</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : edb
+Assigned to  : nobody
+----------------------
+It would appear that a nested query which contains a
+variable in the &quot;where&quot; clause can be erroneously
+flagged as invariant.
+
+The following (admittedly contrived) procedure
+demonstrates this:
+
+SHOW PROCEDURE p_bugtest
+Procedure text:
+=============================================================================
+
+declare variable v_code varchar(2);
+declare variable v_temp varchar(30);
+begin
+  for select distinct code
+    from l_province
+    into :v_code
+  do
+  begin
+    select name
+      from l_province
+      where name = (select name from l_province where
+code = :v_code) and
+            code = :v_code
+      into :r_province1;
+    select name 
+      from l_province 
+      where code = :v_code 
+      into :v_temp;
+    select name
+      from l_province
+      where name = :v_temp and
+            code = :v_code
+      into :r_province2;
+    suspend;
+  end
+end
+
+=============================================================================
+Parameters:
+R_PROVINCE1                       OUTPUT VARCHAR(30) 
+R_PROVINCE2                       OUTPUT VARCHAR(30) 
+
+
+Obviously, the r_province1 process is functionally
+equivalent to the r_province2 process, yet only
+r_province2 contains the expected result. It appears
+that the nested query int he r_province1 codepath is
+only resolved once, for the first value of v_code.
+
+I have verified this on multiple installations of
+IB6.0, IB6.01, and FB1.0. (I'd imagine this bug has
+been present since IB5.)
+
+For completeness, here is the contents of l_province,
+as well as a sample run of the process:
+
+select * from l_province
+
+CODE   NAME                           
+====== ============================== 
+
+AB     Alberta                        
+BC     British Columbia               
+MB     Manitoba                       
+NB     New Brunswick                  
+NF     Newfoundland                   
+NS     Nova Scotia                    
+NT     Northwest Territories          
+ON     Ontario                        
+PE     Prince Edward Island           
+QC     Quebec                         
+SK     Saskatchewan                   
+YT     Yukon Territory                
+NU     Nunavut    
+
+select * from p_bugtest
+
+R_PROVINCE1                    R_PROVINCE2            
+       
+==============================
+============================== 
+
+Alberta                        Alberta                
+       
+Alberta                        British Columbia       
+       
+Alberta                        Manitoba               
+       
+Alberta                        New Brunswick          
+       
+Alberta                        Newfoundland           
+       
+Alberta                        Nova Scotia            
+       
+Alberta                        Northwest Territories  
+       
+Alberta                        Nunavut                
+       
+Alberta                        Ontario                
+       
+Alberta                        Prince Edward Island   
+       
+Alberta                        Quebec                 
+       
+Alberta                        Saskatchewan           
+       
+Alberta                        Yukon Territory  
+----------------------
+User: edb
+Logged In: YES 
+user_id=1582
+
+Also, this may interest you:
+
+SET PLAN
+
+select *
+  from t_classstats s1
+  where s1.f_classnum =  49
+     and s1.f_sampletime = (select max(s2.f_sampletime)
+                               from t_classstats s2 where 
+s2.f_classnum = s1.f_classnum)
+
+PLAN (S2 ORDER ID_CLASSSTATS_SAMPLETIME)
+PLAN (S1 INDEX (RDB$PRIMARY4))
+
+select *
+  from t_classstats s1
+  where s1.f_classnum =  49
+     and s1.f_sampletime = (select max(s2.f_sampletime)
+                               from t_classstats s2 where    
+s2.f_classnum = 49)
+
+PLAN (S2 ORDER ID_CLASSSTATS_SAMPLETIME)
+PLAN (S1 INDEX (RDB$PRIMARY4))
+----------------------
+User: edb
+Logged In: YES 
+user_id=1582
+
+&gt; &gt;   Ahh, and sweet irony rears her head.
+&gt;   Ed, if it is idiom, I don't know it.
+
+I simply meant that it was ironic because this was the very
+form of the query that lead me to discover the problem in
+the first place.
+
+In any case, I tried adding a descending index on
+f_sampletime (I had an ascending one, but not a descending
+one). Here are the stats:
+
+select *
+  from t_classstats s1
+  where s1.f_classnum =  49
+     and s1.f_sampletime = (select max(s2.f_sampletime)
+                               from t_classstats s2 where    
+s2.f_classnum = 49)
+
+[snip]
+
+Current memory = 760832
+Delta memory = 135168
+Max memory = 760832
+Elapsed time= 0.00 sec
+Buffers = 75
+Reads = 35
+Writes 0
+Fetches = 75
+
+
+select *
+  from t_classstats s1
+  where s1.f_classnum =  49
+     and s1.f_sampletime = (select max(s2.f_sampletime)
+                               from t_classstats s2 where  
+      
+s2.f_classnum = s1.f_classnum)
+
+[snip]
+
+Current memory = 857088
+Delta memory = 96256
+Max memory = 895064
+Elapsed time= 10.99 sec
+Buffers = 75
+Reads = 2725
+Writes 0
+Fetches = 189139
+
+That's quite a marked improvement, but it's still quite a
+bit slower. For the record, there are 169197 rows in the
+table. It seems like the
+&quot;where s2.f_classnum = s1.f_classnum&quot; version is actually
+running the max() bit for each possible value, and not
+realizing that it only needs to retrieve the max() once, for
+one value of f_classnum.
+
+Anyway, I think we're getting a bit side-tracked here. It's
+definitely good to have the workarounds and such recorded in
+the bug tracker, but I don't want to talk too much about
+this optimization issue too much here, because the
+optimization issue is a relatively minor, performance-only
+issue that's just a request for enhancement. The bug in
+question (that subselects with variables in the where clause
+seem to be getting marked invariant) is a serious bug that
+affects data accuracy, and may cause invalid data to be
+returned in production systems.
+----------------------
+User: ded
+Logged In: YES 
+user_id=188889
+
+&gt;   Ahh, and sweet irony rears her head.
+
+   Ed, if it is idiom, I don't know it. This tracker is watched not exlusively by you and me and many people steps on 
+this rake daily, this workaround can be useful for them, I have a doubt that this bug will be quickly fixed. About 
+tremendous performance degradation which you reported - I don't feel this on my tables, though subselects are not 
+the racehorses. Check plans, seems optimizer use different indexes. If you'll not object, I'll suggest another 
+workaround for elemination of subselect with max/min at all (I slightly complicated your example to make it more 
+practical and show functionality) like:
+
+Max used:
+
+select s1.third_column
+  from t_classstats s1
+  where s1.f_classnum =  49
+     and s1.f_sampletime = (select max(s2.f_sampletime)
+                               from t_classstats s2 where 
+                                                               s2.f_classnum = s1.f_classnum)
+
+First and Order By used:
+
+Select First 1 third_column
+ From t_classstats
+ Where f_classnum =  49
+ Order By f_sampletime Desc
+
+Descending index on f_sampletime is needed to speed up both queries. If one day Order By will be allowed in 
+subselects, this trick will be useful to speed up really complex queries on many tables.
+
+Best regards, Alexander V.Nevsky.
+----------------------
+User: edb
+Logged In: YES 
+user_id=1582
+
+Just as a note: Selecting &quot;*&quot; or something other than
+&quot;s1.f_sampletime&quot; actually makes more sense in the example
+query, but the timing results are the same. (In case you're
+trying to figure out what I'm trying to accomplish there.)
+
+In production, I'm actually pulling back one of the other
+columns in t_classstats.
+----------------------
+User: edb
+Logged In: YES 
+user_id=1582
+
+Ahh, and sweet irony rears her head.
+
+In the actual case that revealed this bug, I had originally
+used the construct you suggested, but I had to change to
+something similar to what I have in my report. Performance
+seems to degrade geometrically when using the column
+reference in the subselect instead of the :variable
+reference. Observe:
+
+select s1.f_sampletime
+   from t_classstats s1
+   where s1.f_classnum =  49
+       and s1.f_sampletime = (select max(s2.f_sampletime)
+from t_classstats s2 where 
+                                s2.f_classnum = 49)
+
+[single row returned]
+
+Current memory = 788468
+Delta memory = 0
+Max memory = 922700
+Elapsed time= 0.27 sec
+Buffers = 75
+Reads = 2571
+Writes 0
+Fetches = 9208
+
+
+select s1.f_sampletime
+   from t_classstats s1
+   where s1.f_classnum =  49
+       and s1.f_sampletime = (select max(s2.f_sampletime)
+from t_classstats s2 where 
+                                s2.f_classnum = s1.f_classnum)
+
+[single row returned]
+
+Current memory = 879604
+Delta memory = 91136
+Max memory = 922700
+Elapsed time= 1042.48 sec
+Buffers = 75
+Reads = 11806562
+Writes 0
+Fetches = 42238262
+
+Maybe that deserves its own separate bug. One would expect
+that they'd perform equivalently, if it's getting optimized
+correctly.
+
+In any case, that's why I didn't use that construct. 0.27s
+versus 1042.48s is a *huge* difference.
+
+It's also worth noting that using the temporary variable
+workaround (the one used to get r_province2 in the bug
+demonstration) gives similar performance results to the
+former (i.e. it works almost as well, and thousands of times
+better than the latter).
+
+-Ed
+
+----------------------
+User: ded
+Logged In: YES 
+user_id=188889
+
+  I can confirm this and suggest woraround:
+
+select P1.name 
+   from l_province P1
+   Where P1.code = :v_code   
+       And P1.name = (select name from l_province P2 where 
+                                P2.code = P1.Code) 
+
+BTW, Yaffil team tried to fix it but unsuccesfull for meantime, changes were rolled back after field test. Seems it is 
+not simply.                              
+
+Best regards, Alexander V.Nevsky.
+----------------------
+User: edb
+Logged In: YES 
+user_id=1582
+
+&gt; The following version with explicit aliasing for each
+&gt; instance of l_province (unless I've missed something) gives
+&gt; the exact same results.
+
+Just to clarify, I meant that I explicitly labelled each
+table and of its columns with a distinct alias (even in
+overkill situations like p4 and p5), unless I typoed and
+missed something. I have, of course, confirmed that the
+updated query produces the same results (again, on both fb1
+and ib6).
+
+I can quote the output if you like, but it's identical to
+the output in the original report.
+
+-Ed
+----------------------
+User: edb
+Logged In: YES 
+user_id=1582
+
+The following version with explicit aliasing for each
+instance of l_province (unless I've missed something) gives
+the exact same results.
+
+The reason the procedure is so contrived is that I designed
+it as a test case for this particular issue. I ran into this
+the other day in a larger, production stored procedure, and
+proceeded to whittle it down until I could find a test case
+that demonstrated the problem without too much extra chaff
+to deal with. (Also, the original procedure did use proper
+aliasing.)
+
+Is there anything else that would indicate an error in my SQL?
+
+My hunch is that the optimization done in cmp.c is flagging
+the subselect as invariant, and thus only running it once.
+(Thus, the first  select from p2 returns a valid row, but
+the following ones don't, because (select p3.name...)
+subselect is still returning the same value it did the first
+time, despite the fact that v_code is different now.)
+Perhaps the presence of variables in the where clause of
+subselects was not accounted for when the flagging
+conditions were written.
+
+As far as I can tell, the &quot;...into r_province1&quot; and &quot;...into
+r_province2&quot; codepaths are 100% functionally identical --
+one uses a temporary variable, and the other uses a nested
+query in a position that should be totally equivalent.
+
+Any further thoughts?
+
+Updated procedure declaration follows:
+
+---
+
+declare variable v_code varchar(2);
+declare variable v_temp varchar(30);
+begin
+  for select distinct p1.code
+    from l_province p1
+    into :v_code
+  do
+  begin
+    select p2.name
+      from l_province p2
+      where p2.name = (select p3.name from l_province p3
+where p3.code = :v_code) and
+            p2.code = :v_code
+      into :r_province1;
+    select p4.name
+      from l_province p4
+      where p4.code = :v_code
+      into :v_temp;
+    select p5.name
+      from l_province p5
+      where p5.name = :v_temp and
+            p5.code = :v_code
+      into :r_province2;
+    suspend;
+  end
+end
+
+----------------------
+User: helebor
+Logged In: YES 
+user_id=60469
+
+Erm...try using the correct aliasing syntax so that your loop, your select and your sub-select are operating on 
+separate cursors - then see whether the &quot;bug&quot; isn't your own!
+
+                              declare variable v_code varchar(2); 
+                              declare variable v_temp varchar(30); 
+                              begin 
+                              for select distinct lp1.code 
+                              from l_province lp1
+                              into :v_code 
+                              do 
+                              begin 
+                              select lp2.name 
+                              from l_province lp2
+                              where lp2.name = (select lp3.name from l_province lp3 where 
+                              lp3.code = :v_code) and 
+                              lp2.code = :v_code 
+                              into :r_province1; 
+                ..................
+
+As you implied, it's a pretty nutty sort of query anyway...
+
+helebor</text></argument><argument name="title"><text>Variable subselects marked invariant</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_627057</text></argument><argument name="resources"><set/></argument></extension>

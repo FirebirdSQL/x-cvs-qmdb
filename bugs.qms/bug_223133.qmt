@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223133</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+Doing a self join without assigning alias to both occurrences of the table can be a fatal trap for newbies. I will use a contrives, useless example:
+
+select rdb$relation_name from rdb$relations r
+join rdb$relations
+on rdb$relation_id = r.rdb$relation_id
+order by 1
+=&gt; produces a listing of tables, ordered as expected. The first table in the sample db is called &quot;A&quot;.
+
+Observe that only one occurrence of rdb$relations is qualified with an alias. Now, by simply assigning the alias to the second occurrence instead of the first one, we force the server to yield incredible results:
+
+select rdb$relation_name from rdb$relations
+join rdb$relations r
+on rdb$relation_id = r.rdb$relation_id
+order by 1
+=&gt; produces
+A
+A
+A
+... etc. The first table is repeated a number of times and nothing more is shown.
+
+Solution for the user: apply aliases to all occurrences of the same table in a self join:
+
+select rdb$relation_name from rdb$relations r1
+join rdb$relations r2
+on r1.rdb$relation_id = r2.rdb$relation_id
+order by 1
+=&gt; yields the correct results.
+
+Solution for the engine:
+- Demand that self-joins use aliases to distinguish different occurrences of the same table.
+- Self-joins using the original table name should be rejected as ambiguous.
+
+Associated with this issue, there's this one:
+- The server should demand that once a table has been qualified by an alias, only the alias can be used. This helps clearing ambiguity. In fact, MsSql detects this construction an rejects it. This is an invalid statement:
+
+select r.rdb$relation_name
+from rdb$relations r join rdb$indices i
+on rdb$relations.rdb$relation_name = i.rdb$relation_name
+and rdb$unique_flag = 0
+
+Look at the 3rd line. It should be instead:
+
+on r.rdb$relation_name = i.rdb$relation_name
+
+since the alias was declared previously in the join. I saw in the past very sensible self joins that fell because IB allows to ignore the alias and use directly the table name.
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+The logic that handles ambiguous field names takes care of 
+this case.</text></argument><argument name="title"><text>Ambiguous self join produce bizarre results</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223133</text></argument><argument name="resources"><set/></argument></extension>

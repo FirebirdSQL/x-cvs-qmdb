@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>451950</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Feature v1.5
+Status       : Open
+Resolution   : Fixed
+Submitted By : seanleyne
+Assigned to  : alexpeshkoff
+----------------------
+Restrict 'valid' path for External Table to paths 
+specified in IBConfig/ISCConfig.</text></argument><argument name="title"><text>External table paths</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_451950</text></argument><argument name="resources"><set/></argument></extension>

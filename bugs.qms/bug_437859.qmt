@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>437859</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : Fixed
+Submitted By : dimitr
+Assigned to  : dimitr
+----------------------
+I'm not 100% sure this is a bug, but IMHO this ability 
+should be supported.
+
+The engine does not allow to pass an expression with 
+string concatenation to a SP. When I'm compiling a 
+procedure with a line like this one:
+
+execute procedure p_do_something('a' || 'b');
+
+I get an error:
+
+Invalid token.
+Dynamic SQL Error.
+SQL error code = -104.
+Token unknown - line 14, char 57.
+||.
+
+Of course, the following work fine:
+
+declare variable the_var varchar(64);
+...
+the_var = 'a' || 'b';
+execute procedure p_do_something(the_var);
+
+
+----------------------
+User: dimitr
+Logged In: YES 
+user_id=61270
+
+Damn. All entries were lost during the conversion from Bug 
+to Feature Request and vice versa.
+----------------------
+User: dimitr
+Logged In: YES 
+user_id=61270
+
+OK, let it be a request for enhancement.</text></argument><argument name="title"><text>Execute procedure and string concat</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_437859</text></argument><argument name="resources"><set/></argument></extension>

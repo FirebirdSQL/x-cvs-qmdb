@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>764590</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : pcosmo
+Assigned to  : nobody
+----------------------
+When issueing a select on two tables linked by outer
+join the resulting execution plan always forces a sort,
+so an order-by plan cannot be obtained. The plan cannot
+be specified programatically neither - server error.
+
+In detail, let's say we have two tables:
+
+create table parents(
+  id integer not null,
+  name varchar(30) not null,
+  constraint parent_pk primary key(id)
+);
+
+create table children(
+  id integer not null,
+  parent_id integer,
+  name varchar(30) not null,
+  constraint child_pk primary key(id),
+  constraint child_name_uk unique(name)
+);
+
+alter table children add constraint child_parent_fk
+foreign key(parent_id) references parents(id);
+
+Then I issue the select
+  select p.id, c.id
+  from children c join parents p on p.id = c.parent_id 
+  order by c.name;
+The best plan for it is 
+  PLAN JOIN (C ORDER CHILD_NAME_UK,P INDEX (PARENT_PK))
+
+Then, if I give the select
+  select p.id, c.id
+  from children c left join parents p on p.id = c.parent_id
+  order by c.name;
+(same as the first one, only left join instead of inner)
+the plan the optimizer proposes is 
+  PLAN SORT (JOIN (C NATURAL,P INDEX (PARENT_PK)))
+which forces the sort and makes the select to return
+first rows much slower.
+
+If I want the same plan for the second select as in the
+first select I cannot specify the order-by plan; the
+server returns the error &quot;Index CHILD_NAME_UK cannot be
+used in the specified plan&quot;
+
+So the problem is that I cannot obtain an order-by plan
+when doing an outer join (neither automatically, nor
+programatically/manual).
+
+----------------------
+User: pcosmo
+Logged In: YES 
+user_id=792541
+
+I forgot to specify, the situation described applies to all
+versions of Firebird, up to FB1.5 RC3.
+</text></argument><argument name="title"><text>Execution plan ruined by outer join</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_764590</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>483276</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : bazilio
+Assigned to  : robocop
+----------------------
+  GBAK can't backup values of generators which names 
+contains whitespaces such as &quot;Raw Movement_GEN&quot;.
+  To produce this bug:
+   -create  generator &quot;Complex GEN&quot;
+   -assign some value to generator.
+   -backup database
+
+In database backup log reach
+gbak:     writing generator &quot;Complex 
+GEN&quot;                value 0
+
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Wrong symbol_length() function in backup.e causes the 
+problem. Again, embedded blanks aren't acknowledged.</text></argument><argument name="title"><text>GBAK can't backup values of generators</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_483276</text></argument><argument name="resources"><set/></argument></extension>

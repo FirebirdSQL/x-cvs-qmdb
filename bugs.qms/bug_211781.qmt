@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>211781</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : tamlin
+Assigned to  : nobody
+----------------------
+Allocation location is in SVC_start, last param 
+'&amp;service-&gt;svc_handle'.</text></argument><argument name="title"><text>Win32: Server don't close thread handles</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_211781</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,123 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>547383</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : None
+Submitted By : helebor
+Assigned to  : dimitr
+----------------------
+1.  According to docs, exceptions can be trapped by using the GDSCODE keyword with WHEN, e.g. 
+WHEN GDSCODE 35544778 do
+  begin
+    DO SOMETHING;
+    exit;
+  end
+
+However, the compiler barfs on the GDSCODE keyword.
+
+2.  According to the docs, &quot;RDB$EXCEPTIONS describes error conditions related to stored 
+procedures, including user-defined exceptions.&quot;
+
+The table includes a smallint RDB$SYSTEM_FLAG for which the description is &quot;Indicates whether the 
+exception is * User-defined (value of 0) *System-defined (value greater than 0)&quot;
+
+Taken together, this seems to indicate that system exceptions should be in RDB$EXCEPTIONS but, 
+in fact, this table is empty except for any user-defined exceptions.  This is the case for FB and all 
+IB versions from 5.6 forward.  I don't have a 4.x server any more but I seem to recollect that this 
+table was populated by CREATE DATABASE at one time and the doc seems to assert this.
+
+3.  There seems to be no way to read either SQLCODE or GDSCODE into a host variable in a SP.  
+For example, this can't be too much to ask:
+..
+declare variable _SQLCODE_ integer;
+...
+when ANY do
+  _SQLCODE = SQLCODE;
+ 
+However, the compiler rejects SQLCODE as an invalid token.
+
+All in all, it seems SPs can trap only UDE's and the generic SQLCODE exceptions, which makes 
+exception handling pretty ugly and makes liars out of the documenters.
+
+----------------------
+User: dimitr
+Logged In: YES 
+user_id=61270
+
+1. Explained by Ivan, i.e. you should use e.g. &quot;GDSCODE
+arith_except&quot; instead of the numeric code
+2. Reserved for future use. E.g. trigger messages are a
+subject of convertion to system exceptions in v2.0
+3. Partially fixed in v1.5
+----------------------
+User: helebor
+Logged In: YES 
+user_id=60469
+
+Adding a request to increase the maximum size of an exception string to something capable of realistically 
+returning a comprehensible message to the client.
+
+----------------------
+User: helebor
+Logged In: YES 
+user_id=60469
+
+Ivan, you cannot imagine how I struggled with gdscode possibilities!
+You have just saved 60,000 lives.
+
+Just a further question:  is it possible to get at the following?
+#define isc_exception_datatype_missalignment 335544769L
+#define isc_exception_array_bounds_exceeded  335544770L
+#define isc_exception_float_denormal_operand 335544771L
+#define isc_exception_float_divide_by_zero   335544772L
+#define isc_exception_float_inexact_result   335544773L
+#define isc_exception_float_invalid_operand  335544774L
+#define isc_exception_float_overflow         335544775L
+#define isc_exception_float_stack_check      335544776L
+#define isc_exception_float_underflow        335544777L
+#define isc_exception_integer_divide_by_zero 335544778L
+#define isc_exception_integer_overflow       335544779L
+#define isc_exception_unknown                335544780L
+#define isc_exception_stack_overflow         335544781L
+#define isc_exception_sigsegv                335544782L
+#define isc_exception_sigill                 335544783L
+
+i.e. 
+WHEN GDSCODE exception_integer_divide_by_zero do...
+
+Shouldn't it be consistent with the others?
+
+Helen
+
+----------------------
+User: prenosil
+Logged In: YES 
+user_id=89535
+
+&gt; 1. According to docs, exceptions can be trapped by using
+&gt; the GDSCODE keyword with WHEN, e.g.
+&gt; WHEN GDSCODE 35544778 do 
+
+This one is error in docs. GDSCODE should not be followed
+by error number, but by its name.
+E.g. to trap isc_arith_except use
+  WHEN GDSCODE arith_except DO
+
+Another undocumented feature (?) is the fact that FB accepts
+incomplete exception names. E.g. there are errors
+isc_bad_dbkey, isc_bad_db_format, isc_bad_db_handle, etc.,
+and any of these (probably, I did not test it much
+thoroughly) can be trapped by:
+  WHEN GDSCODE bad_ DO
+(At least FB accepts such command.)
+
+&gt; 2. According to the docs, &quot;RDB$EXCEPTIONS ...
+Do not you have RDB$TRIGGER_MESSAGES in mind ?
+ 
+&gt; 3. There seems to be no way to read either SQLCODE or
+&gt; GDSCODE into a host variable in a SP. 
+&gt; when ANY do 
+&gt; _SQLCODE = SQLCODE; 
+
+This would be very useful, and should be qualified as
+feature request.</text></argument><argument name="title"><text>3 bugs in exception handling in SPs</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_547383</text></argument><argument name="resources"><set/></argument></extension>

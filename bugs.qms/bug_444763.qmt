@@ -1,0 +1,121 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>444763</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : tmuetze
+Assigned to  : nobody
+----------------------
+If you execute this statement the column name of the 
+inner select is empty:
+
+select (select count(1) from rdb$database) from 
+rdb$database
+
+I don't know if this is a bug or just a limitation but 
+it seems that this bug(limitation) is somehow related 
+to #222476. The difference is that it happen with all 
+aggregate functions(count, min, max, sum, avg) and 
+also in dialect 1.
+
+Tested with Firebird 0.9.5.156 in Win32.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Claudio Valderrama wrote:
+
+&quot;Sorry, folks, don't claim victory too soon.
+The automatic naming for columns is something I planned and 
+discussed briefly with Frank maybe 18 months ago, but never 
+did. In fact, I was thinking that it would be easier with C++.
+Problems:
+- Have you tested nested expressions? Do they produce 
+named columns? No column should be left unnamed. Have you 
+tested aggregates and sub-queries?
+- What does the SQL standard say about names?
+- If I use the AS &lt;alias&gt; feature, the engine shouldn't build by 
+accident an expression-based column with that &lt;alias&gt;. I 
+think it can currently.
+- If I use two columns that are cast(something), both 
+columns can't be named automatically the same and I guess 
+currently they get same name. Same may be for other 
+expressions. What happens with two columns using UPPER, 
+calling a UDF, etc.
+
+To avoid those and others problems, I once proposed a kind 
+of map. AFAIK, map is available in the STL. Every column 
+name is entered in the map with a count of zero. We create a 
+map between a string and an integer. I don't care if you 
+prefer char* or C++ string, but pick one. The integer counts 
+the number of times the number is in use. Maybe map&lt;string, 
+int&gt; my_map;
+
+If the engine is building a column from a CAST expression,
+number = my_map[key]++; will provide the necessary number 
+to append to the name (where &quot;key&quot; contains the proposed 
+prefix, that's CAST in this case). The first time, number is 
+zero. Therefore, the engine creates a column called CAST 
+concatenated with number, namely CAST0 but I think this 
+goes to the column alias (not name) to make sure it takes 
+precendence.
+
+But the user has another unnamed column with another CAST 
+expression. Again, the engine sends the proposed prefix 
+(CAST) to the map number = my_map[key]++; and it will get 
+1, therefore the automatic alias becomes CAST1 this time.
+
+Same idea for other expressions. But after that, the user will 
+want to address the column by its name or alias. Therefore, 
+we should fix the engine even more:
+- aliases, when specified or created internally, take 
+precedence over names;
+- it should be possible to do the silly select col as col 
+provided that it doesn't conflict with any other name, but I 
+would discourage that practice in the docos... one may get 
+used and have to fix each time joins with conflicting names, 
+because a typical usage of aliases is disambiguate columns in 
+self-joins;
+- aliases cannot clash with other aliases;
+- aliases cannot clash with column names when those 
+columns don't have aliases;
+- as bizarre as it sounds, it seems to me that select a as b, b 
+as a from ... is possible, since both columns have aliases, 
+they take precendence over col names and don't clash;
+- once a column is alias'ed, it can't be referenced anymore by 
+its name (just check other engines and the SQL standard);
+- when the engine is building up names for expression-based 
+columns that weren't explicitly named by the user, it shouldn't 
+compete with the user for names. It won't because the map 
+will provide the suffix in the form of a counter;
+- I haven't explored yet what happens with columns in sub-
+selects and their scope.
+
+Therefore, I think we have a long path to go still, but if you 
+are confident that the engine currently plugs names (even if 
+repeated) for all known cases, then close this report.&quot;
+
+Accordingly, this report is re-opened until all known cases 
+have been tested.
+
+----------------------
+User: tmuetze
+Logged In: YES 
+user_id=152149
+
+It seems to vanished in both of them.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Do you mean the latest version of v1.5 or 1.0?
+
+I want to be sure for my open/closed report.
+----------------------
+User: tmuetze
+Logged In: YES 
+user_id=152149
+
+It does no longer happen in latest Fb versions -&gt; Closed</text></argument><argument name="title"><text>Empty column names with aggregate funcs</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_444763</text></argument><argument name="resources"><set/></argument></extension>

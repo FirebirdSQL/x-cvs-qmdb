@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>658182</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : oscarsp
+Assigned to  : dimitr
+----------------------
+When I try to create &quot;any view&quot;, inside IBExpert or 
+IBConsole, I obtain the following error:
+
+The cursor identified in a FETCH or CLOSE statement is 
+not open.
+invalid request handle.
+
+The same view/tables/indices/... works fine in IB6.
+
+Feliz Navidad a todos.
+Happy Merry Christmas for all.
+----------------------
+User: oscarsp
+Logged In: YES 
+user_id=674873
+
+Ok, this problem was solved in Win32 release 1.5.0.1761
+Now, I can create any view with no problems.
+
+Thanks for your attention.
+Bye ;-)</text></argument><argument name="title"><text>CREATE VIEW fails on 1.5 win32 alpha5</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_658182</text></argument><argument name="resources"><set/></argument></extension>

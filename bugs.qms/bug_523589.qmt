@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>523589</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Closed
+Resolution   : None
+Submitted By : fabianobonin
+Assigned to  : arnobrinkman
+----------------------
+/* Sorry if i'm inconvenient. I know that the launch 
+of FB1 is almost there, but i'm having many problems 
+with queries that have their results affected when i 
+use views inside them. If i'm late in reporting this 
+is because just now i found a way to reproduce what i 
+think is an error. I work a lot with views and for 
+many times i had to rewrite my code or change my 
+database structure because this behavior */
+
+/* master */
+create table t1 (
+  t1_id integer not null,
+  t1_code varchar(10),
+  t1_sum_t2_value numeric(11,2) default 0 not null );
+
+/* detail */
+create table t2 (
+  t2_id integer not null,
+  t1_id integer,
+  t2_value numeric(11,2) default 0 not null );
+
+alter table t1 add primary key (t1_id);
+
+alter table t2 add primary key (t2_id);
+
+insert into t1 values (1, 'invoice 1', 0);
+insert into t1 values (2, 'invoice 2', 0);
+insert into t1 values (3, 'invoice 3', 0);
+insert into t1 values (4, 'invoice 4', 0);
+
+insert into t2 values (1, 1, 5);
+insert into t2 values (2, 1, 10);
+insert into t2 values (3, 2, 5);
+insert into t2 values (4, 2, 10);
+insert into t2 values (5, 3, 5);
+insert into t2 values (6, 3, 10);
+
+/* i join the rdb$database because i need a read-only 
+view in my application and this way i force the view 
+to be read-only. i used SELECT DISTINCT before, but 
+the bug 'distinct propagate ouside a view', already 
+reported, affects the queries based on the views, too 
+*/
+
+create view V1_T1 as select * from t1, rdb$database;
+
+create view V2_T1 as select * from t1, rdb$database 
+where t1_id = t1_id;
+
+/* THE THREE QUERIES BELOW PRODUCES THE SAME RESULT */
+
+select t1_id from T1 /* TABLE*/ where t1_code like '%
+3%'
+/* returns record n.3 - OK */
+
+select t1_id from V1_T1 /* VIEW 1 */ where t1_code 
+like '%3%'
+/* returns record n.3 - OK */
+
+select t1_id from V2_T1 /* VIEW 2 */ where t1_code 
+like '%3%'
+/* returns record n.3 - OK */
+
+
+/* BUT, WHEN USED INSIDE AN IN CLAUSE, THE RESULT IS 
+GOING DIFFERENT */
+
+select * from t2 where t1_id in ( select t1_id from T1 
+where t1_code like '%3%' );
+/* using table T1 - returns 2 rows - OK */
+
+select * from t2 where t1_id in ( select t1_id from 
+V1_T1 where t1_code like '%3%' );
+/* using view V1_T1 - RETURNS 0 ROWS !!!??? */
+
+select * from t2 where t1_id in ( select t1_id from 
+V2_T1 where t1_code like '%3%' );
+/* using view V2_T1 - returns 2 rows - OK */</text></argument><argument name="title"><text>View is affecting the result of a query</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_523589</text></argument><argument name="resources"><set/></argument></extension>

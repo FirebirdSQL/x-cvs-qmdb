@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>747567</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Closed
+Resolution   : Fixed
+Submitted By : myilmaz
+Assigned to  : nobody
+----------------------
+1)
+
+SELECT FIRST (1) SKIP (1) *
+FROM RDB$DATABASE 
+
+statement crach server
+
+2)
+
+SELECT FIRST (?) SKIP (?) *
+FROM RDB$DATABASE 
+
+error : expression eval not supported
+
+----------------------
+User: dimitr
+Logged In: YES 
+user_id=61270
+
+Confirmed for win32 and fixed in the build 3481-1 
+(already available on SF).
+
+----------------------
+User: skidder
+Logged In: YES 
+user_id=495356
+
+Irreproducable with Firebird 1.5 RC3. Bug report is invalid (no 
+OS, version and other information)</text></argument><argument name="title"><text>FIRST / SKIP crach server</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_747567</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>229860</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : robocop
+----------------------
+I have just found one very minor bug when issuing this statement:
+
+alter table drawings add F1 date, add F2 image;
+
+You see it contains word IMAGE that was copied by mistake from MS SQL script. Of course this command did not pass but the error message was misleading:
+
+SQL error code = -607
+Invalid command
+Specified domain or source column does not exist
+SQL warning code = 301
+DATE data type is now called TIMESTAMP
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Statement: alter table drawings add F1 date, add F2 image
+
+I played a little with the command and found that, if adding new DATE column when there is some mistake in a SQL sentence, the same error statement always appears.
+
+I found this, working with the latest version of Firebird, though IB6 has it too.
+
+Regards,
+
+George Kozaderov
+Practical Programs
+Australia
+george@practicalprograms.com
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+The SQL error message stops where the warning begins. There 
+are two messages here. The error says that it doesn't 
+recognize a data type for a field, but I doesn't tell you 
+which data type. The warning simply says that the preferred 
+name for DATE type IN DIALECT 1 is TIMESTAMP, to make 
+migration to dialect 3 clearer. This dialect 1 warning are 
+explained in the documentation. You won't see it in dialect 
+3 since DATE and TIMESTAMP are separate data types.
+
+But regarding the error message that's confusing, the 
+server from now will say:
+
+Dynamic SQL Error
+SQL error code = -607
+Invalid command
+Specified domain or source column IMAGE does not exist
+Statement: alter table tclean add F1 date, add F2 image
+
+so you'll know which is the data type or domain it didn't 
+recognize: IMAGE in this example.
+
+Furthermore, you will be able to know -while building a 
+stored procedure- which is the variable name that FB 
+doesn't recognize (instead of the silly COLUMN UNKNOWN msg) 
+and hopefully you will get the correct line and column 
+where the problem happens.
+
+C.</text></argument><argument name="title"><text>Error in error message</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_229860</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>229231</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : robocop
+----------------------
+If I create a user called &quot;admin&quot; and then grant all privileges on a table to them, the revoke command doesn't work unless I use the &quot;admin&quot; name in upper case.
+
+Here is an example:
+
+grant all on config to &quot;admin&quot;;
+revoke all on config from &quot;admin&quot;;
+
+You would think this would result is admin having no privilege on config but a select on the RDB$USER_PRIVILEGE table shows the &quot;admin&quot; user still has full access!  You need to do:
+
+revoke all on config from &quot;ADMIN&quot;
+
+in order to remove the privileges!
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+The engine first tries to distinguish between a role and a 
+user, by brute force: finding the possible role. If we have 
+a user (role not found), the name should be uppercased, 
+since users are in uppercase. This was the missing code.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Changes in dyn.e to be tested soon.</text></argument><argument name="title"><text>Revoke is case sensitive</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_229231</text></argument><argument name="resources"><set/></argument></extension>

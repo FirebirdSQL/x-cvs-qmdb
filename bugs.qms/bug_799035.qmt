@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>799035</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : kdv
+Assigned to  : nobody
+----------------------
+Found in 5.6, still exists in Firebird 1.0.3 code
+(maybe same exists in 1.5).
+
+Let we have example database c:\test.gdb.
+in any SQL session execute command:
+
+CREATE SHADOW 1 MANUAL 'c:\test.shd';
+
+and Commit.
+after that (shadow file created OK):
+interbase.log contains message
+IBASE (Server)	Tue Sep 02 13:20:31 2003
+	conditional shadow dumped for database C:\TEST.GDB
+
+Interesting, but jrd\sdw.c shows that this is only one
+message for all types of shadow (SDW_dump_pages).
+very confusing.
+
+Now, do
+GSTAT -A C:\TEST.GDB
+ShadowCount will be still 0. &quot;Files&quot; info does not
+contain any shadow file information (maybe it wasn't
+shown ever).
+
+Do next command:
+
+DROP SHADOW 1;
+
+gstat -A C:\TEST.GDB (or just -h)
+
+will show that ShadowCount became incremented to 1.
+
+Doing pair 'create/drop shadow' will increment
+ShadowCount to 2, 3 and so on. AUTO or MANUAL shadow -
+doesn't matter.</text></argument><argument name="title"><text>incorrect SHADOW count and log</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_799035</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>609661</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : stravinskij
+Assigned to  : nobody
+----------------------
+If a date field contains dates minor than year 1859 and the field is 
+indexed the sort fails.
+My experience says that when a query 
+with an ORDER BY clause is applied to a table with an indexed date 
+field containing dates from 301 to 1989 year the table is splitted in 
+two blocks:
+1. from 1858 to 301 year descending;
+2. from 
+1859 to 1989 year ascending.</text></argument><argument name="title"><text>invalid sort in indexed date fields</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_609661</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>545725</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0.x
+Status       : Closed
+Resolution   : Fixed
+Submitted By : alexpeshkoff
+Assigned to  : alexpeshkoff
+----------------------
+When automatic Sweep runs, server hangs in 
+isc_database_info on isc_info_user_names sub-function.
+
+OS - Windows NT/2000. Possibly any SUPERSERVER version.
+FireBird - Rc2, Release. Possibly bug was present in 
+earlier versions, too.
+
+In inf.c, near line 573, field usr_user_name is used 
+as parameter in strlen() without check, whether it 
+NULL or not. In normal attacment, it never may be 0. 
+But automatic Sweep (maybe something else, but Sweep 
+definitely) creates special attachment with 
+attacment-&gt;att_user-&gt;usr_user_name == NULL.
+I build FireBird from source code and I have a patch 
+for it - it's trivial. I think that this bug is to be 
+fixed. What to do now?
+Alexander Peshkov.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Alexander,
+
+Thanks for posting the fix, this was annoying little bug was 
+reported by a couple of users but was turning out to be 
+very difficult to diagnose.
+
+Could you, now, work on a fix for the FB v2 code base.  We 
+really want to keep both bases updated for all 
+fixes/updates.  Thanks</text></argument><argument name="title"><text>Automatic/background sweep hangs</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_545725</text></argument><argument name="resources"><set/></argument></extension>

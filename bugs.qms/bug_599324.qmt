@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>599324</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : lseckelmann
+Assigned to  : nobody
+----------------------
+Hi,
+
+I have encouncered the following problem:
+
+Environment Windows 2000 SP2 or NT 4.0 SP6, Firebird 
+1.0.0.794
+
+After my application is running about 24-48 hours there 
+is an error reported
+in the eventlog like 'SRV not enought none page pool 
+available' (sorry i don't have the correct english 
+message), after an
+hours more the IB eventlook say:
+XX (Server)  INET/inet_error: read errno = 10038 and  in 
+the same second
+XX (CLient)  INET/inet_error: read errno = 10038
+(Both running on the same machine). An the network is 
+OK.
+After that the connection is dead.
+
+And really if I trace (using Perfmon) the none paged pool 
+consumption of my
+application it consumes more and more of it.
+
+After excessive testing i found the following:
+The non paged pool consumption increases only if the 
+Application uses the
+event mechanism of Interbase (isc_queue_events).
+I have already tried some of the implementations of the 
+mechanism (IBObjects3.6, IbObjects4.0, IBExpress, 
+IBEventAlerter (Example in Delphi),
+self written code), all of them have the same result of 
+consuming none paged pool memory.
+The problem only occure if using the TCP/IP Stack,
+so I think it is an Problem of the gds32.dll itself using 
+then TCP/IP stack. 
+
+If I close the connection that is used by the event the 
+memory is freed.
+
+If it is no real bug, is there an way to avoid the memory 
+consumption?
+
+Regards
+Thomas
+
+PS: I also testet with IB6.0.1.6 and IB6.5 same result.
+
+T.Stamm@Eckelmann.de</text></argument><argument name="title"><text>Event consumes 'none paged memory'</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_599324</text></argument><argument name="resources"><set/></argument></extension>

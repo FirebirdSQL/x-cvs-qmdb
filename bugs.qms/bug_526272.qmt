@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>526272</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : tanchinleong
+Assigned to  : paul_reeves
+----------------------
+Greetings everyone,
+
+ I have tried C:\firebird\bin&gt;gbak -L -V -user sysdba -
+password masterkey
+ d:\interbase\intlemp.gdb d:\temp\intlemp.gbk with 
+the -L option - Ignore
+ limbo and got an error:
+ 
+ gbak: readied database d:\interbase\intlemp.gdb for 
+backup
+ gbak: creating file d:\temp\intlemp.gbk
+ gbak: starting transaction
+ gbak: ERROR: invalid transaction handle (expecting 
+explicit transaction
+start)
+ gbak: Exiting before completion due to errors
+
+ FYI, only this happens on firebird gbak function 
+either RC1 or RC2. It
+works fine with InterBase 6.0 gbak function.
+
+Any ideas what is going on ?
+
+Thank you
+
+Tan Chin Leong</text></argument><argument name="title"><text>firebird RC1 and RC2 gbak function</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_526272</text></argument><argument name="resources"><set/></argument></extension>

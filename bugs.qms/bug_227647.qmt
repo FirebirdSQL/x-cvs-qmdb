@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>227647</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Linux ports
+Group        : Fixed v0.9-4
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+Concerns: Firebird 0.9 SS and CS
+
+The disk space is not freed (reported to the OS as free) after the sort file is deleted in the temp directory until the whole task finishes successfully (like gbak restore) or the IB server restarts. As a result running a gbak restore on 600MB db produces &gt;1GB sort files and exhausts the available disk space. 
+
+Thanks to anybody who looks and checks this out.
+----------------------
+User: fsg
+This is the same as Bug #129121, solved by returning to the use of mktemp.
+
+FSG</text></argument><argument name="title"><text>the disk space is not freed after the sort file is deleted</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_227647</text></argument><argument name="resources"><set/></argument></extension>

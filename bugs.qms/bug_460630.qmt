@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>460630</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+When extracting object names for an script with either 
+option -x or -a, isql always takes the easy path and 
+put double quotes around identifiers. This has been 
+deemed annoying by several users. It should use 
+dquotes only if the name cannot be expressed without 
+them. An identifier doesn't need to be surrounded in 
+dquotes if it contains:
+a) Only ASCII A-Z (uppercase only)
+b) 0..9 digits
+c) underscore (_) and $
+provided that in the first position, only a) is met. 
+Blank and zero length identifiers need dquotes always.</text></argument><argument name="title"><text>-x and -a options always use dbl quotes</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_460630</text></argument><argument name="resources"><set/></argument></extension>

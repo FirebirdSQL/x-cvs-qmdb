@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>540547</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Charsets/Collations 
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : achi
+Assigned to  : nobody
+----------------------
+The statement
+
+select distinct Field1 || Field2 from Table1
+
+raises an
+
+arithmetic exception, numeric overflow, or string
+truncation
+Cannot transliterate character between character sets
+
+error if
+
+Field1 is of numeric datataype (numeric, integer, ...)
+Field2 is varchar of a charset with characters &gt; 127
+
+Field1 is implicit casted to (var)char but with a
+dynamic charset and not with the standard charset of
+the database. This seems to be opposite to a string
+literal like
+
+select distinct 'aaa' || field1 || field2 from table1
+
+in which 'aaa' (and all the following fields) seem to
+be interpretated with the standard charset so that the
+statement above is not causing an error.</text></argument><argument name="title"><text>concatenation, numeric fields &amp; charset</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_540547</text></argument><argument name="resources"><set/></argument></extension>

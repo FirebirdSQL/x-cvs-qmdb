@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>494981</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : skopalik
+Assigned to  : nobody
+----------------------
+CREATE exception test 'test text';
+
+set term ^;
+
+CREATE procedure dummy AS
+BEGIN
+ EXCEPTION test;
+END
+^
+execute procedure dummy^
+
+
+You will se:
+exception 1
+-test text
+
+but correct result is:
+exception test
+-test text</text></argument><argument name="title"><text>Bad exception report</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_494981</text></argument><argument name="resources"><set/></argument></extension>

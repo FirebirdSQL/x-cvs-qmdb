@@ -1,6 +1,9 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text/></argument><argument name="stdout"><text>Database: test.gdb
-        Owner: SYSDBA
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+SHOW DATABASE;
+
+DROP DATABASE;
+</text></argument><argument name="description"><text/></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>Owner: SYSDBA
 PAGE_SIZE 4096
 Number of DB pages allocated = 142
 Sweep interval = 20000
@@ -9,8 +12,4 @@ Transaction - oldest = 1
 Transaction - oldest active = 2
 Transaction - oldest snapshot = 2
 Transaction - Next = 5
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
-SHOW DATABASE;
-
-DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE DATABASE - simple DB</text></argument><argument name="test_id"><text>skopalik_0083</text></argument><argument name="resources"><set/></argument></extension>
+Default Character set: NONE</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE DATABASE - simple DB</text></argument><argument name="test_id"><text>skopalik_0083</text></argument><argument name="target_group"><text>.*</text></argument></extension>

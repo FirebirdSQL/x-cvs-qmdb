@@ -1,0 +1,110 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>225219</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+According to the documentation:
+
+The CHECK constraint in a domain definition sets a &lt;dom_search_condition&gt; that must be true for data entered into columns based on the domain. The CHECK constraint cannot reference any domain or column.
+
+So, this should be banned:
+
+create domain d_ontable int 
+check(value&gt;(select rdb$relation_id from rdb$database))
+
+Now what happens with a restore if the domain's check constraint is based on a user table? (And not a system table, where it could work eventually.)
+
+Markus Kemper discovered this issue initially but he wrote that isql was unable to extract info from it, because he though it was an isql limitation.
+
+This is only geeky detail or joke, a bit unrelated with the previous: please see how useful is this domain:
+create domain value_gt_value int 
+check(value&gt;value)
+
+C.
+
+----------------------
+User: robocop
+In light of the following answer...
+
+&gt; -----Original Message-----
+&gt; From: Ann W. Harrison &gt; 
+&gt; The documentation has always said that reference outside the
+&gt; current row are disallowed.  The code has always allowed them.
+&gt; Don DePalma wrote the first doc set and was never convinced
+&gt; that the feature had been sufficiently tested and that it was
+&gt; robust - changing the other table might invalidate the constraint
+&gt; without warning.
+&gt; 
+&gt; My feeling is that there is enough commonality in the code that
+&gt; I believe it works.  What we should do is recognize these dependencies
+&gt; in rdb$dependencies and behave accordingly.  I DO NOT support any
+&gt; effort to remove the capability from the code. (Sorry to shout.
+&gt; This is a 16 year itch for me.)
+&gt; 
+&gt; Regards,
+&gt; Ann
+
+... I have to say I performed the following test: created a table and a procedure that reads it and tests diverse conditions against the only parameter received, using the table in some cases. Then I created a domain that uses such procedure as the check constraint. To be really wicked, I altered the initial table to add a second field that's based on the domain (yes, on the same domain that uses a procedure that selects from the first field of the same table). IB didn't crash. I haven't observed signs of corruption yet.
+This is the script:
+create table tab16(a int);
+set term ^;
+create procedure valid16(a int)
+returns (rc smallint)
+as declare variable tmp int;
+begin
+   if (a is null)
+   then rc = 1;
+   else if (a = -1)
+   then rc = 1;
+   else begin
+      select avg(a) from tab16 into :tmp;
+      if (tmp is null)
+      then rc = 1;
+      else if (a &gt; tmp)
+      then rc = 1;
+      else rc = 0;
+   end
+   suspend;
+end ^
+set term ;^
+create domain dom16 int check((select rc from valid16(value))=1);
+alter table tab16 add b dom16;
+
+insert into tab16(a,b) values(1,1) =&gt; ok
+insert into tab16(a,b) values(1,0) =&gt; validation error
+insert into tab16(a,b) values(1,-1) =&gt; ok
+insert into tab16(a,b) values(1,NULL) =&gt; ok
+insert into tab16(a,b) values(1,2) =&gt; ok
+insert into tab16(a,b) values(1,22) =&gt; ok
+insert into tab16(a,b) values(1,3) =&gt; ok
+insert into tab16(a,b) values(10,4) =&gt; ok
+insert into tab16(a,b) values(3,4) =&gt; ok
+insert into tab16(a,b) values(43,4) =&gt; ok
+insert into tab16(a,b) values(0,10) =&gt; ok
+insert into tab16(a,b) values(99,0) =&gt; validation error
+
+Of course, when I run isql -a to get the metadata script, the order is not the one expected. I wonder if the tool can handle such recursive dependencies in future versions. This is what I got:
+- db creation
+- UDF definitions
+- Domain definitions, here it appears DOM16. First wrong step, since the check constraint referenced a non-existent stored proc. Probably the solution is to defer the creation of the check constraint for the domain?
+- Tables. Here our table appears.
+- Indices
+- FK statements
+- Generators. What if our domain is based on a generator? The script would be wrong again, I think.
+- Views
+- An alone ALTER TABLE statement to add a check constraint to another table, not our interesting one.
+- Exceptions.
+- Create proc statements, including our insteresting one.
+- Alter proc statements with the body of the stored procedures. Here we have our stored proc's code for the domain validation.
+- Triggers
+- Roles
+- Grant statements.
+
+If you take a peek at the procedure, you will see that the validation depends on the fields that are already stored in the table. So, this is really a crazy example, not a very useful one. Also, due to this self-dependency, God saves you if you happen to backup and restore this db, since some of your values that were accepted previously might be rejected and you'll have to avoid restoring the db validity conditions and having to define them again.
+
+I've changed the title and category of the bug. The documentation should be amended, too.
+
+C.</text></argument><argument name="title"><text>isql -a: wrong order with domains based on table's fields</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_225219</text></argument><argument name="resources"><set/></argument></extension>

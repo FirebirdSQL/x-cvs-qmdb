@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>225218</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : Accepted
+Submitted By : robocop
+Assigned to  : skidder
+----------------------
+Hello. According to the standard, it's up to the db vendor where NULLs should be, either at the tail or at the head of an ordered recordset. In IB, when you order ASC (default) on a field with NULLs, they go to the tail. That's a vendor decision. However, the engine must be consistent and in this case, it doesn't: if you order DESC on the same fields, NULLs will appear at the tail, too. One of the answers should be changed.
+
+C.
+
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Although Nickolay added code to support the specification of 
+the null position for a SELECT statement.  
+
+The SQL spec requires that NULLs be handled consistently, 
+if at TOP for ascendingsort then at bottom for descending, 
+which the engine does not do.
+
+Accordingly, this entry is re-opened.
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Syntax was added to control NULL placement in ordered sets.
+
+----------------------
+User: skidder
+Logged In: YES 
+user_id=495356
+
+I implemented nulls/first syntax, but not changed default yet.
+----------------------
+User: asaon
+InterClient does not report correctly
+the null sorting threatment
+----------------------
+User: robocop
+Nobody argues about NULLs being unknown values. However, take time to read IB-Architect to understand why your conclusion is wrong. The name of the thread is just
+[Bug #125218] NULLs always at the tail
+We are speaking about ANSI compliance.
+
+C.
+
+----------------------
+User: kdv
+remember that NULLs are &quot;unknown&quot; values. They are not greater or lower than other values. So NULLS always at the end is right. At least it doesn't violate NULLs logic.
+But, of course, special switch in IBCONFIG to specify where NULLS will be during sort
+would be good.</text></argument><argument name="title"><text>NULLs always at the tail</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_225218</text></argument><argument name="resources"><set/></argument></extension>

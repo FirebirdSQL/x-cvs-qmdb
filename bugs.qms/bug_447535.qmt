@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>447535</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : mweissenbacher
+Assigned to  : nobody
+----------------------
+&lt;pre&gt;
+/*
+  if you try to execute this script on a firebird 
+server on linux
+  it will report you that there are duplicate values 
+in the index.
+  this also affects primary keys. if you put the 
+CREATE UNIQUE INDEX
+  statement before the INSERT INTO statements 
+everything will work if
+  you don't de&amp;reactivate the index or backup&amp;restore 
+the database.
+  it's extremely problematic if you try to 
+backup&amp;restore a database
+  on linux, since you can't restore it if you have 
+used a numeric(18,0)
+  as primary key without deactivating all indexes. and 
+they cannot be reactivated!
+  It seems as the server is using DOUBLE values in 
+some places resulting
+  in rounding of the exact values. the same script, 
+however, works without
+  problems with the win32 version of firebird.
+*/
+
+CREATE TABLE &quot;BACK_ME_UP&quot; 
+(
+  &quot;ID&quot;	NUMERIC(18, 0) NOT NULL
+);
+
+INSERT INTO &quot;BACK_ME_UP&quot; (&quot;ID&quot;) VALUES 
+(123456789012345678);
+INSERT INTO &quot;BACK_ME_UP&quot; (&quot;ID&quot;) VALUES 
+(123456789012345679);
+
+CREATE UNIQUE INDEX &quot;IDX_BACK_ME_UP_ID&quot; 
+ON &quot;BACK_ME_UP&quot;(&quot;ID&quot;);
+&lt;/pre&gt;
+
+----------------------
+User: mweissenbacher
+Logged In: YES 
+user_id=231195
+
+the problem disappeared with the latest snapshot build 456 
+(superserver) for linux i38</text></argument><argument name="title"><text>NUMERIC(18,0) as unique index problem</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_447535</text></argument><argument name="resources"><set/></argument></extension>

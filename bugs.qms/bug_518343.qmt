@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>518343</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+isql has a debug-only feature called addrow that was 
+enabled by Firebird on the prod version, too. 
+Currently, it allows to add a row, field by field to a 
+table, in an interactive, command-line way. The 
+problem is that for date fields, it uses the tm 
+struct, but the implementor forgot that in tm, the 
+year is 1900 based, hence we get a shift:
+
+SQL&gt; create table t(d timestamp);
+SQL&gt; add t;
+Enter data or NULL for each column.  RETURN to end.
+Enter D as M/D/Y&gt;1/1/2002
+Enter D as M/D/Y&gt;
+Bad date
+
+SQL&gt; select * from t;
+
+                        D
+=========================
+3902-01-01 00:00:00.0000
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+In addition, every string field will be mangled with a 
+trailing LF because the routine doesn't strip it and also 
+it's unable to acknowledge the lone &lt;ENTER&gt; to stop the 
+input loop. Probably the original code used gets() instead 
+of fgets() but it wasn't updated properly when ib_fgets() 
+was introduced.</text></argument><argument name="title"><text>isql's addrow mangles date input</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_518343</text></argument><argument name="resources"><set/></argument></extension>

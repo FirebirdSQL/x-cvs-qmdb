@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>558364</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : Fixed
+Submitted By : hippoman
+Assigned to  : hippoman
+----------------------
+Triggers fail to compile with the error below:
+
+ERROR: ISC ERROR CODE:335544569
+
+ISC ERROR MESSAGE:
+Dynamic SQL Error
+SQL error code = -104
+Token unknown
+PLAN
+
+The same code compiles as SP without problems..
+
+I've committed this as a bug because the 6.0 manuals ( 
+and 5.6 for that matter ) say that triggers support 
+the exact same select syntax than SP..</text></argument><argument name="title"><text>Triggers fail to compile if PLAN used</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_558364</text></argument><argument name="resources"><set/></argument></extension>

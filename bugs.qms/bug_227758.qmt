@@ -1,0 +1,119 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>227758</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+&quot;Terry Fehr&quot; wrote in message news:&lt;3a55e77d_1@dnews&gt;...
+&gt; The following DDL exemplifies more completely the problem I've been
+&gt; encountering with accessing views.
+&gt; 
+&gt; CREATE DOMAIN IDINTEGER AS INTEGER NOT NULL;
+&gt; CREATE DOMAIN IDVARCHAR AS VARCHAR(31) NOT NULL;
+&gt; 
+&gt; CREATE TABLE &quot;Company List&quot;
+&gt; (
+&gt; &quot;Company Name&quot;  IDVARCHAR NOT NULL PRIMARY KEY,
+&gt; &quot;Company ID&quot;   IDINTEGER NOT NULL UNIQUE
+&gt; );
+&gt; 
+&gt; CREATE TABLE &quot;Vendor List&quot;
+&gt; (
+&gt; &quot;Company ID&quot;   IDINTEGER NOT NULL PRIMARY KEY,
+&gt; &quot;Days to Quote Expiration&quot; SMALLINT
+&gt; );
+&gt; 
+&gt; /* The following view is inaccessible.*/
+&gt; 
+&gt; CREATE VIEW &quot;Vendor Name List&quot; (&quot;Company ID&quot;, &quot;Company Name&quot;)
+&gt; AS SELECT &quot;Company ID&quot;, &quot;Company Name&quot; FROM &quot;Company List&quot; CL
+&gt; WHERE EXISTS (SELECT * FROM &quot;Vendor List&quot; VL
+&gt;   WHERE VL.&quot;Company ID&quot; = CL.&quot;Company ID&quot;);
+
+
+The message I got is:
+Cannot access column Company Name in view Vendor Name List
+Statement: select * from &quot;Vendor Name List&quot;
+
+And I verified that IB indeed stored the definition as it appears above, so this is not a problem of IBConsole or IB_WISQL. This is a bug in IB: views based on tables whose fields carry spaces in dialect 3 don't work because they can't access those table's fields.
+
+ 
+&gt; /* However, the equivalent DDL with the spaces removed allows access to the
+&gt; view. */
+&gt; 
+&gt; CREATE TABLE &quot;CompanyList&quot;
+&gt; (
+&gt; &quot;CompanyName&quot;   IDVARCHAR NOT NULL PRIMARY KEY,
+&gt; &quot;CompanyID&quot;    IDINTEGER NOT NULL UNIQUE
+&gt; );
+&gt; 
+&gt; CREATE TABLE &quot;VendorList&quot;
+&gt; (
+&gt; &quot;CompanyID&quot;    IDINTEGER NOT NULL PRIMARY KEY,
+&gt; &quot;DaystoQuoteExpiration&quot;  SMALLINT
+&gt; );
+&gt; 
+&gt; CREATE VIEW &quot;VendorNameList&quot; (&quot;CompanyID&quot;, &quot;CompanyName&quot;)
+&gt; AS SELECT &quot;CompanyID&quot;, &quot;CompanyName&quot; FROM &quot;CompanyList&quot; CL
+&gt; WHERE EXISTS (SELECT * FROM &quot;VendorList&quot; VL
+&gt;   WHERE VL.&quot;CompanyID&quot; = CL.&quot;CompanyID&quot;);
+&gt; 
+&gt; Best Regards,
+&gt; Terry Fehr
+
+Also, I verified that the equivalent selectable stored procedure works, if it's defined as:
+
+set term ^;
+CREATE PROCEDURE &quot;P Vendor Name List&quot; 
+( &quot;Company ID&quot; INTEGER,
+  &quot;Company Name&quot; VARCHAR(31))
+AS begin
+for SELECT &quot;Company ID&quot;, &quot;Company Name&quot; 
+FROM &quot;Company List&quot; CL
+WHERE EXISTS (SELECT * FROM &quot;Vendor List&quot; VL
+   WHERE VL.&quot;Company ID&quot; = CL.&quot;Company ID&quot;)
+into :&quot;Company ID&quot;, :&quot;Company Name&quot; do
+   suspend;
+end ^
+set term ;^
+
+Then,
+select * from &quot;P Vendor Name List&quot;
+gives the right answer.
+
+Second, I tried changing the list of field names exposed by the view itself to dialect 1 names (a &amp; b, in this case), but the problem comes from the table's fields. This change doesn't work:
+
+CREATE VIEW &quot;Vendor Name List&quot; (a, b)
+AS SELECT &quot;Company ID&quot;, &quot;Company Name&quot; 
+FROM &quot;Company List&quot; CL
+WHERE EXISTS (SELECT * FROM &quot;Vendor List&quot; VL
+   WHERE VL.&quot;Company ID&quot; = CL.&quot;Company ID&quot;);
+
+But when I saw the workaround Terry had used, I figured out that the problem was very easy to circumvent:
+
+CREATE VIEW &quot;Vendor Name List 4&quot; 
+(&quot;Company ID&quot;, &quot;Company Name&quot;)
+AS SELECT &quot;Company ID&quot; as x, &quot;Company Name&quot; as y
+FROM &quot;Company List&quot; CL
+WHERE EXISTS (SELECT * FROM &quot;Vendor List&quot; VL
+   WHERE VL.&quot;Company ID&quot; = CL.&quot;Company ID&quot;);
+
+Now,
+select * from &quot;Vendor Name List 4&quot;
+works like a charm. I only altered the internal SELECT of the view to use field labels that can be used without quotes. Although IB doesn't recognize field labels as field aliases, that was all it needed to work.
+
+Silly? Well, workarounds do not have to be brilliant. Creativity and experience count.
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+It was a problem when dealing with embedded spaces in 
+quoted identifiers inside par.c.
+
+C.</text></argument><argument name="title"><text>Field names with spaces cannot be used in VIEWS</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_227758</text></argument><argument name="resources"><set/></argument></extension>

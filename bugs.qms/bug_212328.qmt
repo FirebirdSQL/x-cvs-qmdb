@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>212328</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : IBGuardian
+Group        : Fixed v0.9
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+An internal test release of IBGuard with the name of iscGuard (by Mike) presents a decent date and time formatting in the crash report. No more Y2K problems in the report (IBGuard's properties). This test program closed two handle leaks, but there are still two more, probably produced when IB crashes and it's restarted by the Guardian, because the old handles are not released.
+(IMHO, some parts of IBGuard that I reviewed through the web interface, seems to have been done by a sophomore and not by a professional developer.)
+
+----------------------
+User: jharlindong
+Could you tell me what do you use to detect the leak?
+----------------------
+User: tamlin
+Another handle closed. Check CVS diff. It seems someone put some effort in writing the code to leak this handle!</text></argument><argument name="title"><text>iscGuard (ibguard) still leaks handles</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_212328</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,176 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>743679</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : mkoberstein
+Assigned to  : nobody
+----------------------
+If you want the average value of the first 5 rows,
+you would type this sql:
+
+select first 5 avr(price) from orders
+
+but instead it calculates the average from ALL rows.
+
+
+Then I tried this sql:
+
+select avr(price) from orders where id in (select first 5 id 
+from orders)
+
+But the result is the same.
+
+
+It happens with all aggregate functions. Tested with FB 
+1.02 and FB 1.5 RC2.
+
+
+Best regards,
+Martin Koberstein
+----------------------
+User: danielrail
+Logged In: YES 
+user_id=238419
+
+I can confirm that there's a problem with using FIRST/SKIP 
+within a sub-query in the &quot;IN&quot; clause.  
+
+By using Martin Koberstein's example, here's what I found out:
+
+The statement:
+select avg(price) from orders where id in (select first 5 id 
+from orders order by date)
+
+is the same as:
+select avg(price) from orders where id in (select id from orders 
+order by date)
+
+And, the following statement would return all the rows from 
+the table orders:
+select id from orders where id in (select first 5 id from orders 
+order by date)
+
+So I do think that there is a bug in the engine when it comes 
+to the sub-queries using the FIRST/SKIP, in certain 
+circumstances.
+
+----------------------
+User: mkoberstein
+Logged In: YES 
+user_id=67282
+
+OK. I see that select first 5 avr(price) from orders
+cant work with the current fb design.
+
+@mbabuskow
+Yes I didnt know which topic to choose. so I took this
+one. Sorry for that.
+
+But it doesnt work even if you use ORDER BY.
+
+ex:
+select avr(price) from orders where id in (select first 5 id 
+from orders order by date)
+
+
+Now I have to go the long way and write a loop with a break 
+after 5.
+So the FIRST clause is pretty useless (for me) then.
+
+But I think it should support this functionality.
+
+----------------------
+User: mbabuskov
+Logged In: YES 
+user_id=577247
+
+And I really don't see what has it got to do with ISQL?
+
+Please post this kind of things on devel or support list
+first...
+
+----------------------
+User: mbabuskov
+Logged In: YES 
+user_id=577247
+
+This is not a bug. 
+
+Fisrt/skip only determines which rows of your resultset will
+be returned. 
+
+Since the query is:
+SELECT AVG(price) FROM orders
+it can return only one row.
+
+As for the IN case, how do you determine what 5 record are
+FIRST 5 if you don't do the ORDER BY ?
+
+What exaclty were you trying to select? This looks more like
+support question, and definetly not the engine bug.
+
+IMHO, this entry should be deleted as invalid.
+
+P.S. The bug is marked as &quot;CONFIRMED&quot;, so I wander which of
+FB developers confirmed it?
+----------------------
+User: dimitr
+Logged In: YES 
+user_id=61270
+
+1. SELECT FIRST 5 AVG(...)
+
+
+
+
+It's as designed, because FIRST/SKIP works at the 
+record fetch level, i.e. after any grouping and/or 
+sorting is performed. AFAIK, all other SQL servers 
+have similar implementations.
+
+
+
+
+2. FIRST 5 SKIP 3 ...
+
+
+
+
+See above. Your query returns exactly _one_ row, but 
+you ask the engine to skip first 3 ones before 
+returning anything.
+
+
+
+
+3. &lt;field&gt; IN ( SELECT FIRST 5 ... )
+
+
+
+
+It's a bug in the IN predicate, which is executed the 
+same way as:
+
+
+EXISTS ( SELECT FIRST 5 ... WHERE ... = &lt;filed&gt; )
+
+
+As you can see, FIRST/SKIP won't help you at all in 
+this case.
+
+
+
+----------------------
+User: mkoberstein
+Logged In: YES 
+user_id=67282
+
+I forgot SKIP.
+
+if you type this:
+
+select first 5 skip 3 avr(price) from orders
+
+it returns NULL.
+Hopefully it will be changed in 1.5 final..</text></argument><argument name="title"><text>FIRST / SKIP not well implemented</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_743679</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,121 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>417567</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+Sometimes GBAK can't restore database from successfull 
+backup.
+It can't resolve dependecies between triggered views.
+Example database for reintroduce this situation see 
+below
+
+
+================Cut========================
+
+ CREATE DATABASE 'D:\TEST.GDB' 
+ USER 'SYSDBA' PASSWORD 'masterkey'
+ PAGE_SIZE 1024
+ DEFAULT CHARACTER SET WIN1251;
+
+/* Table: TABLE1, Owner: SYSDBA */
+
+CREATE TABLE TABLE1 
+(
+  FIELD1	SMALLINT
+);
+
+COMMIT WORK;
+SET AUTODDL OFF;
+SET TERM ^ ;
+
+SET TERM ; ^
+COMMIT WORK;
+SET AUTODDL ON;
+
+/* View: VIEW1, Owner: SYSDBA */
+
+CREATE VIEW VIEW1 (
+  FIELD1
+) AS
+
+Select FIELD1 from   TABLE1
+JOIN TABLE1 on FIELD1=FIELD1
+;
+
+/* View: VIEW2, Owner: SYSDBA */
+
+CREATE VIEW VIEW2 (
+  FIELD1
+) AS
+
+Select FIELD1 from   TABLE1
+JOIN TABLE1 on FIELD1=FIELD1
+;
+SET TERM ^ ;
+
+
+/* Triggers only will work for SQL triggers */
+
+
+
+CREATE TRIGGER VIEW1_BU0 FOR VIEW1 
+ACTIVE BEFORE UPDATE POSITION 0
+AS declare variable i integer; BEGIN i=0; END 
+ ^
+
+CREATE TRIGGER VIEW2_BU0 FOR VIEW2 
+ACTIVE BEFORE UPDATE POSITION 0
+AS declare variable i integer; BEGIN i=0; END 
+ ^
+
+COMMIT WORK ^
+
+
+/* Triggers only will work for SQL triggers */
+
+
+ALTER TRIGGER VIEW1_BU0  
+ACTIVE BEFORE UPDATE POSITION 0
+as
+begin
+ if (NEW.FIELD1=1) then
+  UPDate  VIEW2 SET FIELD1=1;
+end
+ ^
+
+ALTER TRIGGER VIEW2_BU0  
+ACTIVE BEFORE UPDATE POSITION 0
+as
+begin
+ if (NEW.FIELD1=2) then
+  UPDate  VIEW1 SET FIELD1=2;
+end
+ ^
+
+COMMIT WORK ^
+SET TERM ;^
+
+
+================Cut========================
+
+
+
+----------------------
+User: nobody
+Logged In: NO 
+
+I regularily see the same problem when foreign key 
+constraints have been been broken when the db is in 
+production (this should NOT happen, seems like CASCADE ON 
+DELETE doesn't work perfercly) and then checked on restore. 
+Horrible since you have to resolve (delete) the offending 
+records before you back up the db. This involves backing up 
+and the restoring to check if it works. If not, resolve 
+conflict, try again and so on.
+
+Regards,
+
+Dag Liodden</text></argument><argument name="title"><text>GBAK can't restore database after backup</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_417567</text></argument><argument name="resources"><set/></argument></extension>

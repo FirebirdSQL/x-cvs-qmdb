@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223513</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+Use CONNECT or CREATE DATABASE to specify a database
+SQL&gt; create database 'z0.fdb';
+SQL&gt; create table t(a int);
+SQL&gt; create view v as select a from t;
+
+/* Notice both T and V are shown, but only T should be shown.
+One can argue that a view is a virtual table, etc. */
+SQL&gt; show tables;
+       T                 V
+
+SQL&gt; show views;
+       V
+
+/* This shouldn't work */
+SQL&gt; show table v;
+A                               INTEGER Nullable
+View Source:
+==== ======
+ select a from t
+
+/* This shouldn't work */
+SQL&gt; show view t;
+A                               INTEGER Nullable
+
+I think isql should stop treating VIEWs as TABLEs in its SHOW command as this is confusing.
+
+C.</text></argument><argument name="title"><text>Ambiguity between tables and views in isql's SHOW commands.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223513</text></argument><argument name="resources"><set/></argument></extension>

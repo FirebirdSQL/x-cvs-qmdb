@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>224810</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+Given these two views:
+
+CREATE VIEW VDISTIDX (RDB$RELATION_NAME) AS
+ select distinct rdb$relation_name from rdb$indices
+
+CREATE VIEW VDISTIDX2 (RDB$RELATION_NAME) AS
+ select rdb$relation_name from rdb$indices
+group by rdb$relation_name
+
+Then
+select count(*) from vdistidx v
+join rdb$relation_fields rf
+on v.rdb$relation_name = rf.rdb$relation_name
+with the scheduler saying
+PLAN SORT (JOIN (V RDB$INDICES NATURAL,RF INDEX (RDB$INDEX_4)))
+
+produces a different result than
+select count(*) from vdistidx2 v
+join rdb$relation_fields rf
+on v.rdb$relation_name = rf.rdb$relation_name
+with the scheduler saying
+PLAN MERGE (SORT (RF NATURAL),SORT (SORT (V RDB$INDICES NATURAL)))
+
+Notice both JOIN statements produce different query plans but both views alone produce the same plan. I think that the first case is a bug: the DISTINCT clause is propagating outside the VIEW; just change the fist case to become
+select rdb$relation_name 
+from VDISTIDX v join rdb$relation_fields rf
+on v.rdb$relation_name = rf.rdb$relation_name
+
+and you'll observe that effectively, the DISTINCT applied to the result of the JOIN, leaving each table name only once. I consider it to be a bug, since other engines (MsSql for example) produced the same result with both statements. Comments?
+
+C.</text></argument><argument name="title"><text>DISTINCT propagates outside a VIEW</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_224810</text></argument><argument name="resources"><set/></argument></extension>

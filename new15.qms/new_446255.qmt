@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>446255</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Feature v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : seanleyne
+Assigned to  : nobody
+----------------------
+?
+----------------------
+User: skidder
+Logged In: YES 
+user_id=495356
+
+Explicit locks are implemented in Firebird 1.5.
+Explicit unlock doesn't fit transaction model well.
+If you need Oracle DBMS_LOCK-like locking create an UDF for 
+it.
+----------------------
+User: mweissenbacher
+Logged In: YES 
+user_id=231195
+
+record versioning is the most powerful feature in firebird/interbase. i 
+don't think it would do any good allowing explicit locking.
+----------------------
+User: marcodugoni
+Logged In: YES 
+user_id=113954
+
+Sorry, I disagree with this one.
+The automatic versioning system in IB/FB is powerful and 
+clean.
+No need for explicit locking...</text></argument><argument name="title"><text>Support explicit record lock/unlock</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_446255</text></argument><argument name="resources"><set/></argument></extension>

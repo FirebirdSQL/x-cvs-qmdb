@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>447404</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : seanleyne
+Assigned to  : robocop
+----------------------
+The incomplete SQL command:
+
+   alter domain dom set;
+
+would kill the engine.</text></argument><argument name="title"><text>Incomplete Alter Domain kills IB</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_447404</text></argument><argument name="resources"><set/></argument></extension>

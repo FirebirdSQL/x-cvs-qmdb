@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>451810</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : tord
+Assigned to  : bellardo
+----------------------
+The skip-count in the new SKIP clause is off by one.
+Additional the skip-count cant be zero.
+
+&lt;snip&gt;
+/*
+* This sql-script tests for the skip-bug
+*
+* set ISC_USER and ISC_PASSWORD, then call
+*    isql -i first.sql
+*/ 
+create database &quot;skip.gdb&quot;;
+create table A (
+	id integer not null
+);
+insert into A (id) values (1);
+insert into A (id) values (2);
+insert into A (id) values (3);
+commit;
+select skip 0
+id from a order by id;
+
+select skip 2
+id from a order by id;
+
+commit;
+drop database;
+&lt;snip&gt;
+
+Expected output is:
+       ID
+=========
+        1
+        2
+        3
+
+       ID
+=========
+        3
+
+Actual output (Build 347) is:
+Invalid parameter to FIRST/LIMIT. Only positiv values 
+allowed.
+
+       ID
+=========
+        2
+        3
+
+PS: The error message talks about LIMIT, too :-)
+
+----------------------
+User: bellardo
+Logged In: YES 
+user_id=79108
+
+There are actually 2 bugs here.  The first one is the bug in the error message.  That has been fixed.
+
+The second bug is the off by one error.  The off by one error was correct for the initial design of the first/skip implementation.  This bug report prompted discussion of that design, and as a result the off by one error has also been fixed.
+----------------------
+User: bellardo
+Logged In: YES 
+user_id=79108
+
+There was a discussion in firebird-devel on the limit syntax.  One of the issues addressed was 0/1 based.  The decision was reached to use 1 based numbers because the majority (maybe all, I'm not sure) of the offsets in SQL are 1 based.</text></argument><argument name="title"><text>SKIP is off by one</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_451810</text></argument><argument name="resources"><set/></argument></extension>

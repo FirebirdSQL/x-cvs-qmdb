@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>449011</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+Unique key and char type in SQL Dialect 3 
+If to create a database with use SQL Dialects 3, to 
+the line data there is a following: 
+Example of the table: 
+CREATE TABLE LABELS ( 
+CODE VARCHAR (13) NOT NULL, 
+VALUT SMALLINT NOT NULL, 
+PRIMARY KEY (CODE)); 
+Both columns should not be equaled NULL and primary 
+(unique!) key - CODE. 
+At addition in a database of a line (for example CODE 
+= &quot;ABC&quot; and VALUT=1) all is normal, 
+But if to remember changes, then it is possible to 
+appropriate(give) to a field CODE=NULL!!! - and it NOT 
+a ZERO INDEX, and primary!!! </text></argument><argument name="title"><text>Unique key and char type in SQLDialect 3</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_449011</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223512</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+Use CONNECT or CREATE DATABASE to specify a database
+SQL&gt; create database 'z0.fdb';
+SQL&gt; create table t(a int);
+SQL&gt; create view v as select a from t;
+
+/* Incorrect behavior, according to SQL standards.
+A view cannot be dropped as a table and vice versa. */
+SQL&gt; drop table v;
+SQL&gt; drop view t;
+
+Diane Brown as confirmed that this is not an expected behavior. DROP TABLE should eliminate only a table, not a view and same restriction exists for DROP VIEW, even though IB shares the namespace between tables, views and procedures.
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+DROP TABLE only drops tables.
+DROP VIEW only drop views.
+Thanks to Ann for directions.</text></argument><argument name="title"><text>DROP VIEW shouldn't drop a table.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223512</text></argument><argument name="resources"><set/></argument></extension>

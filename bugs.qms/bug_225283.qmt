@@ -1,0 +1,180 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>225283</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+Hello, I've decoupled this issue from Bug #122376 that I logged. Frank appended this case, but I think it's critical so it deserves its own separate report and priority. If a sort makes some fields with values to appear with NULL instead, I think it's a rather serious issue:
+
+----------Begin of original post-----------
+From: Jan Bakuwel &lt;jan.bakuwel@ams.greenpeace.org&gt; 
+Subject: InterBase 6 - serious bug or &quot;feature&quot; ? 
+Date: Sun, 12 Nov 2000 20:52:27 +0100 
+
+
+Hoi all, 
+
+Perhaps it's my lack of knowledge of the SQL92 standard, however I think 
+I ran into a very serious bug in InterBase. Any ideas, hints, etc are 
+very welcome (this will stop me from applying InterBase successfully). 
+
+Consider a database with 5 tables and a couple of views, one of those 
+views is called v_observation. Consider two queries (you can try them 
+with IBConsole): 
+
+select * from v_observation 
+
+select * from v_observation order by iobservationagree desc 
+
+These two queries return different (!) results. And not just the 
+order.... It seems InterBase has trouble dealing with NULL values that 
+are returned and, in the second case, completely omit the infomation 
+retrieved from the database. I have the same database in Access ... and 
+everything works perfect (exactly like expected) there! 
+You don't believe it ? You can download the database here: 
+
+http://www.greenpeace.org/~jbakuwel/db_linux.zip (gzipped) 
+http://www.greenpeace.org/~jbakuwel/db_win.zip (zipped) 
+
+Hope to hear from some of you....if not too much trouble please also 
+send you reply to my email address... 
+
+kind regards, 
+Jan 
+Greenpeace- Information Technology 
+------------------End of original post-----------
+
+My comments now, extracted from the answer I did in the NGs:
+
+I have narrowed the case to:
+select IOBSERVATIONAGREE
+from v_observation
+order by 1
+
+The same bug can be seen with:
+select distinct IOBSERVATIONAGREE
+from v_observation
+
+And you get nicer &lt;g&gt; results with:
+select IOBSERVATIONAGREE
+from v_observation
+group by iobservationagree
+
+So the one that works is simply:
+select IOBSERVATIONAGREE
+from v_observation
+
+In light of the examples I've posted above, I declare this to be a bug... unless I missed something really obvious. At first glance, the only difference when the ORDER BY clause is put is the SORT that appears in the query plan. Otherwise, the rest of the plan, including the nested JOINs, is the same.
+
+I think IB was too tired to do the sorting after so many joins that it optimized the values towards NULL. &lt;g&gt;
+
+This is the ugly workaround: replace the final view v_observation by a selectable stored procedure that does the same:
+
+set term ^;
+create procedure test
+returns(IOBSERVATIONID int,
+ILEAGUEID int,
+IUSERID int,
+ICATEGORYID int,
+DSUBMITTED timestamp,
+MOBSERVATION blob sub_type text,
+MQUESTION blob sub_type text,
+MSUGGESTION blob sub_type text,
+MBACKGROUNDINFO blob sub_type text,
+MOFFICIALRESPONSE blob sub_type text,
+IOBSERVATIONAGREE int,
+IOBSERVATIONNEUTRAL int,
+IOBSERVATIONDISAGREE int,
+IQUESTIONAGREE int,
+IQUESTIONNEUTRAL int,
+IQUESTIONDISAGREE int,
+ISUGGESTIONAGREE int,
+ISUGGESTIONNEUTRAL int,
+ISUGGESTIONDISAGREE int,
+IWORKGROUPAGREE int,
+IWORKGROUPNEUTRAL int,
+IWORKGROUPDISAGREE int)
+as begin
+for SELECT
+t_Observation.*,
+v_ObservationAgree.iObservationAgree,
+v_ObservationNeutral.iObservationNeutral,
+v_ObservationDisagree.iObservationDisagree,
+v_QuestionAgree.iQuestionAgree, v_QuestionNeutral.iQuestionNeutral,
+v_QuestionDisagree.iQuestionDisagree,
+v_SuggestionAgree.iSuggestionAgree, v_SuggestionNeutral.iSuggestionNeutral,
+v_SuggestionDisagree.iSuggestionDisagree,
+v_WorkgroupAgree.iWorkgroupAgree, v_WorkgroupNeutral.iWorkgroupNeutral,
+v_WorkgroupDisagree.iWorkgroupDisagree
+FROM (((((((((((t_Observation
+LEFT JOIN v_ObservationAgree ON t_Observation.iObservationID =
+v_ObservationAgree.iObservationID)
+LEFT JOIN v_ObservationNeutral ON t_Observation.iObservationID =
+v_ObservationNeutral.iObservationID)
+LEFT JOIN v_ObservationDisagree ON t_Observation.iObservationID =
+v_ObservationDisagree.iObservationID)
+LEFT JOIN v_QuestionAgree ON t_Observation.iObservationID =
+v_QuestionAgree.iObservationID)
+LEFT JOIN v_QuestionNeutral ON t_Observation.iObservationID =
+v_QuestionNeutral.iObservationID)
+LEFT JOIN v_QuestionDisagree ON t_Observation.iObservationID =
+v_QuestionDisagree.iObservationID)
+LEFT JOIN v_SuggestionAgree ON t_Observation.iObservationID =
+v_SuggestionAgree.iObservationID)
+LEFT JOIN v_SuggestionNeutral ON t_Observation.iObservationID =
+v_SuggestionNeutral.iObservationID)
+LEFT JOIN v_SuggestionDisagree ON t_Observation.iObservationID =
+v_SuggestionDisagree.iObservationID)
+LEFT JOIN v_WorkgroupAgree ON t_Observation.iObservationID =
+v_WorkgroupAgree.iObservationID)
+LEFT JOIN v_WorkgroupNeutral ON t_Observation.iObservationID =
+v_WorkgroupNeutral.iObservationID)
+LEFT JOIN v_WorkgroupDisagree ON t_Observation.iObservationID =
+v_WorkgroupDisagree.iObservationID
+into :IOBSERVATIONID,
+:ILEAGUEID,
+:IUSERID,
+:ICATEGORYID,
+:DSUBMITTED,
+:MOBSERVATION,
+:MQUESTION,
+:MSUGGESTION,
+:MBACKGROUNDINFO,
+:MOFFICIALRESPONSE,
+:IOBSERVATIONAGREE,
+:IOBSERVATIONNEUTRAL,
+:IOBSERVATIONDISAGREE,
+:IQUESTIONAGREE,
+:IQUESTIONNEUTRAL,
+:IQUESTIONDISAGREE,
+:ISUGGESTIONAGREE,
+:ISUGGESTIONNEUTRAL,
+:ISUGGESTIONDISAGREE,
+:IWORKGROUPAGREE,
+:IWORKGROUPNEUTRAL,
+:IWORKGROUPDISAGREE
+do suspend;
+end ^;
+set term ;^
+
+I still think the parenthesis are redundant, since I tried without them and got (apparently) the same results. After all, you have only LEFT JOINs.
+
+Now,
+a) select * from test
+b) select * from test
+order by iobservationagree desc
+c) select * from test
+order by iobservationagree asc
+d) select distinct iobservationagree from test
+
+seem to be all correct, except that IB always sorts NULLs at the tail. This is a known behavior. The trick is to fool the fooler.
+
+If the db is no longer available at
+http://www.greenpeace.org/~jbakuwel/db_win.zip
+there will be a copy of it at
+http://www.cvalde.com/bugs/db_win.zip
+where I include the SP &quot;test&quot; that does work.
+
+C.</text></argument><argument name="title"><text>ORDER BY on a VIEW turns values in fields into NULL</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_225283</text></argument><argument name="resources"><set/></argument></extension>

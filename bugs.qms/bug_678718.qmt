@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>678718</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : None
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : None
+Submitted By : prismatec
+Assigned to  : dimitr
+----------------------
+HI!
+A few days later my IBserver 6.01 (w2k) hangs.
+The service does not respon to new connections.
+Can=B4t stop then service. Still stopping.=20
+I wait until 10 minuts to decide root the server.
+I need to go to client house.
+This is the situation:
+1)The client use a firewall. Only 3050 port can be 
+oppened to my server.
+2) My server not have a firewall (not installed yet) 
+therefor, all ports are open. I use w2k and ib 6.01 and 
+tested with Firebird too.
+3) The  software developed by me, use events registered 
+in server to run some porcesses in client (post_event 
+SQL command).
+4) Well, I discover tha when The client register the event 
+in server, the server iniciate a connection in other port, 
+like 3749, in this case. This second connection are 
+dropped by the firewall.
+5) Since the IBServer service not respond ever more, not 
+iniciate new conections in any other base.
+6) If I stop the service, they stil &quot;stpping&quot; forever. I wait 
+more then 30minuts to decide reboot the machine
+
+In other connections with ADSL I had the same problem
+(ibserver freeze). I think is the same origin problem.
+
+My solution was eliminate post_event from by base and 
+applications...
+
+Is not really a good solution!</text></argument><argument name="title"><text>ib/fb freeze when can?t open event connection</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_678718</text></argument><argument name="resources"><set/></argument></extension>

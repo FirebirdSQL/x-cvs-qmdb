@@ -1,0 +1,168 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>544132</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : prenosil
+Assigned to  : nobody
+----------------------
+When you call UDF that
+
+- returns BLOB
+- is invoked with NULL as last _input_ parameter 
+(regardless of its type)
+
+then blob_handle of this _output_ blob will be zero.
+(And consequently such UDF is not able to return any 
+useful data.)
+
+When the UDF then calls blob_put_segment() with zero 
+handle,
+the server crashes with this message in the log:
+====
+Access violation.
+	The code attempted to access a virtual
+	address without privilege to do so.
+This exception will cause the Firebird server
+to terminate abnormally.
+====
+
+
+----------------------
+User: prenosil
+Logged In: YES 
+user_id=89535
+
+Sorry for too short report.
+I should have begin with FB version tested:
+  FB 1.0  (and also IB 6.1) for Windows.
+
+
+&gt; Please post an example that supports clearly your claim.
+
+o.k. here is UDF that should _always_ create blob 
+containing text 'Test',
+regardless of input parameters:
+
+// PBlob is defined e.g. in &quot;ib_externals.pas&quot;
+// (from FreeUDFlib).
+function test
+  (var a, b, c:integer; outBlob: PBlob): integer; stdcall;
+var s:array[1..4] of char;
+begin
+  ShowMessage('BlobHandle='
+               +IntToStr(Integer(outBlob^.BlobHandle)));
+  Result := 0;
+  if (not Assigned(outBlob)) or
+     (not Assigned(outBlob^.BlobHandle)) then exit;
+  s := 'Test';
+  outBlob^.PutSegment(outBlob^.BlobHandle, @s, Length(s));
+end;
+
+
+DECLARE EXTERNAL FUNCTION test
+  INTEGER,
+  INTEGER,
+  INTEGER,
+  BLOB RETURNS PARAMETER 4
+  ENTRY_POINT 'test'
+  MODULE_NAME 'my_udf';
+
+CREATE TABLE TAB2
+  (I1 INTEGER, I2 INTEGER, I3 INTEGER, B BLOB SUB_TYPE 
+TEXT);
+
+INSERT INTO TAB2 (I1, I2, I3) VALUES (1,2,3);
+INSERT INTO TAB2 (I1, I2, I3) VALUES (4,5,NULL);
+
+UPDATE TAB2 SET B=test(I1,I2,I3);
+
+SELECT * FROM TAB2;
+
+     I1      I2      I3             B   blob-contents
+======= ======= ======= =============   =============
+      1       2       3          88:2   Test  &lt;&lt; O.K.
+      4       5  &lt;null&gt;          88:4   Test  &lt;&lt; WRONG !
+
+Thanks to ShowMessage() we know that blob-handle for second 
+row was zero; so
+- WHY is it zero ?!
+- WHY the second blob also contains 'Test', even though 
+blob_put_segment() was not called ?!
+
+
+
+&gt; - Third, the supposed &quot;failure&quot; you see after the access 
+&gt; violation is AS DESIGNED. When a UDF performs and invalid 
+&gt; operation, the engine catches the operating system signal 
+&gt; or structured exception and shutdowns itself to avoid 
+&gt; further data corruption. I explained once in fb-devel the 
+&gt; types of errors that are caught and handled this way. The 
+&gt; UDF should check if it got a null blob struct pointer. If 
+&gt; it was a null blob handle, then the UDF wouldn't fail.The 
+&gt; engine always passes a valid output blob pointer, however.
+
+Yes, I do understand why the server shuts down after
+catching AV. For output blob, blob struct pointer should
+never be null (and is not); if it was, it would be UDF's
+fault trying to dereference it, of course.
+But output-blob's blob-handle should also be always
+valid/not null, which is not; UDF can of course test
+whether blob-handle is null, but should not
+blob_put_segment() itself be immune against wrong blobhandle
+(the same way as UDF is immune against wrong blob struct 
+pointer) ?
+When calling blob_put_segment, UDF just passes value
+it received from server; why should it test the values that
+server sends to itself? Nevertheless, this is just
+minor/secondary problem. Main problem is that blob-handle
+is zero when it should not be.
+
+
+&gt; - Second, I just tried this and got no bad effect:
+&gt; select string2blob(cast(null as char)) from rdb$database;
+&gt; This UDF receives a varchar and outputs a blob. It 
+doesn't 
+&gt; matter whether I use char or varchar in the cast. No 
+&gt; problem.
+
+CREATE TABLE TAB1
+  (S VARCHAR(20), B BLOB SUB_TYPE TEXT);
+INSERT INTO TAB1(S) VALUES ('One');
+INSERT INTO TAB1(S) VALUES (NULL);
+INSERT INTO TAB1(S) VALUES ('Two');
+INSERT INTO TAB1(S) VALUES (NULL);
+
+UPDATE TAB1 SET B=string2blob(S);
+SELECT * FROM TAB1;
+
+S             B  blob-contents
+========= =====  =============
+One        87:4  One
+&lt;null&gt;     87:5  One &lt;&lt; WRONG
+Two        87:6  Two
+&lt;null&gt;     87:7  Two &lt;&lt; WRONG
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Please post an example that supports clearly your claim.
+- First, there's no trace in source code that the last 
+param is related in any way to the blob output, provided 
+that the UDF is in sync with its declaration, of course.
+- Second, I just tried this and got no bad effect:
+select string2blob(cast(null as char)) from rdb$database;
+This UDF receives a varchar and outputs a blob. It doesn't 
+matter whether I use char or varchar in the cast. No 
+problem.
+- Third, the supposed &quot;failure&quot; you see after the access 
+violation is AS DESIGNED. When a UDF performs and invalid 
+operation, the engine catches the operating system signal 
+or structured exception and shutdowns itself to avoid 
+further data corruption. I explained once in fb-devel the 
+types of errors that are caught and handled this way. The 
+UDF should check if it got a null blob struct pointer. If 
+it was a null blob handle, then the UDF wouldn't fail. The 
+engine always passes a valid output blob pointer, however.</text></argument><argument name="title"><text>UDF with NULL input parameter</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_544132</text></argument><argument name="resources"><set/></argument></extension>

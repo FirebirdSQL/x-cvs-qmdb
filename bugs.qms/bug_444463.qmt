@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>444463</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Later
+Submitted By : kdv
+Assigned to  : robocop
+----------------------
+&quot;Before&quot; triggers (insert and update) allows to change 
+field values that they will not pass table check 
+constraints. Before triggers are firing after check 
+constraints, which is wrong and can make data 
+unrestorable.
+
+example script:
+
+to test what is firing first - triggers or checks - we 
+can create triggers that violate checks:
+
+CREATE TABLE TEST1 (I INTEGER 
+  check (i between 1 and 5));
+
+CREATE TRIGGER TEST1_BI FOR TEST1
+ACTIVE BEFORE INSERT POSITION 0
+as begin
+ new.i=6;
+end
+
+CREATE TRIGGER TEST1_BU FOR TEST1
+ACTIVE BEFORE UPDATE POSITION 0
+as begin
+ new.i=7;
+end
+
+then call
+
+INSERT INTO TEST1 VALUES (2);
+select * from test1;
+
+           I
+============
+
+           6
+
+UPDATE TEST1 SET I=2 WHERE I = 6;
+select * from test1;
+
+           I
+============
+
+           7
+
+As can be seen, check constraint is performed 
+BEFORE &quot;before&quot; triggers. Than if such database will 
+be restored from backup, it will give error that field 
+data violates check constraint.
+
+If triggers position will be changed to 5 or greater 
+(64K position was not tested) it does not affect test 
+results.
+
+Correct logic, when checks are applied after &quot;before&quot; 
+triggers, will give exceptions running this test cript.
+
+Tested on: Firebird 0.9.4.41, 0.9.5.290, Interbase 
+6.0.1.6 (trial).</text></argument><argument name="title"><text>before triggers are firing after checks</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_444463</text></argument><argument name="resources"><set/></argument></extension>

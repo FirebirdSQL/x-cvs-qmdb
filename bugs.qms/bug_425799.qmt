@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>425799</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+With a domain being an array, renaming the domain 
+causes rdb$field_dimensions to be left unchanged; 
+hence the connection between a domain and its 
+dimensions specification is broken.
+
+Example:
+create domain dunno int[0];
+commit;
+alter domain dunno to ditto;
+commit;
+select * from rdb$field_dimensions;
+=&gt; will show that the referenced domain is 
+still &quot;DUNNO&quot; instead of &quot;DITTO&quot;. System tables are 
+out of sync.
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+DYN_modify_global_field has been fixed in dyn_mod.e, so the 
+dimensions of a domain (when it's an array) get the new 
+name, too.
+
+C.</text></argument><argument name="title"><text>Renamed domain leaves behind dimensions</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_425799</text></argument><argument name="resources"><set/></argument></extension>

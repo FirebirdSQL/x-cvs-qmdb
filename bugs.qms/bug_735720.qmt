@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>735720</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : askln
+Assigned to  : nobody
+----------------------
+Tested on Firebird 1.5 Windows SS
+
+Given the following declarations
+
+CREATE TABLE t (
+  id INTEGER NOT NULL PRIMARY KEY,
+  s VARCHAR(50)
+);
+CREATE INDEX idx ON t(s); /* ! */
+
+INSERT INTO t VALUES (1, '');
+INSERT INTO t VALUES (2, 'X');
+
+SET TERM ;; ;
+
+CREATE PROCEDURE good RETURNS (id INTEGER) AS
+BEGIN
+  FOR SELECT id FROM t WHERE s STARTING WITH '' INTO :id DO SUSPEND;
+END;;
+
+CREATE PROCEDURE bad RETURNS (id INTEGER) AS
+  DECLARE v VARCHAR(50) = '';
+BEGIN
+  FOR SELECT id FROM t WHERE s STARTING WITH :v INTO :id DO SUSPEND;
+END;;
+
+SELECT * FROM good; returns (1, 2),
+while SELECT * FROM bad; returns only (1)
+other (non-empty) strings seem to work ok
+
+the problem appears only when index 'idx' is defined, without it both selects return correct results.
+
+----------------------
+User: askln
+Logged In: YES 
+user_id=757561
+
+Just found a probably duplicating report (578887).
+Nevertheless, I think this report is still relevant, as original 
+submitter did not found the actual bug, but apparently thought 
+that such behaviour is intentional.
+
+----------------------
+User: askln
+Logged In: YES 
+user_id=757561
+
+Just confirmed it with latest Win32 RC2 build (3389)</text></argument><argument name="title"><text>SELECT ... STARTING WITH :v is wrong when :v = ''</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_735720</text></argument><argument name="resources"><set/></argument></extension>

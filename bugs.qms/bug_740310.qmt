@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>740310</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : joeny
+Assigned to  : nobody
+----------------------
+- FireBird 1.5 RC2
+- Windows NT 5.00.2195 Service Pack 2 (Windows 2000)
+
+When I use/register events, I occasionally get the 
+following error when I disconnect from the database:
+
+      Access violation at address 10024A58 in module
+      'gds32.dll&quot;. Write of address 03B8902E.
+
+This only happens when I connect via TCP/IP. Local
+connections are OK. It is very hard to reproduce since
+it is very inconsistent.
+
+I think this is related to [Firebird-devel] bug# 117514
+(gds32.dll raise intermittent exceptions)
+
+Any solution for this?
+
+Thanks :)</text></argument><argument name="title"><text>GDS32.dll Access Violations, Events</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_740310</text></argument><argument name="resources"><set/></argument></extension>

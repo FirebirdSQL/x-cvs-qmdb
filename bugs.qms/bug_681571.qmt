@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>681571</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : makowski
+Assigned to  : nobody
+----------------------
+Search functions on blobs seem to work
+ exclusively on blob segments, so if your string starts
+in one segment and ends in the next segment, you won't
+find it</text></argument><argument name="title"><text>Like or containing with blob fail</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_681571</text></argument><argument name="resources"><set/></argument></extension>

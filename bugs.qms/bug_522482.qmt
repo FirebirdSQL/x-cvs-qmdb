@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>522482</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : phoove
+Assigned to  : nobody
+----------------------
+Using dbExpress in Delphi 6.0, I receive a Firebird 
+error when I issue a RefreshRecord command on a 
+TSQLClientDataSet. The Refresh command works fine.
+
+The problem does not occur when using Linux Firebird 
+(LI-T1.0.0.368) or Windows Interbase  (WI-V6.0.1.6). 
+It only occurs for me with Windows Firebird WI-
+T6.2.567 RC1 on Windows 98 (2nd Edition) and Windows 
+Firebird RC2 on Windows ME.
+
+Paul Hooverson
+EasyChair Software</text></argument><argument name="title"><text>RefreshRecord Error in Windows RC1, RC2</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_522482</text></argument><argument name="resources"><set/></argument></extension>

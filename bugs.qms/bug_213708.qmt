@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>213708</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9
+Status       : Closed
+Resolution   : Fixed
+Submitted By : patrickgriffin
+Assigned to  : nobody
+----------------------
+When connecting to IB60, microfocus COBOL programs receive:
+
+Dynamic SQL Error
+-SQL error code = -502
+-Declared cursor already exists
+
+Host system AIX 4.2.1.0
+
+The identical program will work properly when connecting:
+- locally to IB40C
+- remotely to IB5.6
+
+The program fails when connecting:
+- locally to IB60 on AIX (CLASSIC configuration)
+- remotely to IB60 on WINNT (SUPERSERVER configuration)
+
+The problem holds true when the sample program is GPRE'ed with IB40C and with IB60.
+
+...pat
+----------------------
+User: patrickgriffin
+Change committed.
+----------------------
+User: patrickgriffin
+This bug is caused by the fact that COBOL does not use null terminated strings.
+
+The routine GDS_DSQL_SET_CURSOR assumes that all Dialect 1 cursor names are null terminated.  Since COBOL names aren't, the cursor named used internally by Interbase may include other variables - variable which can change as the program proceeds.
+
+If an included variable changes during processing, the next call to set_cursor_name (a part of the COBOL OPEN Cursor statment will fail with a -502.  
+
+If the included variable happen to stay static, then the cursor will reopen with no problems -- leading to the randomniss of this bug.
+
+The altered code will be submited to IB-Build.
+
+...pat
+----------------------
+User: patrickgriffin
+There are three conditions where set cursor name can return -502.
+
+This problem seems to be related to the following code in dsql/dsql.c:
+
+ +1016  /* If there already is a cursor and its name isn't the same, ditto.
+ +1017     We already know there is no cursor by this name in the hash table */
+ +1018
+ +1019  if (!request-&gt;req_cursor)
+ +1020      request-&gt;req_cursor = MAKE_symbol (request-&gt;req_dbb, cursor,
+ +1021          length, SYM_cursor, request);
+ +1022  else
+ +1023      {
+ +1024      assert (request-&gt;req_cursor != symbol);
+ +1025      ERRD_post (gds__sqlerr, gds_arg_number, (SLONG) -502,
+ +1026          gds_arg_gds, gds__dsql_decl_err,
+ +1027          0);
+ +1028      };
+
+...pat</text></argument><argument name="title"><text>-502 Declared cursor already exist</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_213708</text></argument><argument name="resources"><set/></argument></extension>

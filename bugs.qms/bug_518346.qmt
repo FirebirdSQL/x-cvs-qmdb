@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>518346</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+A person named Heiko Tappe said in bpi.general that 
+the engine accepts invalid dates and later complains. 
+Fiddling with IBX, he goes and overwrites the 4th byte 
+with value 255 in the sqldata member of the XSQLVAR 
+struct, when he's inserting into a timestamp field 
+like the one in table &quot;t&quot; shown above. He gets an 
+exception.
+Well, I've found that the exception comes from IBX, 
+since isql doesn't complain... but isql shows a 
+screwed result, that's an indication the engines DOES 
+accept invalid dates!
+
+Same steps as shown above, inserting the same example 
+date, but I used the
+MSVC debugger to step into add_row() and tweak the 
+input values by hand,
+mimicking Heiko's example. Since he did
+
+(IBSQL.ParamByName('Datum').AsXSQLVAR.sqldata+3)^ := 
+#255;
+
+I used the debugger into add_row:
+
+case SQL_TYPE_DATE:
+[snip]
+    else
+	{
+	ULONG	date [2];
+	times.tm_mon--;
+	stringvalue = (SCHAR*) ISQL_ALLOC ((SLONG) 
+(ivar-&gt;sqllen + 1));
+	isc_encode_date (&amp;times, date);
+	ivar-&gt;sqldata = stringvalue;
+	((ULONG *)stringvalue) [0] = date [0];
+	if (type == SQL_TIMESTAMP)
+	    ((ULONG *)stringvalue) [1] = date [1];
+	}
+    break;
+
+And then set stringvalue[3] to 255 after these lines 
+were executed. The
+insertion happens. No error code. After that, I get:
+
+SQL&gt; select * from t;
+
+                        D
+=========================
+3902-01-01 00:00:00.0000
+-42032--04--09 00:00:00.0000
+
+No surprise IBX pukes, since the engine accepted 
+garbage!  What isql got
+exactly is
+tm_mday=-9
+tm_mon=-5
+tm_year=-43932
+in the famous struct tm.
+
+Let's separate things: this is not about accepting and 
+invalid date and returning it shifted to a sensible 
+date. When the date is rebuilt from the internal 
+format, it's still invalid. Neither the isc_encode* 
+functions care to check their input params nor the 
+engine validates dates already converted to the 
+internal format that come in parameters. Negative 
+years may make sense, but negative months and days 
+don't have sense in a typical date. Only DSQL does a 
+check on dates that come as literal strings.
+(A different issue is whether we should support dates 
+before year 1 of our era.)</text></argument><argument name="title"><text>input of invalid dates through params</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_518346</text></argument><argument name="resources"><set/></argument></extension>

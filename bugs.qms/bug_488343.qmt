@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>488343</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : fabianobonin
+Assigned to  : nobody
+----------------------
+/*
+I had a problem today that i think it's very serious, 
+because it affects the result of aggregate fields and 
+the number of returned records, too.
+When i join a view with a distinct clause, it returns 
+wrong results when there are aggregate fields.
+The following script will show this: */
+
+create table customers (
+  id integer,
+  name varchar(10) );
+
+create table invoices (
+  id integer,
+  cust_id integer,
+  code varchar(10),
+  quantity integer );
+
+create view v_customers as
+select DISTINCT id, name from customers;
+
+insert into customers values (1, 'Me');
+
+insert into invoices values (1, 1, 'Inv.1', 5);
+insert into invoices values (2, 1, 'Inv.2', 10);
+insert into invoices values (3, 1, 'Inv.3', 15);
+insert into invoices values (4, 1, 'Inv.4', 20);
+
+/* table inner joining the table */
+select sum(inv.quantity) from invoices inv inner join 
+customers cust on inv.cust_id = cust.id;
+/* returns 50 */
+
+/* table inner joining the view */
+select sum(inv.quantity) from invoices inv inner join 
+v_customers cust on inv.cust_id = cust.id;
+/* returns 20 !?!? */
+
+/* table left joining the view */
+select sum(inv.quantity) from invoices inv left join 
+v_customers cust on inv.cust_id = cust.id;
+/* returns 50 */
+
+/* view left joining the table */
+select sum(inv.quantity) from v_customers cust left 
+join invoices inv on inv.cust_id = cust.id;
+/* returns 20 !?!? */
+
+/* all instructions should return 50 */
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+This is probably a side effect of this older bug:
+[ #224810 ] DISTINCT propagates outside a VIEW</text></argument><argument name="title"><text>Problem joining views</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_488343</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>546274</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : None
+Submitted By : andreik
+Assigned to  : arnobrinkman
+----------------------
+hi,
+
+In Firebird 1.0 one can do the next query:
+
+SELECT udf(datefield), count(*) FROM sometable
+  GROUP BY udf(datefield)
+
+But the next statement raises an error:
+
+SELECT EXTRACT(month FROM datefield), count(*)
+  FROM sometable GROUP BY EXTRACT(MONTH FROM datefield)</text></argument><argument name="title"><text>group by  EXTRACT function doesn't work</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_546274</text></argument><argument name="resources"><set/></argument></extension>

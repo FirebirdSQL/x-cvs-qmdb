@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>228526</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nandod
+Assigned to  : robocop
+----------------------
+I noticed that IB happily executes an ambiguous query of the form:
+
+select ...
+from orders o
+left join customers c1 on (o.customer_id1 = c1.id)
+left join customers c2 on (o.customer_id2 = c2.id)
+where somefield = 'somevalue'
+
+Assuming &quot;somefield&quot; exists in both the customers and the orders table,
+the query is ambiguous unless the reference in the where clause is
+qualified.
+
+The result is unpredictable.
+A syntax error should be returned in such cases.
+
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+ambigous references now raised an error when submitted.
+----------------------
+User: robocop
+When several tables are used and some of them have the same name, the WHERE clause applies to the ambiguous field of the last table that has it (from left to right when tables are anumerated in the FROM clause). This problem may change silently the filtering and hence the result set when a LEFT JOIN has been used, since it's not symmetric. The only solution is to qualify the field names. Nando used WHERE, here's an example with ORDER BY that has the same bug:
+
+select r.rdb$relation_name, rc.rdb$relation_name, rc.rdb$constraint_type
+from rdb$relations r left join rdb$relation_constraints rc
+on r.rdb$relation_name = rc.rdb$relation_name
+order by rdb$relation_name
+
+will use implicitly rc.rdb$relation_name, IE, last appearance of the ambiguous field. So, if you want to sort by the first field, you have to use
+order by r.rdb$relation_name
+that's probably what you want. In this example, the error is easy to see but most users tend to type
+select * from t1 left join t2 on condition
+so only examining the results can make the user aware of a possible problem.
+
+C.</text></argument><argument name="title"><text>ambiguous statements return unpredictable results</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_228526</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,14 +1,14 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Domain creation must fail (SQLCODE -104) if domain name is equal to datatype name.
-</text></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 
 CREATE DOMAIN INT AS VARCHAR(32);
 
 DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>Statement failed, SQLCODE = -104
+</text></argument><argument name="description"><text>Domain creation must fail (SQLCODE -104) if domain name is equal to datatype name.
+</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdout"><text/></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text>Statement failed, SQLCODE = -104
 
 Dynamic SQL Error
 -SQL error code = -104
 -Token unknown - line 1, char 15
 -INT
-</text></argument><argument name="title"><text>CREATE DOMAIN - domain name equal to existing datatype</text></argument><argument name="test_id"><text>skopalik_0176</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="title"><text>CREATE DOMAIN - domain name equal to existing datatype</text></argument><argument name="test_id"><text>skopalik_0176</text></argument><argument name="target_group"><text>.*</text></argument></extension>

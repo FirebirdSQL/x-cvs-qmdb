@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>461712</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : trevorjones
+Assigned to  : nobody
+----------------------
+If I have a stored procedure which computes a debtor's 
+account balance at 
+a specified date eg:
+
+create procedure debtor_balance_at( 
+account_id integer, 
+balance_date date )
+returns (
+balance_total numeric(18,2),
+balance_outstanding numeric(18,2))
+as
+begin
+  /* the real procedure is more complex, but
+     this works as an example */
+  select balance_total, balance_outstanding 
+  from debtor_balance
+  where (account_id = :account_id)
+  and (balance_date = :balance_date)
+  into :balance_total, :balance_outstanding;
+
+  suspend;
+end
+
+and I create a computed field on the debtor_account 
+table:
+
+alter table debtor_account add balance_outstanding
+computed by (( select balance_outstanding 
+   from 
+   debtor_balance_at( 
+debtor_account.account_id, 'today' )));
+
+I can see the outstanding balance on the 
+debtor_account table.
+
+Great.
+
+If I disconnect from the database, then reconnect..
+
+select * from debtor_account where account_id = [well 
+anything]
+
+the server crashes.
+
+If I re-connect and re-compile the debtor_balance_at 
+procedure everything 
+works.
+
+Anytime I connect to the database and do not re-
+compile the procedure, if 
+a select returns the computed field,  the server 
+crashes.
+
+Every time I connect and re-compile debtor_balance_at, 
+I can view the 
+computed field without problem.
+
+There's a fix/workaround.  Change the computed field 
+to use current_date 
+instead of 'today'.
+
+Not a big deal, but since Interbase is happy with both 
+versions of my 
+computed field (at least syntactically) and produces 
+correct results 
+until I disconnect, I'm surprised that the 'today' 
+version is allowed to 
+crash the server.  In a multi-user environment 
+(especially with a 
+SuperServer) this could make me very unpopular.
+
+The problem is the same on IB6 and Firebird1.
+
+Maybe I should be using a cast('today' as date) or 
+stick with using 
+current_date.  That's not what worries me. The server 
+crash is a bit 
+bothersome.</text></argument><argument name="title"><text>Computed field crashes server</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_461712</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,260 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>219525</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : arnobrinkman
+----------------------
+I've copied the complete message and I will add my comment at the bottom:
+
+=========
+&quot;Marco Rocci&quot; wrote in message news:stetuscrcqkdfc39iuqv7jvss0f2dm1s90@4ax.com...
+&gt; 
+&gt; ---begin metadata---
+&gt; 
+&gt; CREATE DATABASE &quot;JoinTest.gdb&quot; USER &quot;SYSDBA&quot; PASSWORD &quot;masterkey&quot;
+&gt; PAGE_SIZE 2048;
+&gt; 
+&gt; CREATE DOMAIN d_currency AS FLOAT;
+&gt; CREATE DOMAIN d_date     AS TIMESTAMP;
+&gt; CREATE DOMAIN d_des      AS VARCHAR(30);
+&gt; CREATE DOMAIN d_percent  AS FLOAT;
+&gt; CREATE DOMAIN d_arecod   AS SMALLINT;
+&gt; CREATE DOMAIN d_itmcod   AS SMALLINT;
+&gt; CREATE DOMAIN d_colcod   AS SMALLINT;
+&gt; CREATE DOMAIN d_detcod   AS SMALLINT;
+&gt; CREATE DOMAIN d_dsccod   AS SMALLINT;
+&gt; CREATE DOMAIN d_invcod   AS INTEGER;
+&gt; 
+&gt; /* Lookup tables */
+&gt; 
+&gt; CREATE TABLE tabare (
+&gt;   arecod d_arecod    NOT NULL,
+&gt;   aredes d_des       NOT NULL
+&gt; );
+&gt; 
+&gt; CREATE TABLE tabcol (
+&gt;   colcod d_colcod    NOT NULL,
+&gt;   coldes d_des       NOT NULL
+&gt; );
+&gt; 
+&gt; CREATE TABLE tabdsc (
+&gt;   dsccod d_dsccod    NOT NULL,
+&gt;   dscdes d_des       NOT NULL,
+&gt;   dscmlt d_percent
+&gt; );
+&gt; 
+&gt; CREATE TABLE tabitm (
+&gt;   itmcod d_itmcod    NOT NULL,
+&gt;   itmdes d_des       NOT NULL
+&gt; );
+&gt; 
+&gt; /* Main tables */
+&gt; 
+&gt; CREATE TABLE tabdet (
+&gt;   invcod d_invcod    NOT NULL,
+&gt;   detcod d_detcod    NOT NULL,
+&gt;   itmcod d_itmcod    NOT NULL,
+&gt;   colcod d_colcod            ,
+&gt;   detuni SMALLINT    NOT NULL,
+&gt;   detppu d_currency  NOT NULL,
+&gt;   dsccod d_dsccod    NOT NULL
+&gt; );
+&gt; 
+&gt; CREATE TABLE tabinv (
+&gt;   invcod d_invcod    NOT NULL,
+&gt;   invnum VARCHAR(10) NOT NULL,
+&gt;   invdt  d_date      NOT NULL,
+&gt;   arecod d_arecod
+&gt; );
+&gt; 
+&gt; /* Primary keys */
+&gt; 
+&gt; ALTER TABLE tabare ADD CONSTRAINT tabare_PK PRIMARY KEY (arecod);
+&gt; ALTER TABLE tabcol ADD CONSTRAINT tabcol_PK PRIMARY KEY (colcod);
+&gt; ALTER TABLE tabdsc ADD CONSTRAINT tabdsc_PK PRIMARY KEY (dsccod);
+&gt; ALTER TABLE tabitm ADD CONSTRAINT tabitm_PK PRIMARY KEY (itmcod);
+&gt; ALTER TABLE tabdet ADD CONSTRAINT tabdet_PK PRIMARY KEY
+&gt; (invcod,detcod);
+&gt; ALTER TABLE tabinv ADD CONSTRAINT tabinv_PK PRIMARY KEY (invcod);
+&gt; 
+&gt; /* Unique keys */
+&gt; 
+&gt; ALTER TABLE tabare ADD CONSTRAINT aredes_UK       UNIQUE (aredes);
+&gt; ALTER TABLE tabcol ADD CONSTRAINT coldes_UK       UNIQUE (coldes);
+&gt; ALTER TABLE tabdsc ADD CONSTRAINT dscdes_UK       UNIQUE (dscdes);
+&gt; ALTER TABLE tabitm ADD CONSTRAINT itmdes_UK       UNIQUE (itmdes);
+&gt; ALTER TABLE tabdet ADD CONSTRAINT invcoditmcod_UK UNIQUE
+&gt; (invcod,itmcod);
+&gt; 
+&gt; /* Foreign keys */
+&gt; 
+&gt; ALTER TABLE tabdet ADD CONSTRAINT tabdet_tabinv_FK FOREIGN KEY
+&gt; (invcod) REFERENCES tabinv (invcod);
+&gt; ALTER TABLE tabdet ADD CONSTRAINT tabdet_tabitm_FK FOREIGN KEY
+&gt; (itmcod) REFERENCES tabitm (itmcod);
+&gt; ALTER TABLE tabdet ADD CONSTRAINT tabdet_tabcol_FK FOREIGN KEY
+&gt; (colcod) REFERENCES tabcol (colcod);
+&gt; ALTER TABLE tabdet ADD CONSTRAINT tabdet_tabdsc_FK FOREIGN KEY
+&gt; (dsccod) REFERENCES tabdsc (dsccod);
+&gt; ALTER TABLE tabinv ADD CONSTRAINT tabinv_tabare_FK FOREIGN KEY
+&gt; (arecod) REFERENCES tabare (arecod);
+&gt; 
+&gt; /* Views */
+&gt; 
+&gt; CREATE VIEW view_det (
+&gt;     invcod ,
+&gt;     detcod ,
+&gt;     itmcod ,
+&gt;     colcod ,
+&gt;     detuni ,
+&gt;     detppu ,
+&gt;     dsccod ,
+&gt;     itmdes ,
+&gt;     dscdes ,
+&gt;     coldes )
+&gt;   AS SELECT
+&gt;     a.invcod ,
+&gt;     a.detcod ,
+&gt;     a.itmcod ,
+&gt;     a.colcod ,
+&gt;     a.detuni ,
+&gt;     a.detppu ,
+&gt;     a.dsccod ,
+&gt;     b.itmdes ,
+&gt;     c.dscdes ,
+&gt;     d.coldes
+&gt;   FROM tabdet a
+&gt;     LEFT OUTER JOIN tabcol d ON a.colcod=d.colcod
+&gt;     INNER      JOIN tabitm b ON a.itmcod=b.itmcod
+&gt;     INNER      JOIN tabdsc c ON a.dsccod=c.dsccod
+&gt; ;
+&gt; 
+&gt; CREATE VIEW view_inv (
+&gt;     invcod ,
+&gt;     invnum ,
+&gt;     invdt  ,
+&gt;     arecod ,
+&gt;     aredes )
+&gt;   AS SELECT
+&gt;     a.invcod ,
+&gt;     a.invnum ,
+&gt;     a.invdt  ,
+&gt;     a.arecod ,
+&gt;     b.aredes
+&gt;   FROM tabinv a
+&gt;     LEFT OUTER JOIN tabare b ON a.arecod=b.arecod
+&gt; ;
+&gt; 
+&gt; COMMIT;
+&gt; 
+&gt; /* Example Data */
+&gt; 
+&gt; INSERT INTO tabare (arecod,aredes) VALUES (1,'Area A');
+&gt; INSERT INTO tabare (arecod,aredes) VALUES (2,'Area B');
+&gt; INSERT INTO tabare (arecod,aredes) VALUES (3,'Area C');
+&gt; 
+&gt; INSERT INTO tabcol (colcod,coldes) VALUES (1,'Red'   );
+&gt; INSERT INTO tabcol (colcod,coldes) VALUES (2,'Green' );
+&gt; INSERT INTO tabcol (colcod,coldes) VALUES (3,'Blue'  );
+&gt; INSERT INTO tabcol (colcod,coldes) VALUES (4,'Yellow');
+&gt; 
+&gt; INSERT INTO tabdsc (dsccod,dscdes,dscmlt) VALUES (1,'Discount
+&gt; A',90.00);
+&gt; INSERT INTO tabdsc (dsccod,dscdes,dscmlt) VALUES (2,'Discount
+&gt; B',80.00);
+&gt; INSERT INTO tabdsc (dsccod,dscdes,dscmlt) VALUES (3,'Discount
+&gt; C',75.00);
+&gt; 
+&gt; INSERT INTO tabitm (itmcod,itmdes) VALUES (1,'Pens'   );
+&gt; INSERT INTO tabitm (itmcod,itmdes) VALUES (2,'Pencils');
+&gt; INSERT INTO tabitm (itmcod,itmdes) VALUES (3,'Markers');
+&gt; INSERT INTO tabitm (itmcod,itmdes) VALUES (4,'Erasers');
+&gt; INSERT INTO tabitm (itmcod,itmdes) VALUES (5,'Cards'  );
+&gt; 
+&gt; INSERT INTO tabinv (invcod,invnum,invdt,arecod) VALUES (1,'1/A'
+&gt; ,'10-SEP-2000',2);
+&gt; INSERT INTO tabinv (invcod,invnum,invdt,arecod) VALUES
+&gt; (2,'20/A','12-SEP-2000',1);
+&gt; INSERT INTO tabinv (invcod,invnum,invdt,arecod) VALUES (3,'8/G'
+&gt; ,'14-SEP-2000',2);
+&gt; INSERT INTO tabinv (invcod,invnum,invdt,arecod) VALUES
+&gt; (4,'22/Z','14-SEP-2000',1);
+&gt; INSERT INTO tabinv (invcod,invnum,invdt,arecod) VALUES
+&gt; (5,'15/H','16-SEP-2000',3);
+&gt; 
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (1,1,2,1, 12, 4.95,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (1,2,3,3,  5, 2.90,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,       detuni,detppu,dsccod)
+&gt; VALUES (1,3,4,    2,10.10,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (1,4,5,2,  2, 7.50,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (2,1,1,1,100, 5.00,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,       detuni,detppu,dsccod)
+&gt; VALUES (2,2,4,   50, 2.90,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,       detuni,detppu,dsccod)
+&gt; VALUES (3,1,1,    6, 4.80,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (3,2,2,3, 11, 4.95,2);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (3,3,3,2, 10,10.00,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (3,4,4,1,  3, 7.40,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,       detuni,detppu,dsccod)
+&gt; VALUES (3,5,5,    5, 3.15,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (4,1,1,3,  1, 4.95,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (4,2,2,3,  1, 2.95,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (4,3,3,3,  1, 9.95,2);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,       detuni,detppu,dsccod)
+&gt; VALUES (4,4,4,    1, 7.55,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (4,5,5,3,  1, 3.20,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (5,1,2,2, 10, 4.85,1);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,       detuni,detppu,dsccod)
+&gt; VALUES (5,2,3,   10, 2.95,3);
+&gt; INSERT INTO tabdet (invcod,detcod,itmcod,colcod,detuni,detppu,dsccod)
+&gt; VALUES (5,3,5,1, 10, 9.90,1);
+&gt; 
+&gt; COMMIT;
+&gt; 
+&gt; ---end metadata---
+&gt; 
+&gt; SELECT * FROM view_det INNER JOIN view_inv ON
+&gt; view_det.invcod=view_inv.invcod
+&gt; 
+&gt; DOESN'T WORK -&gt; &quot;No current record for fetch operation.&quot;
+&gt; 
+&gt; ... and neither will:
+&gt; 
+&gt; SELECT * FROM view_det, view_inv WHERE view_det.invcod=view_inv.invcod
+&gt; 
+&gt; Any opinions or workarounds?
+&gt; 
+&gt; TIA and regards,
+&gt; 
+&gt; --
+&gt; Marco Rocci
+=========
+
+If you watch the query plan generated by the failing statement, you'll notice it's really big... no surprise since it involves a join of views that in turn are based on other joins.
+The workaround is to convert
+SELECT * FROM view_det JOIN view_inv ON
+view_det.invcod=view_inv.invcod
+to become
+SELECT * FROM view_det JOIN view_inv ON
+view_det.invcod-view_inv.invcod=0
+or
+SELECT * FROM view_det JOIN view_inv ON
+view_det.invcod+0=view_inv.invcod
+or other variations that fool the optimizer by forcing it to a full scan to do the join.
+But this doesn't deny the fact that the original statement should work, so this is a bug and the same kind of bug that IB5.X suffered from.
+
+C.</text></argument><argument name="title"><text>No current record for fetch operation</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_219525</text></argument><argument name="resources"><set/></argument></extension>

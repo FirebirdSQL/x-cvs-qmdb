@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>489764</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : None
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : kdv
+Assigned to  : nobody
+----------------------
+Again bug with view containing union and triggers.
+This was found testing bug
+[ #489762 ] trigger on view with union receive nulls
+
+Trigger with 2 exceptions can't be created on view with union.
+
+/* begin script */
+
+CREATE TABLE A (ID INTEGER);
+
+CREATE VIEW V1 (VID) AS
+ SELECT ID FROM A
+ UNION ALL
+ SELECT ID FROM A;
+
+/* UNION or UNION ALL does not makes difference for the bug */
+
+CREATE EXCEPTION EXA 'A';
+CREATE EXCEPTION EXB 'B';
+
+COMMIT WORK;
+
+set term ^;
+
+CREATE TRIGGER TV1 FOR V1
+ACTIVE BEFORE UPDATE
+AS
+BEGIN
+  IF (new.VID = 0) THEN
+    EXCEPTION EXA;
+  ELSE
+    EXCEPTION EXB;
+END^
+
+/* here is all Ok, trigger has been created */ 
+
+COMMIT WORK;
+
+Unsuccessful execution caused by system error that does not preclude successful execution of 
+subsequent statements.
+bad BLR -- invalid stream.
+
+Now I can do only rollback. Also I must note that trigger was created, i.e. if I try to
+repeat CREATE TRIGGER, there will be a message 'trying to store duplicate ...'.
+
+Removing one of exception call will remove &quot;bad BLR&quot; message too.
+And, creating same trigger on view without union will not have this error.
+Tested on FB 1.0.0 builds 555 (RC1), 608 and 641 for Windows, W2K Prof, SP2.</text></argument><argument name="title"><text>trigger with except-s on view with union</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_489764</text></argument><argument name="resources"><set/></argument></extension>

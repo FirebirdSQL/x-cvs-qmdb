@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>497032</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : ggiulb
+Assigned to  : nobody
+----------------------
+if you create a trigger on a system tables it works 
+well only in the current connection 
+
+if you disconnect and then reconnect to the database, 
+triggers seems to be  not active, infact if you alter 
+the trigger to 'active' in works well, but only in the 
+current connection 
+----------------------
+User: skidder
+Logged In: YES 
+user_id=495356
+
+I think this needs to be declined. We don't support triggers on 
+system tables, aren't we ?</text></argument><argument name="title"><text>triggers on sys tables fail </text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_497032</text></argument><argument name="resources"><set/></argument></extension>

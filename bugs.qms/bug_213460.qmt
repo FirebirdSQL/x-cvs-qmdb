@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>213460</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : None
+Submitted By : hipgnosis
+Assigned to  : dimitr
+----------------------
+Overview
+
+  With a certain server network configuration, registering an event will lock up the client and lockup the server (requiring a reboot if it runs as a service, or a process kill if it runs as an application (the guardian does not detect it's lockup)) *if* the client is accessing the server through the internet (if it comes through the local lan, then it's fine).
+
+System Discovered On
+
+  Dell Precision 610 dual 550 Xeon III's w/512 megs of memory.
+  Windows NT 4 Workstation Service Pack 6
+  Interbase 6 (normal release)
+  3Com Fast EtherLink XL 10/100Mb TX Ethernet NIC (3C905B-TX) 
+  No firewalls, or other devices that might interfere with network traffic (for purposes of this test). All IP's are manually assigned (no DNS or DHCP server), and TCP/IP is the only network protocol installed on this system.
+
+Configuration Description To Cause Bug
+
+  The above system has only one nic card in it. This card was assigned two IP's, the first being a 192.168.0.x (local network), and the second being it's internet address. A gateway for the NIC card was also set, in addition to IP Forwarding (which was removed later).
+
+  This configuration, while not considered the best, is perfectly legal, and works effectively with all the different servers run on it (MS SQL Server, ftp and web servers, etc.), both accessed from the internet and the local intranet.
+
+  It is only when a client attempts to register events when connected through the internet to the server system that the lockups occur. Otherwise, if the system is on the intranet, the access runs fine.
+
+Fix
+
+  By setting the internet IP first, then having the intranet ip set in the advanced screen (under the internet IP), the problem is resolved (a reboot will be required after changing the configuration).
+
+Comments
+
+  This was a strange bug to hunt down, and stems from the fact that the register events connection to the server through the internet is somehow 'different' enough to cause the crashes (the client will come back to life if the server is shutdown (in NT the server process has to be manually terminated). 
+
+  While the problem requires a certain network configuration to occur (which tends to be common for small internal networks with a dsl or cablemodem connection to the internet), but given the anticipated spreading of InterBase with new applications, it becomes possible that
+some of our customers may receive this frustrating error. 
+This is made even more dangerous by the fact that their network configurations may have been set by a third party consultant, or department IT person. 
+
+  At the minimum, I would recommend that the IB server at  have an exception written into it to handle this type of error gracefully, and return an exception to the connecting client indicating the network incompatibility. </text></argument><argument name="title"><text>Registering Events w/certain configuration crashes IB Server</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_213460</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>711108</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : jalenhunter
+Assigned to  : nobody
+----------------------
+The grammar allows multiple unrelated left joins.
+
+Example:
+Select Customer.name, Address.address, Contact.number from 
+Customer left join Address on Customer.accountID =
+Address.accountID,
+Account left join Contact on Account.ID = Contact.accountID
+where Customer.accountID = Account.ID
+
+
+But when attempted in Firebird, this query says &quot;No
+current record for fetch operation&quot;.
+
+Other databases (HSQLDB, MySQL) handle it perfectly.</text></argument><argument name="title"><text>Multiple Left Joins Fail</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_711108</text></argument><argument name="resources"><set/></argument></extension>

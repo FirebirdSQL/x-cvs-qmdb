@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>214298</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9
+Status       : Closed
+Resolution   : Fixed
+Submitted By : helebor
+Assigned to  : nobody
+----------------------
+Confirmed in v. 5.6, not tested in v. 6:
+
+select count(*) + 1 returns zero when table has no rows but returns correct result if count(*) &gt; 0.
+
+----------------------
+User: patrickgriffin
+Fixed 11/2000.
+
+
+...pat
+----------------------
+User: robocop
+The table doesn't need to be empty. Only the result set needs to be empty to produce the bug. Example:
+
+select count(0)+1 from rdb$relations
+where 0=1
+=&gt; Result is zero. Tested in v6.</text></argument><argument name="title"><text>Select count(*) expression anomaly when table is empty</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_214298</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>446181</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : seanleyne
+Assigned to  : tamlin
+----------------------
+Modify the engine and GBAK routines to allow for the 
+an increased page size to be specified beyond the 
+current 8kb page size.
+
+This will allow for a greater database size as well as 
+can allow for the developer to tune the database to 
+meet their hardware environment.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Database maintenance</text></argument><argument name="title"><text>Enable support for 16kb pages</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_446181 </text></argument><argument name="resources"><set/></argument></extension>

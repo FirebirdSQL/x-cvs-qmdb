@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>673067</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Charsets/Collations 
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : brodsom
+Assigned to  : brodsom
+----------------------
+When client connect to the database with no character
+set or with none, and insert data in it, there are a
+serious performance penalty if the fields in the
+database are not defined as NONE. The difference can be
+up to 50% more time (from 2438ms to 3719ms).
+
+The problem is in the conversion/check needed in the
+conversion if the initial charset is NONE or different
+from the final one. (see cvt_move in cvt.cpp)</text></argument><argument name="title"><text>Bad performance when client charset != db charset</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_673067</text></argument><argument name="resources"><set/></argument></extension>

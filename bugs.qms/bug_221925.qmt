@@ -1,0 +1,148 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>221925</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : robocop
+----------------------
+Try the following:
+===============================
+
+CREATE DOMAIN &quot;JOBCODETYPE&quot; AS VARCHAR(20);
+CREATE DOMAIN &quot;STOCKCODETYPE&quot; AS VARCHAR(30);
+
+create table &quot;Submit&quot; (
+jobid jobcodetype		not null primary key,
+completeby timestamp
+);
+
+create table &quot;Faults&quot; (
+id stockcodetype		not null,
+whenreported timestamp		default 'Now' not null,
+whendone timestamp,
+jmsref jobcodetype		not null,
+
+primary key (id,whenreported),
+foreign key (jmsref) references &quot;Submit&quot;(jobid) on update cascade
+);
+
+
+create view xAllFaults(jobid) as
+select distinct jmsref from &quot;Faults&quot;;
+
+create view xWaitingFaults(jobid) as
+select distinct jmsref from &quot;Faults&quot; where whendone is null;
+
+create view &quot;AllFaults&quot;(jobid,waiting) as
+select XAllFaults.jobid,XWaitingFaults.jobid from XAllFaults left join XWaitingFaults on XAllFaults.jobid = XWaitingFaults.jobid;
+
+
+
+/* All jobid's with faults, and 'f' or 'F' according to if any are undone */
+set term !! ;
+create procedure &quot;JobFaults&quot; returns (jobid varchar(20), fault varchar(1)) as
+	declare variable waiting varchar(20);
+begin
+	for select XAllFaults.jobid,XWaitingFaults.jobid
+	from XAllFaults left join XWaitingFaults on XWaitingFaults.jobid = XAllFaults.jobid
+	into :jobid,:waiting do
+	begin
+		if (waiting is null) then
+			fault = 'f';
+		else
+			fault = 'F';
+		suspend;
+	end
+end!!
+set term ; !!
+
+
+
+insert into &quot;Submit&quot; values ('A',cast('Now' as timestamp));
+insert into &quot;Submit&quot; values ('B',cast('Now' as timestamp));
+
+insert into &quot;Faults&quot;(id,whenreported,jmsref) values ('item A',cast('Now' as timestamp),'A');
+insert into &quot;Faults&quot;(id,whenreported,whendone,jmsref) values ('item B',cast('Now' as timestamp),cast('Now' as timestamp),'A');
+
+
+/*  NOW TRY THE FOLLOWING  */
+
+select * from &quot;Submit&quot; join &quot;JobFaults&quot;
+on &quot;Submit&quot;.jobid = &quot;JobFaults&quot;.jobid
+order by &quot;Submit&quot;.completeby;
+/* Here there appear to be no faults joined to the &quot;Submit&quot; table */
+
+
+select * from &quot;Submit&quot; join &quot;JobFaults&quot;
+on &quot;Submit&quot;.jobid = &quot;JobFaults&quot;.jobid
+/* Yet here the fault is shown correctly joined!! */
+
+IB 6.01, W2k SP1, IBConsole 319. Dialect 3 database.
+johnsparrowuk@yahoo.com
+
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+This entry is related to SFID 228716 (which I am 'deleting' 
+in favor of the older entry -- this one)
+----------------------
+User: robocop
+Confirmed. When the ORDER BY clause is specified, the two columns that come from the sproc are made NULL. That's a bug. When the sorting condition is left out, one record from the proc has values and the other is NULL for lack of a match with the table. This is the correct behavior.
+
+Workaround:
+The offending sentence is:
+
+select s.jobid, s.completeby, j.jobid, j.fault
+ from &quot;Submit&quot; s left join &quot;JobFaults&quot; j
+on s.jobid = j.jobid 
+order by s.completeby
+
+Then, let's build the procedure to output values, but w/o the ORDER BY clause:
+
+set term ^;
+create procedure submit_jobfaults
+returns(jobid varchar(20), completeby timestamp, 
+jobid2 varchar(20), fault varchar(1))
+as begin
+for select s.jobid, s.completeby, j.jobid, j.fault
+ from &quot;Submit&quot; s left join &quot;JobFaults&quot; j
+on s.jobid = j.jobid
+into :jobid, :completeby, :jobid2, :fault
+do suspend;
+end ^
+set term ;^
+
+And now we sort the result from the proc:
+
+select * from submit_jobfaults
+order by completeby
+
+This time, you will see that same good results that the original sentence with no ORDER BY clause, but now, it's ordered and all values have been preserved (only two NULLs that are expected).
+
+(The sorting process causing fields to become NULL or numeric NULL fields to become zero seems to be the generalization.)
+
+C.
+
+----------------------
+User: nobody
+select * from &quot;Submit&quot; left join &quot;JobFaults&quot; 
+on &quot;Submit&quot;.jobid = &quot;JobFaults&quot;.jobid 
+order by &quot;Submit&quot;.completeby; 
+/* Here there appear to be no faults joined to the &quot;Submit&quot; table */ 
+
+
+select * from &quot;Submit&quot; left join &quot;JobFaults&quot; 
+on &quot;Submit&quot;.jobid = &quot;JobFaults&quot;.jobid 
+/* Yet here the fault is shown correctly joined!! */ 
+
+----------------------
+User: nobody
+Sorry, I meant to write &quot;Submit&quot; left join &quot;JobFaults&quot;
+Ie: **left join** not just **join**.
+
+Sorry,
+
+johnsparrowuk@yahoo.com</text></argument><argument name="title"><text>Left joining table to sproc: ORDER BY makes fields NULL</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_221925</text></argument><argument name="resources"><set/></argument></extension>

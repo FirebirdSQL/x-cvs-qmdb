@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>518349</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+Given a coincidence of names, the SHOW command mixes 
+relationships and fools the naive user:
+
+SQL&gt; create table t(a int);
+SQL&gt; create table u(a int);
+SQL&gt; set term ^;
+SQL&gt; create trigger t for u after delete as begin 
+old.a=old.a; end^
+SQL&gt; commit ^
+
+=&gt; Notice that trigger T is attached to table U and 
+table T has no trigger. However:
+
+SQL&gt; show table t^
+A                               INTEGER Nullable
+
+Triggers on Table U:
+T, Sequence: 0, Type: AFTER DELETE, Active
+SQL&gt;
+
+=&gt; Uh? Triggers on table U? I requested all 
+information pertaining to table T to be shown, not 
+about table U. Apparently isql is confused because the 
+wanted table and the trigger on the other table have 
+the same name.</text></argument><argument name="title"><text>isql's SHOW command mangles relationship</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_518349</text></argument><argument name="resources"><set/></argument></extension>

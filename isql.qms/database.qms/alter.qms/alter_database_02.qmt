@@ -1,9 +1,5 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Adding secondary file with alternate keyword for database.</text></argument><argument name="stdout"><text>CAST                                               RDB$FILE_SEQUENCE RDB$FILE_START RDB$FILE_LENGTH 
-================================================== ================= ============== =============== 
-
-C:\TEST.G00                                                        1          10000               0 
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 
 ALTER SCHEMA ADD FILE '$(DATABASE_LOCATION)test.g00' STARTING 10000;
 COMMIT;
@@ -12,4 +8,8 @@ SELECT cast(RDB$FILE_NAME as varchar(50)),RDB$FILE_SEQUENCE,RDB$FILE_START,RDB$F
   FROM RDB$FILES;
 
 DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set><text>^.*TEST.G;TEST.G</text><text>\s+;</text></set></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>ALTER SCHEMA ADD FILE</text></argument><argument name="test_id"><text>skopalik_0002</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="description"><text>Adding secondary file with alternate keyword for database.</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>CAST                                               RDB$FILE_SEQUENCE RDB$FILE_START RDB$FILE_LENGTH 
+================================================== ================= ============== =============== 
+
+C:\TEST.G00                                                        1          10000               0 
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set><text>^.*TEST.G;TEST.G</text><text>\s+;</text></set></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>ALTER SCHEMA ADD FILE</text></argument><argument name="test_id"><text>skopalik_0002</text></argument><argument name="target_group"><text>.*</text></argument></extension>

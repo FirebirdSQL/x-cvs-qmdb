@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE GENERATOR
-
-Dependencies:
-CREATE DATABASE
-Basic SELECT</text></argument><argument name="stdout"><text>RDB$GENERATOR_NAME              RDB$GENERATOR_ID RDB$SYSTEM_FLAG
-=============================== ================ ===============
-
-TEST                                           9          &lt;null&gt;
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 
 CREATE GENERATOR test;
 COMMIT;
 SELECT * FROM RDB$GENERATORS WHERE RDB$GENERATOR_NAME='TEST';
 
 DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE GENERATOR</text></argument><argument name="test_id"><text>skopalik_0140</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="description"><text>CREATE GENERATOR
+
+Dependencies:
+CREATE DATABASE
+Basic SELECT</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>RDB$GENERATOR_NAME              RDB$GENERATOR_ID RDB$SYSTEM_FLAG
+=============================== ================ ===============
+
+TEST                                           9          &lt;null&gt;
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE GENERATOR</text></argument><argument name="test_id"><text>skopalik_0140</text></argument><argument name="target_group"><text>.*</text></argument></extension>

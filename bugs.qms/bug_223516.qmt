@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223516</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+LangRef describes among values that
+rdb$fields.rdb$field_type can assume the following two:
+D_FLOAT - 11
+INT64 - 16
+Both values appear in the documentation but not in rdb$types.
+I don't have any idea what D_FLOAT is but at least INT64 should be listed in rdb$types for consistency reasons. Also, putting NUMERIC (1) and DECIMAL (2) as registered sub_types would help programs that cope with metadata.
+
+C.
+
+----------------------
+User: prenosil
+Logged In: YES 
+user_id=89535
+
+There are more values missing in rdb$types, e.g.
+
+RDB$OBJECT_TYPE    12  GROUP
+RDB$OBJECT_TYPE    13  ROLE
+
+and probably these should be added too:
+
+RDB$PARAMETER_TYPE  0  INPUT
+RDB$PARAMETER_TYPE  1  OUTPUT
+
+RDB$SYSTEM_FLAG     0  USER_DEFINED
+RDB$SYSTEM_FLAG     1  SYSTEM_DEFINED
+
+RDB$INDEX_INACTIVE  0  ACTIVE
+RDB$INDEX_INACTIVE  1  INACTIVE
+
+RDB$UNIQUE_FLAG     0  ALLOWS_DUPLICATES
+RDB$UNIQUE_FLAG     1  DOES_NOT_ALLOW_DUPLICATES
+
+RDB$TRIGGER_INACTIVE  0  ACTIVE
+RDB$TRIGGER_INACTIVE  1  INACTIVE
+
+RDB$GRANT_OPTION    0  ''
+RDB$GRANT_OPTION    1  GRANT_OPTION
+RDB$GRANT_OPTION    2  ADMIN_OPTION
+
+RDB$PAGE_TYPE       1  DB_HEADER_PAGE
+RDB$PAGE_TYPE       2  PIP
+RDB$PAGE_TYPE       3  TIP
+etc...
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Database maintenance
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Database maintenance
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Also, rdb$function_arguments.rdb$mechanism becomes -1 when 
+the return argument needs FREE_IT. It seems it's simply the 
+negative value of rdb$mechanism logged in table rdb$types 
+(in this case, 1 is by_reference).
+
+C.</text></argument><argument name="title"><text>Missing types in rdb$types.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223516</text></argument><argument name="resources"><set/></argument></extension>

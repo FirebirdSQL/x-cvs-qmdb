@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>745094</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : labiance
+Assigned to  : nobody
+----------------------
+At least on firebird 1.5RC2 on linux, isql fails
+silently with error code 1 when read permission isn't
+granted on firebird.conf.
+
+This is highly disconcerting to the user. An error
+message such as &quot;unable to read
+/usr/local/firebid/firebird.conf&quot; would be much
+more appropriate. 
+----------------------
+User: labiance
+Logged In: YES 
+user_id=64512
+
+Well, for my needs a simple &quot;see syslog for error output&quot;
+would have saved me an hour or two of time :). I'm not used
+to executing &quot;client&quot; programs and getting the errors out
+through syslog, although i'm new to using classic server.
+
+I DID have a firebird.conf in
+/usr/local/firebird/firebird.conf, however, not realizing
+that all users who must execute the isql binary must be in
+the firebird group, I didn't have read permission to it, and
+beat my head against the wall for a while wondering why isql
+wasn't starting. 
+----------------------
+User: alexpeshkoff
+Logged In: YES 
+user_id=423445
+
+It writes message to system log, but I must agree - 
+diagnostic should be better.
+The question is a bit more common for CS. For today we use 
+following &quot;firebird root directory&quot; (later home) detection 
+algorythm - get path to executable, and step one level up. For 
+example, executable file /usr/local/firebird/bin/isql will find it's 
+home to be /usr/local/firebird. Next steps (including ENV 
+analysis) should be taken only if this way fails. But who can 
+give a sample when it fails? May be some special measures 
+to clear argv[0] before calling isc_*(), but normally 
+file /home/user/fireusing will have it's home directory - /home. 
+And, certainly, firebird.conf is missing there!
+I think that home directory search algorythm should be 
+improved for CS on Unix'es and embedded in win32.</text></argument><argument name="title"><text>isql fails silently when unable to read firebird.conf</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_745094</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>750686</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : prenosil
+Assigned to  : nobody
+----------------------
+Suppose we have indexed field with lots of NULLs.
+Then Greater-Than operator (or Less-Than for
+Descending index) will be much slower than expected,
+because sparse bitmap created from the index
+will incorrectly contain references to NULL values.
+The only case where NULLs in index should be processed
+is explicit testing using &quot;IS NULL&quot;, not ordinal comparing
+operators.
+
+Example:
+If we have table with 1,000,000 rows containing NULL,
+plus 1,000 rows with values from 1 to 1,000,
+then query
+  SELECT * FROM tab WHERE val &gt;= 900
+will correctly return 100 rows, however it will be
+incredibly slow, because internally it will fetch 
+1,000,0100 rows (despite using index).
+</text></argument><argument name="title"><text>Wrong internal processing of NULLs in index</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_750686</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>562417</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : Fixed
+Submitted By : ded
+Assigned to  : dimitr
+----------------------
+  Any aggregate function except Count concatenated with 
+'' returns null, Count returns empty string
+
+Select Max(AnyColumn)||''
+From AnyTable
+
+     Max
+========
+ &lt;null&gt;
+
+Select Count(*)||''
+From AnyTable
+
+   Count
+========
+
+
+Casting, such as
+
+Select Cast(Max(AnyColumn) As Varchar (50) ||''
+From AnyTable
+
+results the same. Seems this bug affects all IB/FB 
+versions.
+
+Alexander V.Nevsky</text></argument><argument name="title"><text>Aggregate concatenated empty char</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_562417</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>607903</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GPRE
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : alexpeshkoff
+Assigned to  : nobody
+----------------------
+GPRE doesn't process double-quoted strings in .epp file 
+correctly, when used with dialect 3 DATABASE.
+
+Firebird - 1.5, win32, CVS 2002-sep-10.
+
+Not mentioning something like &quot;PRIMARY KEY&quot; in SQL 
+operators (it's possibly correct not to accept such 
+constants for dialect 3 - ???), gpre fails on statements 
+like:
+strcmp(something, &quot;DATABASE&quot;).
+Since we are going to dialect 3 in future, I think this 
+should be treated as bug.</text></argument><argument name="title"><text>GPRE bug with dialect 3 database</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_607903</text></argument><argument name="resources"><set/></argument></extension>

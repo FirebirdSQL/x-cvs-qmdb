@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>744175</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : dimitr
+Assigned to  : nobody
+----------------------
+If an index contains garbage and automatic GC 
+is disabled, then it's impossible to create unique 
+indices or PK/UK/FK constraints.
+
+
+For example:
+
+
+
+
+1) attach with isc_dpb_no_garbage_collect
+
+
+2) insert some duplicate data
+
+
+  INSERT INTO T1 (F1) VALUES (1);
+
+
+  INSERT INTO T1 (F1) VALUES (1);
+
+
+3) delete these rows
+
+
+  DELETE FROM T1;
+
+
+4) create unique index
+
+
+  CREATE UNIQUE INDEX IDX1 ON T1 (F1);
+
+
+
+
+You'll see &quot;attempt to store duplicate value ...&quot; 
+error message, which is incorrect in this case.
+
+Since indices work outside transaction control, it 
+may be a initial design/implementation pitfall. It 
+appears the index creation and partner lookup 
+code never touches records and hence is unable 
+to determine which versions are actual at the 
+moment of index creation.</text></argument><argument name="title"><text>Garbage vs indices/constraints</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_744175</text></argument><argument name="resources"><set/></argument></extension>

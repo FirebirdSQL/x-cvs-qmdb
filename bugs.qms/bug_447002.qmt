@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>447002</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : nobody
+----------------------
+The InterBase Optimizer does not properly utilize 
+indexes on sub-selects containing IN.
+
+Example: (Using - Employee.gdb)
+
+ select *   from employee
+   where dept_no in
+    (select dept_no
+     from department
+      where department = &quot;Marketing&quot;);
+
+Produces the plan:
+
+  PLAN (DEPARTMENT INDEX (RDB$4,RDB$PRIMARY5))
+  PLAN (EMPLOYEE NATURAL)
+
+You can fool the optimizer into using the appropriate 
+index by using the following trick.
+
+ select *   from employee
+   where dept_no &gt; 0 /* something that is always true 
+*/ and
+    dept_no in
+     (select dept_no
+      from department
+       where department = &quot;Marketing&quot;);
+
+Produces the plan:
+
+  PLAN (DEPARTMENT INDEX (RDB$4,RDB$PRIMARY5))
+  PLAN (EMPLOYEE INDEX (RDB$FOREIGN8))
+
+The second plan is correct behaviour</text></argument><argument name="title"><text>Optimisation on subselects</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_447002</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>571026</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : michlv
+Assigned to  : nobody
+----------------------
+Hello,
+
+in remote/inet.c and remote/xinet.c
+when reporting gethostbyname error, firebird does not 
+tell gethostbyname input (name). May be this problem 
+fixed?
+
+The error is:
+
+INET/INET_connect: gethostbyname failed, error code = 
+%d
+
+I thing that following is more descriptive:
+INET/INET_connect: gethostbyname (name) failed, error 
+code = %d
+
+where name is gethostbyname input name.
+
+Vladimir Michl
+
+----------------------
+User: nobody
+Logged In: NO 
+
+Hi Vladimir,
+
+we have encountered the same problem, do you have some
+feed-back or solutions to fix this problem on a linux box?
+
+Thanks in advance
+Volker</text></argument><argument name="title"><text>INET/INET_connect: gethostbyname</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_571026</text></argument><argument name="resources"><set/></argument></extension>

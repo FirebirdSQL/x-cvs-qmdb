@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>447014</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : robocop
+----------------------
+Some tool devs and end users claimed for one-line 
+comment as other servers have. They aren't recognized 
+in other position, so don't count of them being as 
+flexible as C++ double-slash token.</text></argument><argument name="title"><text>Double hyphen (--) as comment</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_447014</text></argument><argument name="resources"><set/></argument></extension>

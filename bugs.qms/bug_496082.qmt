@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>496082</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : UDF/Built-In Functions
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : fabianobonin
+Assigned to  : nobody
+----------------------
+Please, put the POWER function in the built-in library.
+It's the base of almost all financial operations.
+
+Power(2,2) --&gt; equal to 2^2 --&gt; 8
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+DPower was implemented. It works with double precision.
+
+----------------------
+User: fabianobonin
+Logged In: YES 
+user_id=346895
+
+Oooops!!!
+
+2^2 = 4 !!!
+
+Sorry... I think i missed this class in the school!</text></argument><argument name="title"><text>POWER function in fbudf</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_496082</text></argument><argument name="resources"><set/></argument></extension>

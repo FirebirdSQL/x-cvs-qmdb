@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>480749</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : robocop
+----------------------
+The isc_database_info() call now returns the counter 
+values for: Oldest Transaction, Oldest Active 
+Transaction, Oldest Snapshot and Next Transaction</text></argument><argument name="title"><text>isc_database_info() returns counter values</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_480749</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>221649</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Feature v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : dimitr
+----------------------
+   I noticed it in 1999 (IB6 in private beta testing) but I'm not sure who discovered it. It still exists and may be rather old.
+create table mau(a int);
+commit;
+create UNIQUE index idx_mau on mau(a);
+commit;
+   Whether this was left as a transition from Paradox (that accepts NULL PKs) or it's an oversight is what I want to confirm.
+   As a comparation, you cannot declarate a PK or UNIQUE constraint if you don't include the NOT NULL clause on the affected field(s), so the underlying automatic index for such constraint will be always on non-nullable column(s).
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Agreement: from SQL, UNIQUE clause must accept nullable fields.
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+This is the answer from SQL expert Diane Brown:
+==========
+I'll answer the easy part first: the ISO SQL standard says 
+nothing about indexes, at all.  
+(I believe the old X/open SQL standard, which has long 
+since disappeared off the radar as far as I know, included 
+CREATE INDEX statement, but ISO standard never has.)
+
+In SQL92, PK constraint is violated if any value is null.
+
+By the way, the SQL92 rules for Primary Key constraint and 
+Unique constraint differ in their treatment of nulls.
+==========
+
+To be continued...
+
+C.
+
+----------------------
+User: nobody
+Logged In: NO 
+
+I'm not sure this is a bug.  Its handy to allow a unique constraint on a column that allows nulls.  The nice way to handle this is to allow any number of null values in the column but if the value isn't null, then it has to be unique.  This is even the correct relational model operation since a null value isn't equal to anything else *even another null*.  So each null value is unique!
+
+A place this is nice for example is a customer number that is optional but when entered must be unique.  Other things like account numbers, login names, ... all can work this way.  If you can't use a unique constraint on a column like this, then its really a pain to implement the above.
+
+I would argue that the unique constraint should be changed to allow it on nullable fields but if this is against the SQL-92 spec, then at least leave the ability to create unique indexes on null columns!
+
+PS: other databases also allow unique indexes on nullable columns (Sybase SQL Anywhere for example) and its a lack of understanding of how nulls actually work in the relational model (ie: the rule that null != anything else) that makes people think this shouldn't be allowed but it should and it is very useful!
+
+----------------------
+User: robocop
+Just changed the title, because it said the opposite of what I wanted, sorry.
+
+C.</text></argument><argument name="title"><text>Unique index allowed on NULLABLE field</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_221649</text></argument><argument name="resources"><set/></argument></extension>

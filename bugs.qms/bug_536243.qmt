@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>536243</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Charsets/Collations 
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : sergey_bervinov
+Assigned to  : nobody
+----------------------
+Anybody knows why UPPER function doesn't work on the 
+UNICODE_FSS charset? Any ASCII strings processed 
+correctly rather strings in the UNICODE_FSS
+charset.
+
+How it can be cured?</text></argument><argument name="title"><text>UNICODE_FSS charset and UPPER function</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_536243</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>451917</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Feature v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : seanleyne
+Assigned to  : arnobrinkman
+----------------------
+Add support for CASE, IIF and COALESE.
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+This will alllow the deprecation of fbudf's poor substitutes.</text></argument><argument name="title"><text>CASE, IIFand COALESE</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_451917</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>534208</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0.x
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+As reported by Ivan Prenosil and other person before:
+
+select udf(&lt;params&gt;) from tbl;
+
+will fail if the udf's return type is a blob. Problem 
+comes from METD that gives a zero length to blob 
+fields in UDFs. The correct length for blobs is a 
+quad, 8 bytes. In turn, METD_get_function() gets zero 
+because when a udf is defined, ddl.c:put_field() 
+doesn't send length information for blobs to DYN.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Since put_field() is a routine shared by every metadata 
+definition function, it was much safer to have METD set 8 
+bytes for udf's params being blobs in the run-time 
+structure, since this size is fixed and constant.</text></argument><argument name="title"><text>select fails when udf returning blob</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_534208</text></argument><argument name="resources"><set/></argument></extension>

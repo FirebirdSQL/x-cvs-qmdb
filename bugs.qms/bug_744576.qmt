@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>744576</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : None
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : tgk
+Assigned to  : nobody
+----------------------
+While testing Firebird on Windows 2003 sever I have 
+found the connect and disconnect speed to have 
+increased over W 2000 server by ten times or more, but 
+there seems to be no difference in running performance 
+once connected. I wish I could give more detail, Another 
+user has confirmed finding the same issue. 
+
+Firebird 1.0.0.796
+Windows 2003 Server Enterprise Build 3790
+----------------------
+User: dimitr
+Logged In: YES 
+user_id=61270
+
+AFAIK, it's not an issue with FB 1.5. Try e.g. RC2 to 
+see whether it's true for you or not.
+</text></argument><argument name="title"><text>Connect and Disconnect speed very slow on W 2003 server</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_744576</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,62 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>431381</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+When I try to create a Before insert trigger on a view 
+I get a connection lost.  After I made some test I 
+found the problem.  It has something to do with the 
+fact that I use 2 times the same table &amp; column name 
+in the view.
+
+
+I'll ATTACH The script for creating the DB
+
+The syntax for the trigger is : 
+
+CREATE TRIGGER BI_VW_RESERVATIONS FOR VW_RESERVATIONS 
+ACTIVE
+BEFORE INSERT POSITION 0
+AS
+BEGIN
+  NEW.ZIP_CODE = ''; /* Not Null field */
+  IF (NEW.LOCATION_ID IS NULL) THEN
+  BEGIN
+    IF (NEW.RESERVATION_LOCATION_CODE IS NULL) THEN
+    BEGIN
+      SELECT SUPPORT$LOCATIONS.LOCATION_ID
+        FROM SUPPORT$LOCATIONS
+       WHERE (SUPPORT$LOCATIONS.CODE = 
+NEW.RESERVATION_LOCATION_CODE )
+        INTO NEW.LOCATION_ID;
+    END ELSE
+    BEGIN
+      NEW.LOCATION_ID = 5;
+    END
+  END
+  INSERT INTO RENTING$RESERVATIONS (RESERVATION_ID, 
+MEMBER_ID, OBJECT_ID, LOCATION_ID)
+       VALUES (NEW.RESERVATION_ID, NEW.MEMBER_ID, 
+NEW.OBJECT_ID, NEW.LOCATION_ID);
+END
+
+----------------------
+User: rafs
+Logged In: YES 
+user_id=65292
+
+Sorry for the late reaction. 
+If you need more information, i can send you a script with 
+the problem.
+
+My Email : Raf.Schandevyl@rrconsult.be
+
+
+----------------------
+User: nobody
+Logged In: NO 
+
+Forgot to add my E-Mail address</text></argument><argument name="title"><text>Connection Lost when creating a trigger</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_431381</text></argument><argument name="resources"><set/></argument></extension>

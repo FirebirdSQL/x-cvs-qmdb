@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>584541</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : ded
+Assigned to  : nobody
+----------------------
+  FB LI-V6.2.796 Classic. Accidental attempt to connect 
+to database during restore rejected but gbak terminated  
+with message Object In Use on creation of one of 
+foreign keys.
+----------------------
+User: michlv
+Logged In: YES 
+user_id=213474
+
+I have the same expirience.
+
+I use FB 1.0.2.908 super 32 (compiled on Debian 2.2) and FB 
+1.0.0.796 super 32 (original build from sourceforge) both Linux 
+versions and FB 1.0.2.908 win32 on W2k.
+
+When I restoring DB, and normal user (not SYSDBA) connect 
+to datatabase, server answer Database shutdown, but when 
+gbak restoring indexes (foreign keys), on some index reject 
+restoring with Object In Use.
+
+There is tested combinations:
+Win32 version:
+ * restoring with local path /ibdata/database.gdb
+user connecting with network path from other computer.
+gbak fail.
+
+ * restoring with network path localhost:/ibdata/database.gdb
+user connecting with network path from other computer.
+gbak OK, But I test it little.
+
+All Linux versions (specified before):
+ * restoring with local path /ibdata/database.gdb
+user connecting with network path from other computer.
+gbak fail.
+
+ * restoring with network path localhost:/ibdata/database.gdb
+user connecting with network path from other computer.
+gbak fail.
+
+ * restoring with network path hostname:/ibdata/database.gdb
+user connecting with network path from other computer.
+gbak fail.
+
+For single file database this not great problem, restore to 
+other name and after restoring, rename DB file.
+
+But if you have on DB server more databases and some from 
+it is multifile, restoring is problem. I cannot guarantee, that 
+client not connect to my database.</text></argument><argument name="title"><text>Connect during restore - gbak fails</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_584541</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>591890</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : eku
+Assigned to  : nobody
+----------------------
+If the TCP network connection to the server timed out
+and later closed by the server, the client will receive
+a SIGPIPE signal when it writes to the socket.
+Unfortunately the client library doesn't handle this
+situation, which normaly will result in a core dump of
+the application.
+
+Program received signal SIGPIPE, Broken pipe.
+0x3001174c in write () from /usr/lib/libc.so.1
+(gdb) where 
+#0  0x3001174c in write () from /usr/lib/libc.so.1
+#1  0x3023b2a1 in _s_sosend () from
+/usr/lib/libsocket.so
+#2  0x30239ca2 in send () from /usr/lib/libsocket.so
+#3  0x301b6b21 in packet_send (port=0x8066e64,
+buffer=0x8068f36 &quot;&quot;, buffer_length=4) at inet.c:4545
+#4  0x301b678a in inet_write (xdrs=0x8066ef4,
+end_flag=1) at inet.c:4247
+#5  0x301b5c3f in xdrinet_endofrecord (xdrs=0x8066ef4,
+flushnow=1) at inet.c:3638
+#6  0x301b5b6b in send_full (port=0x8066e64,
+packet=0x806af84) at inet.c:3560
+#7  0x301b0b64 in disconnect (port=0x8066e64) at
+interface.c:5127
+#8  0x301a94ed in REM_detach_database
+(user_status=0x804797c, handle=0x8066df8) at
+interface.c:1068
+#9  0x3015a8b0 in isc_detach_database
+(user_status=0x804797c, handle=0x30299094) at
+why.c:1811
+
+As a work-around the application could irgnore the
+signal SIGPIPE
+(sigaction(...,SIG_IGN)), but I'm not sure about the
+consistency of the data in the GDS library.</text></argument><argument name="title"><text>FB CS doesn't handle SIGPIPE</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_591890</text></argument><argument name="resources"><set/></argument></extension>

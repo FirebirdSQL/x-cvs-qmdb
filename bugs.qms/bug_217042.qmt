@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>217042</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+1) create table t0(check(0=0))
+   How can a table constraint be made without any field? I thought at least one field should be defined.
+
+2) create table tgen2(a computed by(0))
+create table tgen3(a computed by(0/(0)))
+create table tgen4(a computed by(rdb$db_key))
+   Do you see any value in accepting this declaration? A computed field alone? I can never have a row.
+
+3) create table tgen5(a int, b computed by(rdb$db_key))
+   Insert values in field &quot;a&quot; and then try to select =&gt; string truncation or arithmetic overflow.
+
+4) create domain dint int default 'hello' not null
+   This is only a small example. IB never validates the default for any type of field. I can insert any kind of crap as default for domains of any datatype and also for fields defined inside a table.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Thanks for the reminder. It's actually the same issue in 
+the parsing file that allows this non-compliant code:
+
+update tbl
+set tbl.field1 = v1,
+set tbl.field2 = v2;
+
+According to the standard, you shouldn't be able to qualify 
+the fields of the updated table. They belong to the updated 
+table by definition. Here, &quot;tbl.&quot; shouldn't be allowed.
+
+----------------------
+User: uchum
+Logged In: YES 
+user_id=405553
+
+5)
+SQL&gt; create table tgen7(a.b int, x.y int);
+SQL&gt; show table tgen7;
+B                               INTEGER Nullable 
+Y                               INTEGER Nullable 
+
+parse.y:
+  table_clause    : simple_table_name external_file '('
+table_elements ')' ...
+  table_element   : column_def  ...
+  column_def      : column_def_name ...
+  column_def_name : column_name
+  column_name     : simple_column_name
+                | symbol_table_alias_name '.'
+symbol_column_name ...</text></argument><argument name="title"><text>IB doesn't validate weird constructions</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_217042</text></argument><argument name="resources"><set/></argument></extension>

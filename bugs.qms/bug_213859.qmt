@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>213859</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : arnobrinkman
+----------------------
+Given a table test which has the colums id integer (unique) and num integer.
+
+Insert some records (~40.000 in my case). Most of the numbers in column num are distinct, only some are two ore three times repeated.
+
+The following query fails:
+
+Select id, num from test where num in (select num from test group by num having count(num &gt; 1))
+
+What is expected: those numbers WITH ID's which occur more than one time in the database.
+
+Note: * Each query for it's own succeeds.
+         * Preparing column num in a way that select num from test group by num having count(num &gt; 1) would return only one row and rewritting the statement as Select id, num from test where num = (select num from test group by num having count(num &gt; 1)) succeeds too.
+
+Tested with MS Access, MS-Sql, Oracle; same data, query finished within three seconds in any case.
+
+----------------------
+User: nobody
+The SELECT ... WHERE ... IN (SELECT .....) statemant never uses an index with interbase.  While the statemant SELECT ... WHERE ... IN (1,2,3) Uses the defined index.
+I think the problem is the optimizer.
+
+When we make the query=plan ourself, it says we can't use the indexes.
+
+
+----------------------
+User: nobody
+Reflexive queries work much better when the context is explicitly
+described with table aliases.  Obviously some parser/compilers are
+better than others at guessing what you mean.  
+----------------------
+User: prenosil
+I do not understand what is your problem: wrong result or performance ?  After correcting typo in your original query I got correct result. Do you have index on num field ?
+
+Select id, num
+  from test
+ where num in 
+ (select num from test group by num having count(num) &gt; 1)
+
+You can also try this syntax (I believe it should be faster):
+
+Select id, num
+  from test t
+ where not singular (select * from test where num=t.num)
+
+----------------------
+User: nobody
+Thanks for your suggestion.
+
+First: ... count(num &gt; 1) was a typo mistake and ... the query you suggsted now returns all the rows in the table. OK, now IB is not hangig any more but i don't get the data i want ... so this is not a real solution.
+BTW: my 'IN'- way should work either ....
+----------------------
+User: nobody
+Um... try 
+Select id, num from test where
+exists 
+(
+select num from test test2 
+where test.num=test2.num
+group by num having count(num)&gt;1
+)
+
+Why? 'cus you can't do a count on (num &gt; 1) and exists is much faster than in if you have more than just a few records in your subselect.
+----------------------
+User: nobody
+Ehm, query fails means the DB is not responding any more and getting very bussy - but no stressy access to the disks.
+
+Occured with IB6.01 super server windows 2000 professional. Downloaded the latest build from the Inprise download site.
+
+Query submitted using IBConsole</text></argument><argument name="title"><text>Subquery connected with 'IN' clause</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_213859</text></argument><argument name="resources"><set/></argument></extension>

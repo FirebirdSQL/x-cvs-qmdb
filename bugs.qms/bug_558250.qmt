@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>558250</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : skopalik
+Assigned to  : nobody
+----------------------
+FB 1.0 Win32
+Both dialects, all type of connection.
+
+First connect 0.02 s
+next other 1.02 s
+When many clients try connect at same time
+(usualy www server) connection delay is
+aprox. in second equal number of clients.
+10 clients connect aprox. 10 sec.
+Server waiting 10 sec and connect
+all client at the same time.
+Power of HW has'nt any effect.
+----------------------
+User: skopalik
+Logged In: YES 
+user_id=405949
+
+I was tested under WinNT 4.0 SP5 (1 CPU), WinNT 4.0 SP6 (2 
+CPU), Win2000 (2 CPU).
+I used TCP/IP to local host and remote, NetBUI and Local 
+firebird connection.
+How can I help us with this problem ?
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Slavomir,
+
+Please provide more details:
+
+What OS version you are running?
+
+What connection method (local, TCP loopback, TCP, 
+NetBEUI) are you using?</text></argument><argument name="title"><text>Win32 - connection delay</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_558250</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>518276</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+FB RC2, prior releases, Borland IB, etc.
+
+Selectable stored procedures that don't touch tables 
+don't have an obvious access plan yet they are 
+perfectly legal and useful. Currently the engine 
+panics and doesn't return anything. Follows ultra 
+simplistic example:
+
+set term ^;
+create procedure pplan
+returns(a int)
+as begin
+   a = 0;
+   suspend;
+end ^
+set term ;^
+
+select * from pplan;
+
+Using isql or another tool, returned plan is the null 
+string. Very bad when the procedure participates in a 
+join with other tables, views or stored procedures, 
+because the full plan is obfuscated and nothing is 
+returned.</text></argument><argument name="title"><text>Select Stored Procedure returns empty/null PLAN</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_518276</text></argument><argument name="resources"><set/></argument></extension>

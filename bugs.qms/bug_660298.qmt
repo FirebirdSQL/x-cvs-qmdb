@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>660298</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : hschlup
+Assigned to  : arnobrinkman
+----------------------
+To resolve my problem with Unions in Sub-Query I tried 
+following. I created a view:
+
+CREATE VIEW V_Call_User
+(ID, User_ID)
+AS
+SELECT id,owner_id FROM call
+UNION
+SELECT id,responsible_id FROM call
+UNION
+SELECT id,supervisor_id FROM call
+UNION
+SELECT call_id,responsible_id FROM call_task
+
+That gives me a simple list...
+
+A simple select to this list works fine. But when I 
+execute the following SQL:
+
+SELECT * FROM V_CALL WHERE id IN
+( SELECT id FROM V_CALL_USER
+  WHERE user_id = '1')
+
+I get a AV and even the Server shut's down and i have to 
+restart the server
+service.
+
+This bug was confirmed by Arno Brinkman in the 
+newsgroup: borland.public.interbase.general
+
+Yes, it's a BUG !
+
+I can reproduce it !
+
+Have you tried and Stored Procedure instead ? Maybe 
+you can workaround wit
+an SP.
+
+Regards,
+Arno Brinkman</text></argument><argument name="title"><text>Server shuts down with following SQL</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_660298</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>221921</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : arnobrinkman
+----------------------
+Take the following example of a self-referential table and a sproc that returns the children of a specified item:
+
+create table &quot;ExampleTable&quot; (
+code integer			not null primary key,
+name varchar(100)		not null unique,
+parent integer,
+
+foreign key (parent) references &quot;ExampleTable&quot;(code)
+);
+
+/* &quot;Children&quot; result is not null if this item has it's own children */
+set term !! ;
+create procedure &quot;ChildrenOfItem&quot;(par integer) returns (code integer,children integer) as
+begin
+	for select &quot;MainTypes&quot;.code, Min(&quot;ChildTypes&quot;.code) from
+	&quot;ExampleTable&quot; &quot;MainTypes&quot; left join &quot;ExampleTable&quot; &quot;ChildTypes&quot; on &quot;MainTypes&quot;.code = &quot;ChildTypes&quot;.parent
+	where &quot;MainTypes&quot;.parent = :par or (&quot;MainTypes&quot;.parent is null and :par is null)
+	group by &quot;MainTypes&quot;.code into :code,:children do
+		suspend;
+end!!
+set term ; !!
+
+insert into &quot;ExampleTable&quot; values (0,'A',null);
+insert into &quot;ExampleTable&quot; values (1,'AA',0);
+insert into &quot;ExampleTable&quot; values (3,'AB',0);
+insert into &quot;ExampleTable&quot; values (4,'AC',0);
+insert into &quot;ExampleTable&quot; values (2,'AD',0);
+insert into &quot;ExampleTable&quot; values (5,'B',null);
+insert into &quot;ExampleTable&quot; values (6,'BA',5);
+insert into &quot;ExampleTable&quot; values (7,'BB',5);
+insert into &quot;ExampleTable&quot; values (8,'BC',5);
+insert into &quot;ExampleTable&quot; values (9,'BD',5);
+insert into &quot;ExampleTable&quot; values (10,'BE',5);
+insert into &quot;ExampleTable&quot; values (11,'BF',5);
+
+select * from &quot;ChildrenOfItem&quot;(0);
+/*  Gives 1,2,3,4 as you would expect */
+
+
+select * from &quot;ChildrenOfItem&quot;(0) inner join &quot;ExampleTable&quot; on &quot;ChildrenOfItem&quot;.code = &quot;ExampleTable&quot;.code
+order by name;
+/* gives 'AA','AD','AB','AC' even though it is order on name!! Codes are still 1,2,3,4
+HOWEVER, in this example, changing it to ORDER BY NAME DESC correctly returns AD,AC,AB,AA
+
+In my real system however, neither ORDER BY NAME or ORDER BY NAME DESC has any effect  */
+
+============================
+
+IB 6.01, W2k SP1, IBConsole 319. Dialect 3 database.
+johnsparrowuk@yahoo.com</text></argument><argument name="title"><text>ORDER BY has no effect</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_221921</text></argument><argument name="resources"><set/></argument></extension>

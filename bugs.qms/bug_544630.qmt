@@ -1,0 +1,62 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>544630</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Charsets/Collations 
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : danielrail
+Assigned to  : nobody
+----------------------
+Someone on IB-Support has some problems when 
+connecting to a database using UNICODE_FSS.
+
+Here's the message:
+&quot;I have try to make this SQL an the SERVER STOP!!!
+
+SELECT * FROM TABLE
+WHERE COLUM LIKE '&lt;international-character&gt;%'
+
+Firebird Server 1.0 769
+Pentium 4 512 MB Ram
+Mandrake 8.2
+and
+Firebird Server 1.0 769
+AMD K6-2 550 128 Ram
+Red Hat 7.1
+
+In the 2 computers - CRASH...
+
+HELP ME
+Thanks Vinicius&quot;
+
+I have the same type of problem under Windows 2000, 
+and it takes a long time for Windows to shutdown 
+Firebird when that happens, sometimes I have to 
+reboot.  When this happens the CPU for Firebird is at 
+100% sustained and it can be for upto 15 minutes after 
+I give the stop service command through the Windows 
+service manager.
+
+The problem occurs only when connecting using 
+UNICODE_FSS character set.  There's no problem when 
+connecting using other character sets.
+
+In Vinicius's case, he needs UNICODE_FSS, because he 
+deals with Brazil and China.  
+
+I can reproduce this behavior every time.
+
+Thank you for your attention.
+
+Daniel Rail
+----------------------
+User: eliask
+Logged In: YES 
+user_id=251635
+
+This is to confirm that the same thing happened to me with
+Firebird/1.0 build 821 on Win2K. I created a database that
+uses UNICODE_FSS with 4k page size, and ibserver.exe loops
+forever (100% CPU) when I try to use operator LIKE in a
+SELECT statement.
+
+Elias K</text></argument><argument name="title"><text>Problems when connecting using UNICODE</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_544630</text></argument><argument name="resources"><set/></argument></extension>

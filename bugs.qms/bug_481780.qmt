@@ -1,0 +1,81 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>481780</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : andreik
+Assigned to  : nobody
+----------------------
+next select statement shut downs server
+(RC1 1.0.0.557)
+
+SELECT
+    DISTINCT
+    b.ID,
+    b.RAISED,
+    b.BUGDESCRIPTION,
+    b.BUGINSTRUCTION,
+    b.DECISIONDATE,
+    b.FIXCOMMENT,
+    b.VERSIONFROM,
+    b.VERSIONTO,
+    p.ID,
+    SP.ID,
+    bt.id,
+    br.id,
+    f.id,
+    r.id,
+    d.id,
+    fx.id
+from
+  bug_bugbase b
+  LEFt JOIN usr$project p ON b.SUBSYSTEM = p.usr$name
+  LEFt JOIN usr$subproject sp ON b.BUGAREA = 
+sp.usr$name
+  LEFt JOIN usr$bugtype bt ON b.BUGTYPE = bt.usr$name
+  LEFt JOIN usr$bugfrequency br ON b.BUGFREQUENCY = 
+br.usr$name
+  LEFt JOIN usr$worker f ON b.FOUNDER = f.usr$longname
+  LEFt JOIN usr$worker r ON b.RESPONSIBLE = 
+r.usr$longname
+  LEFt JOIN usr$decision d ON b.DECISION = d.usr$name
+  LEFt JOIN usr$worker fx ON b.FIXER = fx.usr$longname
+WHERE fx.id is not null
+
+all joins are on text fields
+
+in log file there are next records:
+
+WIN2000SERVER (Server)	Mon Nov 12 17:02:28 2001
+	(null) Access violation.
+		The code attempted to access a virtual
+		address without privilege to do so.
+	This exception will cause the InterBase server
+	to terminate abnormally.
+
+WIN2000SERVER (Client)	Mon Nov 12 17:02:28 2001
+	C:\Program 
+Files\Borland\InterBase\bin\ibserver.exe: terminated 
+abnormally (-1)
+
+
+WIN2000SERVER (Client)	Mon Nov 12 17:02:29 2001
+	Guardian starting: C:\Program 
+Files\Borland\InterBase\bin\ibserver.exe
+
+
+or simply:
+
+WIN2000SERVER (Client)	Mon Nov 12 18:30:01 2001
+	C:\Program 
+Files\Borland\InterBase\bin\ibserver.exe: terminated 
+abnormally (-1)
+
+
+WIN2000SERVER (Client)	Mon Nov 12 18:30:02 2001
+	Guardian starting: C:\Program 
+Files\Borland\InterBase\bin\ibserver.exe
+
+
+during work of this SQL statement Firebird
+creates temporary files at least 200MB</text></argument><argument name="title"><text>select statement crashes the server</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_481780</text></argument><argument name="resources"><set/></argument></extension>

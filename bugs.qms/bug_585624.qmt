@@ -1,0 +1,168 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>585624</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : datiscum
+Assigned to  : nobody
+----------------------
+The following script on a simple database with two
+tables, and two stored 
+procedures stalls Firebird and IB Server. Even
+disconnecting becomes 
+impossible, not to speak of other clients connecting.
+
+
+ 1.Connect.
+ 2.&lt;script&gt;
+ delete from TEST where T_GROUP = 2;
+ execute procedure GROUP_COPY( 1 , 2 );
+ commit;
+ &lt;/script&gt;
+ 3.Disconnect.
+
+After at most three times repeating these three steps
+the server is stalled. I 
+was very disappointed to finally see Firbird and IB
+Server to choke on an 
+example as simple as that. It has cost me days to track
+it down, since I 
+looked for errors in my application and IBO at first.
+
+The behaviour is reproducible with IBConsole, Interbase
+Server 6.01, Firebird
+FirebirdSS-1.0.0.796-0.64IO.tar.gz ,
+Firebird-1.0.1.821-Win32.exe, and
+Firebird-1.0.1.794Win32.exe, using Windows 2000
+Professional or SuSE Linux 
+8.0, other OS not tried.
+
+I hope the example helps to have the error removed,
+soon. Having the server 
+stalled without a chance to shut it down gracefully is
+not bearable.
+
+The script to initialize the database follows:
+
+
+SET SQL DIALECT 3;
+SET NAMES ISO8859_1;
+
+CREATE DATABASE '192.168.1.40:/DB/Test.fdb'
+USER 'SYSDBA' PASSWORD '!master?'
+PAGE_SIZE 8192
+DEFAULT CHARACTER SET ISO8859_1;
+
+SET TERM ^ ;
+
+/**************************************************************************
+****/
+ /* Stored Procedures */
+/**************************************************************************
+****/
+
+CREATE PROCEDURE GROUP_COPY (
+SOURCE INTEGER,
+DESTINATION INTEGER)
+AS
+BEGIN
+EXIT;
+END^
+
+
+CREATE PROCEDURE INSERT_VALUES (
+CONT INTEGER,
+D_GROUP INTEGER)
+AS
+BEGIN
+EXIT;
+END^
+
+SET TERM ; ^
+
+/**************************************************************************
+****/ /* Tables */
+/**************************************************************************
+****/
+
+CREATE TABLE GROUPS (
+GR_ID INTEGER NOT NULL,
+GR_NAME VARCHAR(40) CHARACTER SET ISO8859_1 NOT NULL
+COLLATE DE_DE
+);
+
+CREATE TABLE TEST (
+ID INTEGER NOT NULL,
+T_GROUP INTEGER NOT NULL
+);
+
+/**************************************************************************
+****/ /* Primary Keys */
+/**************************************************************************
+****/
+ ALTER TABLE GROUPS ADD CONSTRAINT PK_GROUPS PRIMARY
+KEY (GR_ID);
+ALTER TABLE TEST ADD CONSTRAINT PK_TEST PRIMARY KEY
+(ID, T_GROUP);
+
+/**************************************************************************
+****/ /* Foreign Keys */
+/**************************************************************************
+****/
+ALTER TABLE TEST ADD CONSTRAINT FK_TEST FOREIGN KEY
+(T_GROUP)
+REFERENCES GROUPS (GR_ID);
+
+/**************************************************************************
+****/ /* Stored Procedures */
+/**************************************************************************
+****/ 
+
+SET TERM ^ ;
+
+ALTER PROCEDURE GROUP_COPY (
+SOURCE INTEGER,
+DESTINATION INTEGER)
+AS
+begin
+insert into TEST( ID, T_GROUP )
+select A.ID, :Destination from TEST A
+where A.T_GROUP = :Source
+and not exists (select * from TEST B
+where B.ID = A.ID
+and :Destination = B.T_GROUP );
+end
+^
+
+ALTER PROCEDURE INSERT_VALUES (
+CONT INTEGER,
+D_GROUP INTEGER)
+AS
+DECLARE VARIABLE ANZ INTEGER;
+begin
+ANZ = 0;
+
+while ( ANZ &lt; CONT ) do
+begin
+if ( not exists ( select ID from TEST where ID = :ANZ
+and T_GROUP =
+
+:D_GROUP )) then
+
+insert into TEST ( ID , T_GROUP ) values ( :ANZ ,
+:D_GROUP );
+ANZ = ANZ +1;
+end
+end
+^
+
+SET TERM ; ^
+
+commit;
+
+/* Default values for the tables. */
+insert into GROUPS VALUES ( 1 , 'Group1' );
+insert into GROUPS VALUES ( 2 , 'Group2' );
+commit;
+execute procedure INSERT_VALUES( 30000 , 1);
+commit;</text></argument><argument name="title"><text>IB server stalled by simple script </text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_585624</text></argument><argument name="resources"><set/></argument></extension>

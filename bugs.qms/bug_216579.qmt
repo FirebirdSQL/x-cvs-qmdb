@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>216579</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9
+Status       : Closed
+Resolution   : Fixed
+Submitted By : fsg
+Assigned to  : nobody
+----------------------
+Using generators in computed by columns 
+will return wrong results and create
+an unusable database.
+
+Here is a script to reproduce this bug:
+
+create database &quot;cf.gdb&quot;;
+
+create generator gen1;
+set generator gen1 to 1000;
+show generator gen1;
+
+create table t0 (a integer, genid_field computed by (a + gen_id(gen1, 1)));
+show table t0;
+insert into t0(a) values(10);
+insert into t0(a) values(12);
+select * from t0;
+
+set generator gen1 to 1000;
+show generator gen1;
+select * from t0;
+
+drop database;
+exit;
+
+
+----------------------
+User: nobody
+I didn't see a problem either - the construction is not great because
+the value of the field changes each time it is read - which is what it
+should do.  I'm using V6 on NT.  What system showed the error?
+----------------------
+User: fsg
+Fixed by Patrick J. P. Griffin
+----------------------
+User: robocop
+I can see the bug:
+create generator g0;
+create table test(a int, b computed by (a+gen_id(g0,1)))
+insert into test(a) values(1)
+insert into test(a) values(0)
+insert into test(a) values(2)
+select * from test
+Internal gds software consistency check (invalid block type encountered (147))
+Statement: select * from test
+
+Commit or rollback produces:
+Internal gds consistency check (can't continue after bugcheck)
+
+IBConsole =&gt; Validation
+No database validation errors were found.
+
+Reconnecting to the db:
+select * from rdb$database
+=&gt; ok
+select * from test
+=&gt; Internal gds software consistency check (invalid block type encountered (147))
+
+Validated with gfix, then performed a sweep with gfix and another validation. Never a bug is encountered. However,
+select a from test
+=&gt; no problem, returns 1, 0 &amp; 2.
+select b from test
+Internal gds software consistency check (invalid block type encountered (147))
+So, the problem is only the computed column defined using the generator. After that, the engine stops obeying commands, for example:
+SQL&gt; select * from rdb$database;
+Statement failed, SQLCODE = -204
+Dynamic SQL Error
+-SQL error code = -204
+-Table unknown
+-RDB$DATABASE
+
+Needless to say, I cannot see the wrong values, because the engine crashes before. As you can see, it's not that the gdb becomes corrupt, but the engine halts due to a critical internal condition.
+
+----------------------
+User: prenosil
+I do not see anything wrong.
+
+From your script I got these results:
+  select * from t0; 
+          A GENID_FIELD 
+         == =========== 
+         10        1011 
+         12        1014 
+
+  set generator gen1 to 1000; 
+  select * from t0; 
+          A GENID_FIELD 
+         == =========== 
+         10        1011 
+         12        1014 
+
+1000+1+10 = 1011 o.k.
+1001+1+12 = 1014 o.k.</text></argument><argument name="title"><text>generators in computed by columns will return wrong results</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_216579</text></argument><argument name="resources"><set/></argument></extension>

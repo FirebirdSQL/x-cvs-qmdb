@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>229009</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : prenosil
+Assigned to  : robocop
+----------------------
+IB will allow CREATE VIEW command where number of view columns does not correspond to number of columns in select statement, e.g. you can create
+
+  CREATE VIEW v (xx) AS
+    SELECT a,b,c FROM tab;
+
+and it will create view that looks like
+
+  CREATE VIEW v (xx,b,c) AS
+    SELECT a,b,c FROM tab;
+
+According to SQL92 rules, such statement should return syntax error.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+The code to check for that issue was in place, but previous 
+code made impossible to detect the error condition properly.
+
+C.</text></argument><argument name="title"><text>CREATE VIEW not returning syntax error</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_229009</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>538201</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0.x
+Status       : Closed
+Resolution   : Fixed
+Submitted By : kdv
+Assigned to  : nobody
+----------------------
+Interbase 6.0.1.0, Firebird 1.0.0.796/808, Interbase 6.5.0.28
+All Win32 versions (on W2K SP2)
+
+Server crashes executing the following statement:
+
+select extract(month from cast(null as date))
+  from RDB$Database
+
+or
+
+select count(*)  from RDB$Database
+   where extract(month from cast(null as date))&gt;3
+
+seems that problem is in extract.
+
+During server crash nothing is being reported in interbase.log. 
+Only AV message on screen.
+----------------------
+User: danielrail
+Logged In: YES 
+user_id=238419
+
+Just to add my observations.  If Firebird is running as a 
+service, there's no error that pops up, except from the 
+client application which has lost the connection.  I also 
+have IB Guardian running and that service is even shutdown 
+when this error occurs, so Firebird is never automaically 
+restarted.  At this point a person has to manually restart 
+Firebird.
+
+The following error appears in the interbase.log file:
+DEVCOMP1 (Client)	Tue Apr 02 10:38:34 2002
+	C:\Program 
+Files\Borland\InterBase\bin\ibserver.exe: terminated 
+abnormally (-1)
+
+Hope this information helps.
+
+Daniel Rail</text></argument><argument name="title"><text>crash with extract from null as date</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_538201</text></argument><argument name="resources"><set/></argument></extension>

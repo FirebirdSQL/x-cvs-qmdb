@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>784076</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : bhh
+Assigned to  : nobody
+----------------------
+rollback to invalid savepoint with 
+isc_dsql_execute_immediate crashes fbserver
+sample:
+...savepoint test;
+isc_dsql_execute_immediate(...,...,0,SQLText,1,nil);
+
+
+----------------------
+User: skidder
+Logged In: YES 
+user_id=495356
+
+Irreproducable on current CVS Linux CS
+(Firebird 2.0 Alpha 1 Build 4084).
+Better desciption of environment required.
+(Firebird version, OS, used client, etc).
+Testcase is needed.
+
+NOTE: you need recent client from Firebird 1.5 at least to get 
+correctly new error messages. Older clients may crash.
+But server should not crash anyway.</text></argument><argument name="title"><text>rollback to savepoint crashes server</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_784076</text></argument><argument name="resources"><set/></argument></extension>

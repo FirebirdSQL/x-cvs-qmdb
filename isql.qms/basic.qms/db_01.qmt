@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Check the correct content of RDB$DATABASE for freh, empty database.</text></argument><argument name="stdout"><text>  RDB$DESCRIPTION RDB$RELATION_ID RDB$SECURITY_CLASS              RDB$CHARACTER_SET_NAME          
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>select * from RDB$DATABASE;
+
+commit;
+</text></argument><argument name="description"><text>Check the correct content of RDB$DATABASE for freh, empty database.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>  RDB$DESCRIPTION RDB$RELATION_ID RDB$SECURITY_CLASS              RDB$CHARACTER_SET_NAME          
 ================= =============== =============================== =============================== 
 
            &lt;null&gt;             128 &lt;null&gt;                          NONE                            
 
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>select * from RDB$DATABASE;
-
-commit;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>pcisar</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$DATABASE content</text></argument><argument name="test_id"><text>pcisar_0001</text></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument></extension>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$DATABASE content</text></argument><argument name="test_id"><text>pcisar_0001</text></argument><argument name="target_group"><text>.*</text></argument></extension>

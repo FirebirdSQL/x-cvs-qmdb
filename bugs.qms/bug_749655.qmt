@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>749655</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : sesummers
+Assigned to  : nobody
+----------------------
+Can't directly compare a Blob field containing text 
+with a string constant because the string constant is 
+interpreted as a Char, and the code comparing the Blob 
+to the Char uses a &quot;Starting with&quot; comparison rather 
+than &quot;=&quot; comparison. 
+
+For example:
+Select * from Table where Blobfield = '' 
+returns ALL records. 
+
+Select * from Table 
+where Blobfield = Cast('' as VarChar(1))
+returns only records with a blank blobfield.
+
+According to Ivan Prenosil:
+
+&quot;You are right that comparing string with blob 
+behaves &quot;strange&quot;.
+
+1) From my tests it seems that &quot;STARTING&quot; operator 
+is used  instead of the &quot;=&quot; operator.
+
+2) The same query inside SP works as expected !
+
+This happens in Firebird 1.0 (Build 908) as well as 
+Firebird 1.5 RC3. I'm running it on Windows XP Pro. I 
+get the same results on the local server as well as a 
+remote server running NT4 SP6. </text></argument><argument name="title"><text>Blob Comparison with constant uses &quot;Starting&quot;, not &quot;=&quot;</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_749655</text></argument><argument name="resources"><set/></argument></extension>

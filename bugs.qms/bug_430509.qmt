@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>430509</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Charsets/Collations 
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : nobody
+Assigned to  : brodsom
+----------------------
+I have a table:
+
+CREATE TABLE STOCKS 
+(
+  MNEN	        INTEGER NOT NULL,
+  ACTIVO	VARCHAR(50) CHARACTER SET ISO8859_1 
+COLLATE PT_PT,
+CONSTRAINT PK_STOCKS PRIMARY KEY (MNEN)
+);
+
+having the values
+
+1, &quot;B&amp;A&quot; 
+2, &quot;BES&quot; 
+3, &quot;BCP&quot; 
+4, &quot;B&amp;A Pref.&quot; 
+5, &quot;Banif&quot; 
+
+doing 
+SELECT ACTIVO FROM STOCKS ORDER BY ACTIVO
+
+gives me:
+
+B&amp;A
+Banif
+B&amp;A Pref.
+BCP
+BES
+
+THAT IS WRONG!!!
+If wanted i can give a test database i have (using it 
+on a site)
+
+Pedro Costa
+pbeck@ciberbit.pt
+
+----------------------
+User: brodsom
+Logged In: YES 
+user_id=546439
+
+This is not a bug but a unicode collation implementation.
+Unicode allows four methods to collate &quot;variable&quot; characters
+(this class include the ampersand).
+The implemented method is the &quot;shifted&quot; one that only take
+into account those caracters after it taked into account all
+the other characters.
+This is the default method for unicode, but I think is the
+worse one for users.
+The new collations will include the other methods to collate
+variable characters.
+----------------------
+User: dietertremel
+Logged In: YES 
+user_id=275429
+
+same with Collation DE_DE. Please help in next release.
+Thank You Dieter Tremel, tremel@tremel-computer.de</text></argument><argument name="title"><text>ORDER BY works wrong with collate PT_PT</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_430509</text></argument><argument name="resources"><set/></argument></extension>

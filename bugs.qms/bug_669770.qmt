@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>669770</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : skopalik
+Assigned to  : nobody
+----------------------
+select distinct is about 10x to 100x faster then
+select count(distinct ).
+Tested version: FB 1.0.2.908 and FB 1.5.0.1761
+
+test case:
+create table a ( a int);
+
+create procedure aset( cnt int) as
+declare variable i int;
+begin
+  i=0;
+  while(i&lt;cnt)do begin
+   insert into a VALUES (:cnt/1000)
+    i=i+1;
+  end
+end
+
+execute procedure aset (10000)
+
+PC: Notebokk Celeron 500/ 128 MB RAM
+There are result captured from wisql:
+
+select distinct * from a
+
+PLAN SORT ((A NATURAL))
+
+          A 
+=========== 
+
+         10 
+
+Current memory = 0
+Delta memory = 0
+Max memory = 0
+Elapsed time= 0.13 sec
+Buffers = 75
+Reads = 0
+Writes 0
+Fetches = 20072
+
+
+select count (distinct a) from a
+
+PLAN (A NATURAL)
+
+      COUNT 
+=========== 
+
+          1 
+
+Current memory = 0
+Delta memory = 0
+Max memory = 0
+Elapsed time= 10.86 sec
+Buffers = 75
+Reads = 0
+Writes 0
+Fetches = 20071</text></argument><argument name="title"><text>Count ( DISTINCT ... ) is too slow</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_669770</text></argument><argument name="resources"><set/></argument></extension>

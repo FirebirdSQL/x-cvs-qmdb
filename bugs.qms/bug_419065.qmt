@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>419065</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : cichon
+Assigned to  : nobody
+----------------------
+I have used Interbase from release 4.x.
+
+Still I'm using firebird. But I have a problem. I have 
+the same field, in one table as char(10) (named FZDNR) 
+and in the second table as NUMERIC (HNR). I need the 
+following select expression:
+
+SELECT * FROM WA WHERE HNR NOT IN (SELECT FZDNR FROM H)
+
+In the pre-6 Versions of Interbase it was working 
+fine, but now I get the whole table WA, so I think the 
+join on HNR-&gt;FZDNR doesnt work. Tell me pls, is it a 
+bug or is it an feature?
+
+Greetings
+
+Waldemar
+
+
+
+
+----------------------
+User: mapopa
+Logged In: YES 
+user_id=85089
+
+You have to do a cast 
+(cast FZDNR as integer)
+i did'nt tried but is easy to do it 
+for me is logical 
+to compare char(10) with char(10) fields 
+so the engine is doing good ;)</text></argument><argument name="title"><text>Join on diffrent datatypes</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_419065</text></argument><argument name="resources"><set/></argument></extension>

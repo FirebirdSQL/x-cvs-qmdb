@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>212177</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : andreik
+Assigned to  : patrickgriffin
+----------------------
+hi,
+
+I just discovered error in IB6.0.
+
+I have a table
+
+create table bug_bugbase (
+  s varchar(20) character set win1251 collate win1251 default 'XXXX'
+    not null
+);
+
+I work in win1251 code page, which is for belarusian language.
+
+Note, the default value above 'XXXX' is a cyrrilic (belarusian) text.
+
+Database works well, I can insert records, update, and delete them.
+But when I backup it and then restore I receive the next error
+message from gbak:
+
+gbak: restore failed for record in table BUG_BUGBASE
+gbak: ERROR: arithmetic exception, numeric overflow, or string truncation
+gbak: ERROR:     Cannot transliterate character between character sets
+
+it seems that IB supports default values only in standart
+(english) code page.
+
+I'm very upset, because, I just lost result of week of my work.
+I backed up database, then deleted GDB file and then
+tried to restore it and recieved this message. All records in tables
+where I had default values in cyrrilic are missed.
+
+With best regrads,
+
+Andrei Kireev
+a_kireev@yahoo.com
+</text></argument><argument name="title"><text>error with non-english column defaults</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_212177</text></argument><argument name="resources"><set/></argument></extension>

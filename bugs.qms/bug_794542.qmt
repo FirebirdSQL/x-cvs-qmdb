@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>794542</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : vrecion
+Assigned to  : nobody
+----------------------
+Reproduceable error in Firebird 1.5 RC5 (not appearing in 
+earlier versions):
+
+select
+ (select count(1) from some_table) as MMCount,
+ other_table.*
+FROM other_table
+
+results with false error message:
+Invalid token.
+Dynamic SQL Error.
+SQL error code = -104.
+Invalid expression in the select list (not contained in 
+either an aggregate function or the GROUP BY clause)
+
+The version with asterisk:
+select
+ (select count(*) from some_table) as MMCount,
+ other_table.*
+FROM other_table
+works correctly and returns expected data
+
+But version with count(1) works in previous versions of 
+Firebird correctly.
+
+I have found this after trying to upgrade from 1.4 to 1.5, 
+when application suddenly started to report above 
+mentioned error.
+
+Pavel Vrecion
+----------------------
+User: skidder
+Logged In: YES 
+user_id=495356
+
+Arno fixed the problem in current CVS (and probably 1.5 
+branch too). Thanks for the report, but it is better to submit 
+bugs to fb-devel firest.
+----------------------
+User: danielrail
+Logged In: YES 
+user_id=238419
+
+My mistake.  It should work.  I just tested it and it does 
+work.  Can you take this discussion to the Firebird-devel list?  
+So, it might be properly discussed.  And, also don't forget to 
+mention what you are using to test this.
+----------------------
+User: danielrail
+Logged In: YES 
+user_id=238419
+
+I think that the previous format was a bug, since it didn't 
+enforce the SQL standard properly.  The SQL standard only 
+supports COUNT(*).  So, Firebird is just better enforcing the 
+standard.
+
+Daniel Rail</text></argument><argument name="title"><text>Using &quot;select count(1)&quot; in nested selects fails</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_794542</text></argument><argument name="resources"><set/></argument></extension>

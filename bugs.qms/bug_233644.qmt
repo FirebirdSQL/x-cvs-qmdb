@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>233644</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : andreik
+Assigned to  : nobody
+----------------------
+cannot specify PLAN in UPDATE statement.
+
+I have two tables:
+
+CREATE TABLE contact
+(ID INTEGER NOT NULL,
+ NAME VARCHAR(60),
+ ...
+)
+
+CREATE TABLE company
+(CONTACTKEY INTEGER,
+ FULLNAME VARCHAR(60),
+ ...
+)
+
+ID is primary key and CONTACTKEY is foreignkey
+references contact(id).
+
+I need to set FULLNAME=NAME for all records in company
+where fullname IS NULL or fullname = ''.
+
+Ok, I wrote the following statement:
+
+UPDATE company cp
+  SET fullname= (SELECT name FROM contact ct WHERE ct.id=cp.contactkey)
+  WHERE cp.fullname IS NULL OR cp.fullname = '';
+
+Both tables contains ~40K records so the request hangs my machine.
+After reboot I checked the plan and it was:
+
+  PLAN(company NATURAL, contact NATURAL)
+
+I tried to set PLAN for entire UPDATE statement or
+only for SELECT sub-query but in both cases I received
+error message &quot;Invalid SQL&quot; or something like this.
+
+In the end of all, I just wrote STORED PROC
+what did all the work in 3 seconds.</text></argument><argument name="title"><text>cannot specify PLAN in UPDATE statement</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_233644</text></argument><argument name="resources"><set/></argument></extension>

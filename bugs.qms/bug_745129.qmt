@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>745129</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : fpeinado
+Assigned to  : nobody
+----------------------
+The win32 port of firebird 1.5 RC2 crashes on following 
+situation:
+   1-Start a Big Process (Such as Backup or Validation)
+   2-Stop the client process (Sample: Ctrl-C on gbak 
+utility)
+
+The server engine shows on &quot;Firebird Tray Icon&quot; that has 
+1 process and 1 attached database.
+
+If I click on close, he warns that have 1 connection live 
+(What? The client has been killed!!!).
+
+If I confirm, they trew a Windows Exception.
+
+I guess that the information writed above was enought to 
+recreate the problem situation.
+
+My OS is Microsoft Windows XP Professional SP1 
+(English).
+
+My email is flavio@peinado.com.br and further 
+information may be requested.
+
+Thanks for attention.</text></argument><argument name="title"><text>Crash on LongProcess On Win32 (FB 1.5 RC2)</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_745129</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>421263</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : UDF/Built-In Functions
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+The substr UDF that comes with FB returns NULL when 
+the final position is greater than the last position 
+in the input string argument. This causes any kind of 
+problems. Hence, two solutions have been provided:
+- Fix substr so it will return NULL when provided with 
+NULL, but it will report the full string if the final 
+position of the slice is greater than the strig.
+- Add substrlen that will have the argument most 
+people are used to: starting position plus length of 
+the slice instead of starting and final position.
+
+The final solution will come when a substr function, 
+ANSI compliant, can implemented in the server's core 
+in the future.
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Substr has been fixed, so it will return the full string if 
+the final position is greater than the string's length.
+Substrlen has been added, that takes string, start pos and 
+length of the slice for greater convenience.
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Substr has been fixed, so it will return the full string if 
+the final position is greater than the string's length.
+Substrlen has been added, that takes string, start pos and 
+length of the slice for greater convenience.
+
+C.</text></argument><argument name="title"><text>UDF substr gives NULL if slice &gt; input</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_421263</text></argument><argument name="resources"><set/></argument></extension>

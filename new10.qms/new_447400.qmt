@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>447400</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : fsg
+----------------------
+The TCP port can now be specified in the connection 
+string, thus allowing for easy support for port # 
+other than 3050.
+
+The connect string would be as follows:
+
+   Server:Port:Drive\Directory\Database.gdb</text></argument><argument name="title"><text>TCP Port in connect string</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_447400</text></argument><argument name="resources"><set/></argument></extension>

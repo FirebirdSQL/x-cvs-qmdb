@@ -1,0 +1,151 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>514186</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : basergey
+Assigned to  : robocop
+----------------------
+Similar to request 221925: &quot;Left joining table to sproc: ORDER BY 
+makes fields NULL&quot;
+
+Bug also present on only one field when left 
+joining table to VIEW.
+
+OS: NT4 server SP6a
+FB: VI-T6.2.706 
+Firebird Release Candidate 2; ODS version 
+10.10
+
+Details:
+
+/* Table: ROOT */
+CREATE TABLE ROOT (
+    
+ROOT_ID INTEGER NOT NULL,
+    ROOT_TEXT VARCHAR(50));
+/* Primary 
+keys definition */
+ALTER TABLE ROOT ADD PRIMARY KEY 
+(ROOT_ID);
+
+
+/* Table: CHILD_ONE */
+CREATE TABLE CHILD_ONE 
+(
+    CHILD_ID INTEGER NOT NULL,
+    ROOT_ID INTEGER);
+/* Primary 
+keys definition */
+ALTER TABLE CHILD_ONE ADD PRIMARY KEY 
+(CHILD_ID);
+
+
+/* Table: CHILD_TWO */
+CREATE TABLE 
+CHILD_TWO (
+    CHILD_ID INTEGER NOT NULL,
+    ROOT_ID INTEGER);
+/* 
+Primary keys definition */
+ALTER TABLE CHILD_TWO ADD PRIMARY KEY 
+(CHILD_ID);
+
+
+/* View: ONE_QNT */
+CREATE VIEW ONE_QNT(
+    
+ROOT_ID,
+    QNT)
+AS
+select root_id, count(child_id) as qnt 
+from child_one group by root_id;
+
+
+/* View: TWO_QNT 
+*/
+CREATE VIEW TWO_QNT(
+    ROOT_ID,
+    QNT)
+AS
+select 
+root_id, count(child_id) as qnt from child_two group by 
+root_id;
+
+
+/* test data */
+
+insert into ROOT(ROOT_ID, 
+ROOT_TEXT) values(1, 'text 1');
+insert into ROOT(ROOT_ID, 
+ROOT_TEXT) values(2, 'text 2');
+insert into ROOT(ROOT_ID, 
+ROOT_TEXT) values(3, 'text 3');
+
+insert into 
+CHILD_ONE(CHILD_ID, ROOT_ID) values(1, 1);
+insert into 
+CHILD_ONE(CHILD_ID, ROOT_ID) values(2, 1);
+insert into 
+CHILD_ONE(CHILD_ID, ROOT_ID) values(3, 1);
+insert into 
+CHILD_ONE(CHILD_ID, ROOT_ID) values(4, 1);
+insert into 
+CHILD_ONE(CHILD_ID, ROOT_ID) values(5, 1);
+insert into 
+CHILD_ONE(CHILD_ID, ROOT_ID) values(6, 1);
+insert into 
+CHILD_ONE(CHILD_ID, ROOT_ID) values(7, 1);
+insert into 
+CHILD_ONE(CHILD_ID, ROOT_ID) values(8, 2);
+insert into 
+CHILD_ONE(CHILD_ID, ROOT_ID) values(9, 2);
+insert into 
+CHILD_ONE(CHILD_ID, ROOT_ID) values(10, 2);
+
+insert into 
+CHILD_TWO(CHILD_ID, ROOT_ID) values(1, 2);
+insert into 
+CHILD_TWO(CHILD_ID, ROOT_ID) values(2, 2);
+insert into 
+CHILD_TWO(CHILD_ID, ROOT_ID) values(3, 2);
+insert into 
+CHILD_TWO(CHILD_ID, ROOT_ID) values(4, 2);
+insert into 
+CHILD_TWO(CHILD_ID, ROOT_ID) values(5, 2);
+insert into 
+CHILD_TWO(CHILD_ID, ROOT_ID) values(6, 2);
+insert into 
+CHILD_TWO(CHILD_ID, ROOT_ID) values(7, 2);
+insert into 
+CHILD_TWO(CHILD_ID, ROOT_ID) values(8, 3);
+insert into 
+CHILD_TWO(CHILD_ID, ROOT_ID) values(9, 3);
+insert into 
+CHILD_TWO(CHILD_ID, ROOT_ID) values(10, 3);
+
+
+/* test 
+queryes */
+
+/* this query returns valid results */
+select r.*, 
+oq.qnt oq_qnt, tq.qnt tq_qnt
+from root r
+left join one_qnt oq on 
+(r.root_id = oq.root_id)
+left join two_qnt tq on (r.root_id = 
+tq.root_id)
+
+/*             HERE IS THE BUG                */
+/* after adding ORDER BY - 
+OQ_QNT ALWAYS NULL */
+/* BUT TQ_QNT IS OK                           */
+select r.*, oq.qnt 
+oq_qnt, tq.qnt tq_qnt
+from root r
+left join one_qnt oq on 
+(r.root_id = oq.root_id)
+left join two_qnt tq on (r.root_id = 
+tq.root_id)
+order by r.root_id</text></argument><argument name="title"><text>ORDER BY makes fields NULL</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_514186</text></argument><argument name="resources"><set/></argument></extension>

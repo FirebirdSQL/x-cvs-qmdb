@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>459059</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : kdv
+Assigned to  : nobody
+----------------------
+Following Martin Gruber book I've found that index can 
+break returning result of ANY subquery.
+
+Example:
+
+CREATE TABLE CUSTOMERS (
+    CNUM INTEGER,
+    CNAME CHAR(10),
+    CITY CHAR(10),
+    RATING INTEGER,
+    SNUM INTEGER);
+
+INSERT INTO CUSTOMERS VALUES 
+(2001, 'Hoffman', 'London', 100, 1001);
+INSERT INTO CUSTOMERS VALUES 
+(2002, 'Giovanni', 'Rome', 200, 1003);
+INSERT INTO CUSTOMERS VALUES (2003, 'Lui', 'San Jose', 
+200, 1002);
+INSERT INTO CUSTOMERS VALUES (2004, 'Grass', 'Berlin', 
+300, 1002);
+INSERT INTO CUSTOMERS VALUES 
+(2006, 'Clemens', 'London', NULL, 1001);
+INSERT INTO CUSTOMERS VALUES (2008, 'Cisneros', 'San 
+Jose', 300, 1007);
+INSERT INTO CUSTOMERS VALUES (2007, 'Pereira', 'Rome', 
+100, 1004);
+
+SELECT *
+FROM Customers c
+WHERE not c.rating  = any
+(SELECT r.rating
+FROM Customers r
+WHERE r.city = 'San Jose');
+
+When there is no index on RATING field all OK, and
+result is the same when
+&quot;not c.rating = ANY&quot; is changed to
+&quot;c.rating &lt;&gt; ALL&quot; (this is normal behavior according 
+to the book and SQL standard).
+
+CNUM	CNAME	CITY	RATING	SNUM
+2001	Hoffman	London	100	1001
+2007	Pereira	Rome	100	1004
+
+But if index on RATING is added
+
+CREATE INDEX BYRATING ON CUSTOMERS (RATING);
+
+things goes wrong, and &quot;not c.rating = any&quot; starts 
+using index and producing wrong results:
+PLAN (R INDEX (BYRATING))
+PLAN (C NATURAL)
+
+CNUM	CNAME	CITY	RATING	SNUM
+2001	Hoffman	London	100	1001
+2006	Clemens	London		1001
+2007	Pereira	Rome	100	1004
+
+middle record have RATING value = NULL.
+
+Workaround is only one - use &quot;c.rating &lt;&gt; ALL&quot; instead 
+of ANY. It does not use index and returns correct 
+result. But this is not applicable for all cases.
+----------------------
+User: kdv
+Logged In: YES 
+user_id=12130
+
+All this was tested only with
+Firebird 1.0.0.338 for Windows.(W2K SP2).</text></argument><argument name="title"><text>index breaks = ANY result</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_459059</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>457133</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+Some combinations of single line comments using the 
+double hyphen marker defeat the lexer. Specially in 
+batch files, where one can comment several lines one 
+by one while developing an app, this example will fail:
+
+--
+
+--GRANT ALL ON DEPARTAMENTO                    TO DEPTO
+--GRANT ALL ON CARRERA                         TO DEPTO
+
+--GRANT ALL ON PROFESOR                        TO DEPTO
+
+GRANT ALL ON POSTITULO                       TO DEPTO;
+
+The server won't recognize the last GRANT as valid and 
+will reject the whole input. Also, having two newlines 
+before a single line comment can cause a message 
+saying that &quot;--&quot; is unrecognized command. Things like
+
+SQL&gt; select
+CON&gt; --
+CON&gt; 1
+CON&gt; --
+CON&gt; --
+CON&gt;
+CON&gt; --
+CON&gt; from
+CON&gt; --
+CON&gt; rdb$database
+CON&gt;
+CON&gt; ---
+CON&gt; ---------------
+CON&gt; ;
+
+should be accepted. I have the patch to parse.y 
+working and expect to commit it to CVS this weekend.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Changes passed TCS run by Mark O'Donohue.</text></argument><argument name="title"><text>Single line comments (--) defeat lexer</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_457133</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,212 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>532805</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : awharrison
+Assigned to  : awharrison
+----------------------
+It appears that using alter table can cause some significant
+corruption if the alterations aren't committed before being
+used.  
+
+The symptoms include incorrect conversion error messages,
+updates to the wrong field!  and values that change after
+a disconnect reconnect, even after a commit!!!
+
+
+FB1.0, Win2K.  Behavior is the same on IB6.5
+
+Here are some examples:
+
+SQL&gt; set autoddl off
+SQL&gt; alter table foobar add f2 varchar (20);
+SQL&gt; update foobar set f2 = 'abcdefghijklmnopqrst';
+Statement failed, SQLCODE = -413
+
+conversion error from string &quot;abcdefghijklmnopqrst&quot;
+SQL&gt; show table foobar;
+F1                              INTEGER Nullable
+F2                              VARCHAR(20) Nullable
+SQL&gt; commit;
+SQL&gt; delete from foobar;
+SQL&gt; insert into foobar (f1, f2) values (1, 'abcdefghijklmnopqrs');
+Statement failed, SQLCODE = -413
+
+conversion error from string &quot;abcdefghijklmnopqrs&quot;
+SQL&gt;quit;
+
+C:\Harrison&gt;isql foo.gdb
+Database:  foo.gdb
+SQL&gt; select * from foobar
+CON&gt; ;
+
+          F1 F2
+============ ====================
+
+           1 &lt;null&gt;
+           2 abcdefg
+           3 abcdefghijklmnopqrs
+
+SQL&gt; insert into foobar (f1, f2) values (4, '12345678901234567890');
+SQL&gt; commit
+CON&gt; ;
+SQL&gt; select * from foobar;
+
+          F1 F2
+============ ====================
+
+           1 &lt;null&gt;
+           2 abcdefg
+           3 abcdefghijklmnopqrs
+           4 12345678901234567890
+
+SQL&gt; set autoddl off;
+SQL&gt; alter table foobar add temp varchar (6);
+SQL&gt; update foobar set temp = f2;
+Statement failed, SQLCODE = -413
+
+conversion error from string &quot;abcdefg&quot;
+SQL&gt; alter table foobar drop f2;
+SQL&gt; alter table foobar alter temp to f2;
+SQL&gt; select * from foobar;
+
+          F1 F2
+============ ======
+
+           1 1
+           2 2
+           3 3
+           4 4
+
+SQL&gt; commit;
+SQL&gt; select * from foobar;
+
+          F1 F2
+============ ======
+
+           1 1
+           2 2
+           3 3
+           4 4
+
+SQL&gt; connect foo.gdb;
+Commit current transaction (y/n)?y
+Committing.
+Database:  foo.gdb
+SQL&gt; select * from foobar;
+
+          F1 F2
+============ ======
+
+           1 &lt;null&gt;
+           2 &lt;null&gt;
+           3 &lt;null&gt;
+           4 &lt;null&gt;
+
+SQL&gt; alter table foobar drop f2
+CON&gt; ;
+SQL&gt; alter table foobar add f2 varchar (20);
+SQL&gt; commit
+CON&gt; ;
+SQL&gt; update foobar set f2 = 'abcdefghijklmnopqrst'
+CON&gt; ;
+SQL&gt; commit
+CON&gt; ;
+SQL&gt; alter table foobar add temp varchar(6);
+SQL&gt; commit;
+SQL&gt; update foobar set temp = f2;
+Statement failed, SQLCODE = -802
+
+arithmetic exception, numeric overflow, or string truncation
+SQL&gt; commit;
+SQL&gt; alter table foobar drop f2;
+SQL&gt; commit;
+SQL&gt; alter table foobar alter temp to f2;
+SQL&gt; commit
+CON&gt; ;
+SQL&gt; select * from foobar;
+
+          F1 F2
+============ ======
+
+           1 &lt;null&gt;
+           2 &lt;null&gt;
+           3 &lt;null&gt;
+           4 &lt;null&gt;
+
+SQL&gt; alter table foobar drop f2;
+SQL&gt; alter table foobar add f2 varchar (20);
+SQL&gt; update foobar set f2 = 'abcdefghijklmnopqrst';
+Statement failed, SQLCODE = -413
+
+conversion error from string &quot;abcdefghijklmnopqrst&quot;
+SQL&gt; showt table foobar;
+Statement failed, SQLCODE = -104
+
+Dynamic SQL Error
+-SQL error code = -104
+-Token unknown - line 1, char 1
+-showt
+SQL&gt; show table foobar;
+F1                              INTEGER Nullable
+F2                              VARCHAR(6) Nullable
+SQL&gt; commit;
+SQL&gt; show table foobar;
+F1                              INTEGER Nullable
+F2                              VARCHAR(20) Nullable
+SQL&gt; update foobar set f2 = 'abcdefghijklmnopqrst';
+Statement failed, SQLCODE = -413
+
+conversion error from string &quot;abcdefghijklmnopqrst&quot;
+SQL&gt; update foobar set f2 = '1234567'
+CON&gt; ;
+SQL&gt; update foobar set f2 = '01234567890123456789';
+Statement failed, SQLCODE = -802
+
+arithmetic exception, numeric overflow, or string truncation
+SQL&gt; select * from foobar
+CON&gt; '
+CON&gt; ;
+
+          F1 F2
+============ ====================
+
+     1234567 1234567
+     1234567 1234567
+     1234567 1234567
+     1234567 1234567
+
+SQL&gt; commti
+CON&gt; commit;
+Statement failed, SQLCODE = -104
+
+Dynamic SQL Error
+-SQL error code = -104
+-Token unknown - line 1, char 1
+-commti
+SQL&gt; commit;
+SQL&gt; select * from foobar;
+
+          F1 F2
+============ ====================
+
+     1234567 1234567
+     1234567 1234567
+     1234567 1234567
+     1234567 1234567
+
+SQL&gt; commit;
+SQL&gt; connect foo.gdb;
+Database:  foo.gdb
+SQL&gt; select * from foobar;
+
+          F1 F2
+============ ====================
+
+     1234567 &lt;null&gt;
+     1234567 &lt;null&gt;
+     1234567 &lt;null&gt;
+     1234567 &lt;null&gt;
+
+SQL&gt;</text></argument><argument name="title"><text>Alter table messes up</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_532805</text></argument><argument name="resources"><set/></argument></extension>

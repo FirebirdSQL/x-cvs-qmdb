@@ -1,0 +1,117 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>512975</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : mmenaz
+Assigned to  : nobody
+----------------------
+Firebird RC2, IB 6.0.1
+
+When creating tables with columns that 
+are of a certain domain, you can &quot;embed&quot;
+spaces or CR+LF into the 
+definition between the domain name and the 
+default
+keyword.
+
+output:
+Without domains 
+(correct):
+DEF_ERROR_NODOM.INTERESSI DEFAULT 
+0
+DEF_ERROR_NODOM.STAMPATO_MODULO DEFAULT 'S'
+
+With 
+domains (wrong):
+DEF_ERROR.INTERESSI
+DEFAULT 
+0
+DEF_ERROR.STAMPATO_MODULO DEFAULT 'S'
+
+Note that the 
+DEF_ERROR.INTERESSI column has the DEFAULT keyword on a new 
+line
+(! If read back, there is a Cr+Lf), and that 
+DEF_ERROR.STAMPATO_MODULO has 4
+spaces before the 
+DEFAULT.
+This provokes some problems in tools, like IBObject, 
+that relies upon a well
+formed string.
+I've found no mention of 
+this in the Firebird sourgeforce bug database, but I
+don't 
+understand if it's only for open, recent bugs or not (I posted a 
+similar
+problem with ALTER DOMAIN, but it's fixed in Firebird 
+RC2, while this is not).
+Is it a issue to submit?
+
+Here the 
+details:
+CREATE TABLE DEF_ERROR (
+RITENUTAMOV_ID AUTOINC_DM 
+NOT NULL,
+RITENUTA MONEY_DM,
+INTERESSI MONEY_DM
+DEFAULT 
+0,
+STAMPATO_MODULO NOSI_DM DEFAULT 'S',
+TESORERIA_CAPITOLO 
+RIT_TESORERIA_CAPITOLO_DM);
+
+
+
+CREATE TABLE 
+DEF_ERROR_NODOM (
+RITENUTAMOV_ID INTEGER NOT NULL,
+RITENUTA 
+NUMERIC(15,2),
+INTERESSI NUMERIC(15,2)
+DEFAULT 
+0,
+STAMPATO_MODULO CHAR(1) DEFAULT 'S',
+TESORERIA_CAPITOLO 
+CHAR(1));
+
+/* ***************** domains 
+********************** */
+CREATE DOMAIN AUTOINC_DM 
+AS
+NUMERIC(18,0)
+
+CREATE DOMAIN MONEY_DM 
+AS
+NUMERIC(15,2)
+DEFAULT 0
+CHECK (ALUE BETWEEN -
+9999999999999.99 AND +9999999999999.99)
+
+CREATE DOMAIN 
+NOSI_DM AS
+CHAR(1)
+DEFAULT 'N'
+NOT NULL
+CHECK (VALUE IN 
+('S', 'N'))
+
+CREATE DOMAIN RIT_TESORERIA_CAPITOLO_DM 
+AS
+VARCHAR(6)
+CHECK ((VALUE IS NULL) OR (VALUE = 
+UPPER(VALUE)))
+
+
+/* **************** default query 
+***************** */
+SELECT RTRIM(RDB$RELATION_NAME) || ' .' 
+|| RTRIM(RDB$FIELD_NAME),
+RDB$DEFAULT_SOURCE
+FROM 
+RDB$RELATION_FIELDS
+WHERE RDB$DEFAULT_SOURCE IS NOT 
+NULL
+
+Thanks
+Marco Menardi</text></argument><argument name="title"><text>embed spaces and CR+LF before DEFAULT</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_512975</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223126</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+&quot;Jeff Overcash (TeamB)&quot; &lt;overcash@onramp.net&gt; wrote in message 
+
+news:3A1AAB31.B2FC5423@onramp.net...
+&gt; There is also a bug (also in isql I believe) that if you override a domain's
+&gt; constraints or default and also override the collate the collate will be
+&gt; extracted before the default or constraint.  I fixed that also.
+&gt; 
+&gt; &quot;Claudio Valderrama C.&quot; wrote:
+&gt; [snip]
+
+I can confirm this with an isql session:
+
+SQL&gt; show domain extract_bug;
+EXTRACT_BUG
+  CHAR(1) CHARACTER SET ISO8859_1
+  COLLATE ES_ES Nullable
+  default 'v'
+  check(value &gt;='a' and value &lt;='z')
+
+SQL&gt; show table t_extract_bug;
+A (EXTRACT_BUG) CHAR(1) CHARACTER SET ISO8859_1
+  COLLATE PT_PT Nullable
+  default 'w'
+  check(value &gt;='a' and value &lt;='z')
+CONSTRAINT INTEG_60:
+  check(a&gt;='c')
+
+The SHOW command may be forgiven, but the extract command uses the same routines:
+
+isql -x c:\proy\jeff.gdb
+=&gt;
+CREATE DOMAIN &quot;EXTRACT_BUG&quot; AS
+  CHAR(1) CHARACTER SET ISO8859_1
+  default 'v'
+  check(value &gt;='a' and value &lt;='z')
+  COLLATE ES_ES;
+[snip]
+/* Table: T_EXTRACT_BUG, Owner: SYSDBA */
+CREATE TABLE &quot;T_EXTRACT_BUG&quot;
+  (&quot;A&quot; &quot;EXTRACT_BUG&quot; COLLATE PT_PT  default 'w');
+[snip]
+ALTER TABLE &quot;T_EXTRACT_BUG&quot; ADD
+  check(a&gt;='c');
+
+As you can see, at the field definition level, the COLLATE clause happens before the DEFAULT clause and IB won't accept this syntax, so the script has to be fixed before it can be reused. The same happens if a field is created and the NOT NULL constraint is added along with a different charset:
+SQL&gt; show table t_extract_bug2;
+  A (EXTRACT_BUG) CHAR(1) CHARACTER SET ISO8859_1
+  COLLATE PT_PT Not Null default 'v'
+  check(value &gt;='a' and value &lt;='z')
+
+Worse, in this case, not only the COLLATE clause appears first, but that the order of the NOT NULL constraint and the DEFAULT clause are reversed and IB will reject the definition even if we take off the collation, because IB expects the DEFAULT to come before NOT NULL:
+
+SQL&gt; show table t_extract_bug3;
+  A (EXTRACT_BUG) CHAR(1) CHARACTER SET ISO8859_1
+  COLLATE PT_PT Not Null default '8'
+  check(value &gt;='a' and value &lt;='z')
+In this case, IBConsole (and not isql) preserved the right order between DEFAULT and NOT NULL
+
+Thanks to Jeff Overcash for helping to uncover this issue.
+
+C.</text></argument><argument name="title"><text>Misplaced collation when extracting metadata with isql</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223126</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>447391</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : nobody
+----------------------
+The -V (Verbose) option of GBAK now allows for 
+a 'counter' value to be specified -- i.e. GBAK ... -V 
+20000
+
+This value will provide additional user feedback, as 
+the data rows are backed-up or restored.  Once GBAK 
+has processed the defined number of rows (either 
+backed-up/restored or re-indexed), GBAK will print 
+message indicating the running row count value.
+
+By default, the counter value is 10,000.</text></argument><argument name="title"><text>New option for -V switch</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_447391</text></argument><argument name="resources"><set/></argument></extension>

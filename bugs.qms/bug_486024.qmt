@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>486024</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : ssamayoa
+Assigned to  : awharrison
+----------------------
+GBAK and backup service add a generator to the backup 
+file. This generator is called RDB$SECURITY. The 
+problem occurs when:
+
+1. Backup database:
+RDB$SECURITY generator added to the backup file.
+
+2. Restore database from backup file:
+RDB$SECUTIRY generator is restored.
+
+3. Backup database again:
+RDB$SECUTIRY exists in the database then is backed up 
+as normal generator but GBAK also adds RDB$SECUTIRY 
+generator by its own (two generators called 
+RDB$SECUTIRY in the same backup).
+
+4. Restore database from backup file:
+An error 335544349 with the following message:
+
+Attempt to store duplicate value (visible to active 
+transactions) in unique index &quot;RDB$INDEX_11&quot;
+
+This index is over RDB$GENERATORS(RDB$GENERATOR_NAME).
+The database gets partially restored (it can be 
+accesed).
+
+The only current workarround is to drop RDB$SECUTIRY 
+generator after restore from &quot;second&quot; generation or 
+set RDB$SYSTEM_FLAG to 1.
+
+This error occurs with FireBird RC1 v6.2.567 on Win32, 
+binaries dated nov 19 2001.
+
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Sergio has confirmed that with the latest internal debug 
+binaries I made available to him, the problem is gone.</text></argument><argument name="title"><text>GBAK adds generator to backup file</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_486024</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>446237</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : seanleyne
+Assigned to  : robocop
+----------------------
+This has to be one of the most frustrating error 
+messages which the system produces.</text></argument><argument name="title"><text>Eliminate &quot;Column not found&quot; error</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_446237</text></argument><argument name="resources"><set/></argument></extension>

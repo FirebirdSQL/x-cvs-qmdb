@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>DROP EXCEPTION - that not exists
-
-Dependencies:
-CREATE DATABASE
-</text></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 
 DROP EXCEPTION test;
 SHOW EXCEPTION test;
 
 DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
+</text></argument><argument name="description"><text>DROP EXCEPTION - that not exists
+
+Dependencies:
+CREATE DATABASE
+</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdout"><text/></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
 
 unsuccessful metadata update
 -Exception not found
 There is no exception TEST in this database
-</text></argument><argument name="title"><text>DROP EXCEPTION - that not exists</text></argument><argument name="test_id"><text>skopalik_0211</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="title"><text>DROP EXCEPTION - that not exists</text></argument><argument name="test_id"><text>skopalik_0211</text></argument><argument name="target_group"><text>.*</text></argument></extension>

@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>446234</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Feature v1.5
+Status       : Closed
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : skidder
+----------------------
+Support should be added to provide support for nested 
+transactions
+----------------------
+User: skidder
+Logged In: YES 
+user_id=495356
+
+Savepoints and nested transactions is the same thing.
+Firebird 1.5 has savepoints working.
+Autonomous transactions is a completely different story...</text></argument><argument name="title"><text>Support for Nested Transaction</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_446234</text></argument><argument name="resources"><set/></argument></extension>

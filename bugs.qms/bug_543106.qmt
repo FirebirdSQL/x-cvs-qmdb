@@ -1,0 +1,87 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>543106</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : andreik
+Assigned to  : nobody
+----------------------
+Serious bug in Firebird 1.808
+
+Playing with ALL keyword I found a bug. Here is a 
+little example:
+
+create table tst (i integer);
+
+insert into tst values (2);
+insert into tst values (3);
+
+commit;
+
+select * from tst where 1 &gt; all (select i from tst)
+
+Result: 
+================
+
+
+empty set. That is correct.
+
+Then do following:
+
+drop table tst;
+
+create table tst (i integer not null, primary key(i));
+
+insert into tst values (2);
+insert into tst values (3);
+
+commit;
+
+Select * from tst where 1 &gt; all (select i from tst)
+
+Result:
+================
+        2
+        3
+
+Oops! That is wrong.
+
+Trying several examples I found that the incorrect 
+result
+produced when primary keys index is used. Specifying
+plan for sub select will result in correct output:
+
+select * from tst where 1 &gt; all (select i from tst 
+plan (tst natural))
+
+Result:
+================
+
+
+It seems that SOME and ANY works fine,
+so far.
+
+
+
+
+----------------------
+User: andreik
+Logged In: YES 
+user_id=62876
+
+
+hi,
+
+this problem doesn't exist in IB 6.0
+but it is in FB 0.9.4 and later.
+----------------------
+User: kdv
+Logged In: YES 
+user_id=12130
+
+I've already reported this bug as
+index breaks = ANY result
+https://sourceforge.net/tracker/?func=detail&amp;aid=459059&amp;group_id=9028&amp;atid=109028
+
+I think this bug description must be deleted, since &gt; ALL or = ALL uses index and
+gives wrong result same way.</text></argument><argument name="title"><text>bug with ALL keyword</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_543106</text></argument><argument name="resources"><set/></argument></extension>

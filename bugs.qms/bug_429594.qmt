@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>429594</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+GBAK restores tables and views before UDFs. If table 
+or view contains an UDF in 'COMPUTED BY' filed, GBAK 
+can't restore it.
+
+System - Win32
+Firebird 0.9-4</text></argument><argument name="title"><text>GBAK &amp; UDF in 'COMPUTED BY' field</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_429594</text></argument><argument name="resources"><set/></argument></extension>

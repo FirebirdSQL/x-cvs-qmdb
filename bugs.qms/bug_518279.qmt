@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>518279</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+&quot;Paulius Pazera&quot; &lt;paulius at glds.com&gt; wrote in 
+message news:&lt;3c59c241$1_2@dnews&gt;...
+Hey guys,
+
+
+Here is one more weird bug (script follows), I don't 
+even know how to describe it. I was able to duplicate 
+it on 5.6 for windows and on 6.0.1.6 (open source) for 
+both windows and linux. Could someone please check 
+this on v6.5
+
+Is it known bug yet? Will it be fixed in next release? 
+Why it happens? Are there some workarounds?
+
+
+Thanks for any input on this,
+
+Paulius
+
+
+/* prepare two simple tables and stored procedure */
+
+CREATE TABLE T1 (I1 INTEGER);
+insert into t1 values (2);
+insert into t1 values (3);
+
+CREATE TABLE T2 (I1 INTEGER, I2 INTEGER);
+insert into t2 values (2, 1);
+
+set term ^;
+create procedure sp
+returns (
+i integer,
+s varchar(3)
+) as
+begin
+  i=1;
+  s='ABC';
+  suspend;
+end
+^
+set term ;^
+commit;
+
+/* will produce 'string truncation' error */
+
+select t1.i1, t2.i1, t2.i2, sp.i, sp.s
+  from t1
+  left outer join t2 on t2.i1 = t1.i1
+  left outer join sp on sp.i=t2.i2
+  order by t1.i1 desc;
+
+/* removing 'order by' or
+   replacing 'left outer join sp' with 'join sp'
+   (results are different but valid) or
+   removing sp.s from select clause (results will be 
+wrong)
+   will make this query work */
+
+select t1.i1, t2.i1, t2.i2, sp.i, sp.s
+  from t1
+  left outer join t2 on t2.i1 = t1.i1
+  left outer join sp on sp.i=t2.i2;
+
+select t1.i1, t2.i1, t2.i2, sp.i, sp.s
+  from t1
+  left outer join t2 on t2.i1 = t1.i1
+  join sp on sp.i=t2.i2
+  order by t1.i1 desc;
+
+select t1.i1, t2.i1, t2.i2, sp.i
+  from t1
+  left outer join t2 on t2.i1 = t1.i1
+  left outer join sp on sp.i=t2.i2
+  order by t1.i1 desc;
+commit;
+
+/* clean up */
+
+drop procedure sp;
+drop table t1;
+drop table t2;
+commit;
+
+Note: incidentally, this example is hard to check at 
+first glance to see what the engine does, because it 
+doesn't return the plan due to bug #518276.</text></argument><argument name="title"><text>left join =&gt; string truncation error</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_518279</text></argument><argument name="resources"><set/></argument></extension>

@@ -662,8 +662,8 @@ class FirebirdDatabaseResource(Resource):
     def SetUp(self, context, result):
         # Generate a database.
         self.__FirebirdServices = FirebirdService(context)
-        self.__database_path = "".join((context["server_location"],
-        context["database_location"],self.database_name))
+        self.__database_path = "".join((context["server_location"], \
+            context["database_location"],self.database_name))
         context["user_name"] = self.user_name
         context["user_password"] = self.user_password
         if self.backup_file:
@@ -711,8 +711,8 @@ class FirebirdDatabaseResource(Resource):
     def CleanUp(self, result):
         # Drop a database.
         try:
-            self.__con = kinterbasdb.connect(dsn=self.__database_path,
-            user=self.user_name,password=self.user_password)
+            self.__con = kinterbasdb.connect(dsn=str(self.__database_path), \
+                user=str(self.user_name), password=str(self.user_password))
             self.__con.drop_database()
         except Exception, error:
             # Cleanup failed.
@@ -727,7 +727,7 @@ class FirebirdInitScriptResource(Resource):
 
     An instance of this resource must have a Firebird database resource
     as prerequisite resource. An ISQL script is run on this database to
-    provide additinal, test-specific initialization for database resource.
+    provide additional, test-specific initialization for database resource.
     Any changes made to the database will persist, and it's not deleted 
     during cleanup.
 
@@ -836,7 +836,7 @@ class FirebirdUserResource(Resource):
 
 
 
-class FirebirdTestBase:
+class FirebirdTestBase(Test):
     """A base class for Firebird tests.
 
     An 'FirebirdTestBase' introduce common attributes and functionality for Firebird tests.
@@ -861,13 +861,21 @@ class FirebirdTestBase:
             Use the nickname listed in AUTHORS.TXT. For new test authors, don't forget
             to add appropriate record (nickname and e-mail) in this file!"""
             ),
+        qm.fields.TextField(
+            name="bug_id",
+            title="Bug identifier",
+            description="""Bug Identifier
+
+            If this test covers a bug, it should have a bug tracker entry.
+            Enter the ID from bug tracker here (usualy a number)."""
+            ),
         qm.fields.EnumerationField(
             name="test_type",
             title="Type of test",
             description="""Test could be positive or negative (defaults to POSITIVE).
 
             Positive test checks if something pass without error, 
-            while negative test checks if something fail""",
+            while negative test checks if something fail.""",
             enumerals = ["Positive","Negative"],
             default_value="Positive",
             ),
@@ -893,7 +901,7 @@ class FirebirdTestBase:
         ]
 
 
-class FirebirdISQLTestBase(Test):
+class FirebirdISQLTestBase(FirebirdTestBase):
     """Check a program's output and exit code.
 
     An 'FirebirdExecTestBase' runs a program and compares its standard output,
@@ -1138,10 +1146,8 @@ class FirebirdISQLTestBase(Test):
                 pattern = "$("+substitution.upper()+")"
                 replacement = context[substitution]
                 e_stdin = e_stdin.replace(pattern, replacement)
-            result["ExecTest.stdin"] = "'''" + e_stdin + "'''"
             # Create a thread to write to the child's standard input
             # stream.
-#            stdin_thread = WriteThread(stdin_f, self.stdin)
             stdin_thread = WriteThread(stdin_f, e_stdin)
 	    stdin_f = None
             # Create threads to read the child's standard output and
@@ -1227,27 +1233,20 @@ class FirebirdISQLTestBase(Test):
 
                 if stdout_stripped != self.stdout_stripped:
                     causes.append("standard output")
-                    result["ExecTest.expected_stdout"] \
-                        = "'''" + self.stdout + "'''"
-                    result["ExecTest.stdout"] = "'''" + stdout + "'''"
-                    result["ExecTest.stripped_stdout"] = "'''" + stdout_stripped + "'''"
-                    result["ExecTest.stripped_expected_stdout"] = "'''" + self.stdout_stripped + "'''"
+                    result["ExecTest.stdin"] = "<pre>" + e_stdin + "</pre>"
+                    result["ExecTest.stdout_expected"] = "<pre>" + self.stdout + "</pre>"
+                    result["ExecTest.stdout"] = "<pre>" + stdout + "</pre>"
+                    result["ExecTest.stdout_stripped"] = "<pre>" + stdout_stripped + "</pre>"
+                    result["ExecTest.stdout_stripped_expected"] = "<pre>" + self.stdout_stripped + "</pre>"
                     result["ExecTest.stripped_diff"] \
-                        = '\n'.join(difflib.ndiff(stdout_stripped.splitlines(1),self.stdout_stripped.splitlines(1)))
-		else:
-                    result["ExecTest.stripped_stdout"] = "'''" + stdout_stripped + "'''"
-                    result["ExecTest.stdout"] = "'''" + stdout + "'''"
-                    result["ExecTest.expected_stdout"] \
-                        = "'''" + self.stdout + "'''"
-                    result["ExecTest.stripped_diff"] \
-                        = '\n'.join(difflib.ndiff(stdout_stripped.splitlines(1),self.stdout_stripped.splitlines(1)))
+                        = "<pre>"+'\n'.join(difflib.ndiff(stdout_stripped.splitlines(0),self.stdout_stripped.splitlines(0)))+"</pre>"
                 # Check to see that the standard error matches.
                 stderr_stripped = re.sub("Use CONNECT or CREATE DATABASE to specify a database.*\n","",stderr)
                 if stderr_stripped != self.stderr:
                     causes.append("standard error")
-                    result["ExecTest.stderr"] = "'''" + stderr + "'''"
-                    result["ExecTest.expected_stderr"] \
-                        = "'''" + self.stderr + "'''"
+                    result["ExecTest.stdin"] = "<pre>" + e_stdin + "</pre>"
+                    result["ExecTest.stderr"] = "<pre>" + stderr + "</pre>"
+                    result["ExecTest.expected_stderr"] = "<pre>" + self.stderr + "</pre>"
                 # If anything went wrong, the test failed.
                 if causes:
                     result.Fail("Unexpected %s." % string.join(causes, ", ")) 
@@ -1315,7 +1314,7 @@ class FirebirdISQLTestBase(Test):
         return text
         
     
-class FirebirdISQLTest(FirebirdTestBase,FirebirdISQLTestBase):
+class FirebirdISQLTest(FirebirdISQLTestBase):
     """Check a program's output and exit code.
 
     An 'FirebirdISQLTest' runs ISQL by using the 'exec' system call."""

@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>788793</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Charsets/Collations 
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : bacuz
+Assigned to  : nobody
+----------------------
+Firebird doesn't use collations with WHERE's when using 
+the LIKE and CONTAINING SQL operators. With the &quot;=&quot; 
+operator the string is properly matched according with 
+the active collation (i'm using no accents collations and 
+the strings are found when i search full string with or 
+without accents.. but with the CONTAINING the string is 
+not matched). </text></argument><argument name="title"><text>Bug w using collations in WHERE's using CONTAINING or LIKE</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_788793</text></argument><argument name="resources"><set/></argument></extension>

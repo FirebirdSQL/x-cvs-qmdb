@@ -1,19 +1,19 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE EXCEPTION - try create Exception with same name
-
-Dependencies:
-CREATE DATABASE
-CREATE EXCEPTION
-Basic SELECT
-</text></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 CREATE EXCEPTION test 'A1';
 
 CREATE EXCEPTION test 'message to show';
 
 DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
+</text></argument><argument name="description"><text>CREATE EXCEPTION - try create Exception with same name
+
+Dependencies:
+CREATE DATABASE
+CREATE EXCEPTION
+Basic SELECT
+</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdout"><text/></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
 
 unsuccessful metadata update
 -DEFINE EXCEPTION failed
 -attempt to store duplicate value (visible to active transactions) in unique index &quot;RDB$INDEX_23&quot;
-</text></argument><argument name="title"><text>CREATE EXCEPTION - try create Exception with same name</text></argument><argument name="test_id"><text>skopalik_0138</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="title"><text>CREATE EXCEPTION - try create Exception with same name</text></argument><argument name="test_id"><text>skopalik_0138</text></argument><argument name="target_group"><text>.*</text></argument></extension>

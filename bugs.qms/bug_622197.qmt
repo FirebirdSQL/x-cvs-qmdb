@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>622197</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : None
+Submitted By : smillien
+Assigned to  : nobody
+----------------------
+Jeff Overcash report to me that IBX test the version of 
+GDS32.dll to activate / deactivate the descendant of 
+TIBCustomService.
+If the version is at least 6.0, so these components are 
+loaded (this for compatibility with IB5.6 or older)
+But FB1.5 alpha 2 have two dll for the client connection, 
+the gds32.dll is kept for ascending compatibility and 
+they are no version information in this dll.
+So, software using for example TIBBackupService,  
+crashes with an access violation when he starts.
+
+I'm using temporally the old dll (6.2.0.679) to continue 
+working with FB1.5 alpha 2
+
+
+----------------------
+User: andrewgoedhart
+Logged In: YES 
+user_id=394219
+
+Still a problem with alpha 3 
+IBX looks up the procedure entry points in the dll 
+
+ IBLibrary := LoadLibrary(PChar(IBASE_DLL));
+  if (IBLibrary &gt; HINSTANCE_ERROR) then
+  begin
+    CurLibrary := IBLibrary;
+    BLOB_get := GetProcAddr('BLOB_get'); {do not localize}
+    BLOB_put := GetProcAddr('BLOB_put'); {do not localize}
+    isc_sqlcode := GetProcAddr('isc_sqlcode'); {do not localize}
+    .....
+
+THis infomation is no longer present in the new firebird
+gd32.dll and so the load fails.
+----------------------
+User: dimitr
+Logged In: YES 
+user_id=61270
+
+Alpha 3 will contain all necessary version info.</text></argument><argument name="title"><text>IBX fails with GDS32 / FBClient</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_622197</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>710751</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : paul_reeves
+Assigned to  : nobody
+----------------------
+After changing the number of parameters in a stored
+procedure it becomes impossible to alter triggers that
+call that stored procedure. 
+
+This occurs even if the alterations to the stored
+procedure and trigger occur within the same transaction. 
+
+The error is:
+
+  invalid request BLR at offset NNN
+  -parameter mismatch for procedure XYZ
+
+This bug appears to have existed since IB 5.n
+
+The only current solution is to drop the trigger(s),
+drop the stored procedure, create the new stored
+procedure and then recreate the trigger(s).
+
+----------------------
+User: celyo
+Logged In: YES 
+user_id=686335
+
+The same bug appears when two depending stored 
+procedures have to be changed and change includes different 
+number of parameters and there is no COMMIT statement 
+between the DROP clause and the CREATE clause.
+(TestBUG.sql)
+The test should not be performed in isql or other SQL utility 
+that commits automaticaly after each statement. 
+The whole TestBUG.sql should be executed in a single 
+Transaction.
+
+Here are two SQL files that show the BUG.
+
+--------------------- CreateDB.sql -------------------------
+CREATE DATABASE 'C:\TestDB.gdb'
+USER 'SYSDBA' PASSWORD 'masterkey'
+PAGE_SIZE = 1024;
+
+SET TERM ^ ;
+
+CREATE PROCEDURE TEST_SLAVE (
+    PARAM1 INTEGER)
+RETURNS (
+    FIELD1 INTEGER,
+    FIELD2 INTEGER)
+AS
+
+BEGIN
+  SUSPEND;
+END
+^
+
+
+CREATE PROCEDURE TEST_MASTER (
+    PARAM1 INTEGER)
+RETURNS (
+    FIELD1 INTEGER,
+    FIELD2 INTEGER)
+AS
+BEGIN
+  SELECT
+    TEST_SLAVE.FIELD1,
+    TEST_SLAVE.FIELD2
+  FROM
+    TEST_SLAVE(:PARAM1)
+  INTO
+    :FIELD1,
+    :FIELD2;
+END
+^
+
+SET TERM ; ^
+
+COMMIT WORK;
+
+--------------------- TestBUG.sql -------------------------
+SET SQL DIALECT 3;
+
+CONNECT 'C:\TestDB.gdb' USER 'SYSDBA' 
+PASSWORD 'masterkey';
+
+
+
+DROP PROCEDURE TEST_MASTER;
+DROP PROCEDURE TEST_SLAVE;
+
+SET TERM ^ ;
+
+CREATE PROCEDURE TEST_SLAVE (
+    PARAM1 INTEGER,
+    PARAM2 INTEGER)
+RETURNS (
+    FIELD1 INTEGER,
+    FIELD2 INTEGER)
+AS
+
+BEGIN
+  SUSPEND;
+END
+^
+
+
+CREATE PROCEDURE TEST_MASTER (
+    PARAM1 INTEGER,
+    PARAM2 INTEGER)
+RETURNS (
+    FIELD1 INTEGER,
+    FIELD2 INTEGER)
+AS
+BEGIN
+  SELECT
+    TEST_SLAVE.FIELD1,
+    TEST_SLAVE.FIELD2
+  FROM
+    TEST_SLAVE(:PARAM1,:PARAM2)
+  INTO
+    :FIELD1,
+    :FIELD2;
+END
+^
+
+SET TERM ; ^
+
+COMMIT WORK;
+
+
+----------------------
+User: paul_reeves
+Logged In: YES 
+user_id=110431
+
+The initial post should have had a script attached
+demonstrating the problem. Unfortunately the browser crashed
+before it could upload it. Hopefully this time it will get
+through. If not anyone interested should mail me.</text></argument><argument name="title"><text>Dep. triggers cannot be modified if SP param count changed.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_710751</text></argument><argument name="resources"><set/></argument></extension>

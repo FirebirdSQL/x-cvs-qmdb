@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>212340</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+This simple SELECT statement does not work
+select country, count(country)
+from customer
+group by country
+order by count(country)
+
+I'm getting SQL error code = -104, Token unknown count.
+----------------------
+User: robocop
+Not a bug, but a limitation and probably in sync with some conformance level of SQL92.
+
+----------------------
+User: nobody
+Maybe it is not good but I have never read official SQL-92 standard. Everything I know about SQL I have read in SQL server documentation (MS SQL, Sybase SQL Anywhere, Pervasive SQL, Interbase). I have tested the above query with Pervasive SQL, SQL Anywhere, MS Access, Borland Database Engine (Paradox) and it works everywhere. According to the Interbase documentation (I have read it again) you are right. Fortunately column number works as expected. Thank you for the tip. This limitation is not realy big but I would like to see this feature implemented in the future. Column numbers are good if query is automatically generated but for a human function name is more readable.
+
+Could somebody cancel my bug report and add this information to the feature requests list.
+
+Andrzej
+----------------------
+User: awharrison
+InterBase does not allow you to specify a function
+(i.e. count) in an order by clause.  To the best of
+my feeble recollection, that's consistent with some
+level of SQL-92.
+
+You can get the effect you want by using the
+ordinal position of the column in the select list.
+(i.e. order by 2)
+
+Ugly, you bet.  But a bug?  Probably not.</text></argument><argument name="title"><text>Token unknown in simple SELECT with GROUP BY and ORDER BY</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_212340</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,144 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>450301</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : tord
+Assigned to  : robocop
+----------------------
+robocop submitted at end of june some changes in 
+parse.y, dsql.c and some other files, which enabled 
+the SUBSTRING keyword. There was no description given 
+in the Changelog, but you can find the comments in the 
+c-files.
+
+The syntax for SUBSTRING is:
+    SUBSTRING( s FROM start [FOR length] )
+
+s is a string, start is 1-based. The command should 
+extracts from the string &quot;s&quot; starting at 
+position &quot;start&quot; a substring with at most &quot;length&quot; 
+chars. If &quot;length&quot; isn't given, then the command 
+should extract the full string after the &quot;start&quot; 
+position.
+
+The SUBSTRING keyword isnt available in early firebird-
+versions (e.g. 0.9.4) or in the interbase-versions.
+
+I have tested the command in FireBird 1.0.0 Beta 2, 
+Build 324 Classic on Linux 2.2.16 (SuSE 7.0).
+
+When I use the command in the where-clause (e.g. 
+with &quot;in&quot; or &quot;=&quot;) it doesnt work, when I use it with 
+string-concatenation, it doesnt work, either.
+
+The following script shows the problem:
+
+/*
+* substring.sql
+* -------------
+* This sql-script tests for the substring-bug
+*
+* set ISC_USER and ISC_PASSWORD, then call
+*    isql -i substring.sql
+*/ 
+create database &quot;substring.gdb&quot;;
+
+create table foo (
+	bar varchar(10) not null
+);
+
+alter table foo
+	add constraint foo_pk primary key (bar);
+
+set echo;
+insert into foo (bar) values ('1234');
+insert into foo (bar) values ('5678');
+select substring(bar from 1 for 2) from foo;
+select '*'||substring(bar from 1 for 2)||'*' from foo;
+select bar from foo where substring(bar from 1 for 2) 
+= '12';
+set echo;
+
+commit;
+
+drop database;
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Tord, you wrote that
+select bar from foo where substring(bar from 1 for 2) 
+= '12';
+Should produce:
+BAR
+===========
+12
+This is impossible, as you might have noticed. The output 
+will be 1234 instead.
+
+Anyway, the whole problem was the the DSQL layer doesn't 
+follow the same path in gen.c when you put substring alone 
+and inside an expression (the second case fails), so I 
+decremented the starting parameter directly in parse.y and 
+the problem is gone.
+
+C.
+
+----------------------
+User: tord
+Logged In: YES 
+user_id=122378
+
+The expected results are:
+
+insert into foo (bar) values ('1234');
+insert into foo (bar) values ('5678');
+select substring(bar from 1 for 2) from foo;
+
+SUBSTRING
+==========
+
+12
+56
+
+select '*'||substring(bar from 1 for 2)||'*' from foo;
+
+
+============
+*12*
+*56*
+
+select bar from foo where substring(bar from 1 for 2) 
+= '12';
+
+BAR
+===========
+12
+
+set echo;
+
+The actual output at build 324 is:
+
+insert into foo (bar) values ('1234');
+insert into foo (bar) values ('5678');
+select substring(bar from 1 for 2) from foo;
+
+SUBSTRING
+==========
+
+12
+56
+
+select '*'||substring(bar from 1 for 2)||'*' from foo;
+
+
+============
+*23*
+*67*
+
+select bar from foo where substring(bar from 1 for 2) 
+= '12';
+set echo;</text></argument><argument name="title"><text>SUBSTRING doesnt work</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_450301</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>226456</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : dimitr
+Assigned to  : robocop
+----------------------
+When I have an index, for example: &quot;idx_asc_History_Stamp&quot; and try to use this index in my SELECT statement as shown below:
+...
+PLAN (&quot;History&quot; ORDER &quot;idx_asc_History_Stamp&quot;)
+...
+then I get an error with ISC ERROR CODE = 335544343:
+
+invalid request BLR at offset 112
+there is no index IDX_ASC_HISTORY_STAMP for table History
+
+But if I have an index named IDX_ASC_HISTORY_STAMP or both of them, this SELECT statement with my plan works fine, but uses the upper-cased one.
+
+So it looks like PLAN cannot recognize an index name, which is SQL delimited identifier.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+The routine par_plan in jrd/par.c was uppercasing the 
+index. It no longer has to do that or it will defeat 
+MET_lookup_index_name that's case sensitive. Index names 
+come already uppercased if the name is not between quotes 
+or the dialect is 1.
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+The routine par_plan in jrd/par.c was uppercasing the 
+index. It no longer has to do that or it will defeat 
+MET_lookup_index_name that's case sensitive. Index names 
+come already uppercased if the name is not between quotes 
+or the dialect is 1.
+
+C.</text></argument><argument name="title"><text>SELECT/PLAN does not understand delimited SQL index names</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_226456</text></argument><argument name="resources"><set/></argument></extension>

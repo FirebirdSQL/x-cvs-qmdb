@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>451922</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Feature v1.5
+Status       : Open
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : dimitr
+----------------------
+As in the case of Oracle, allow for a single trigger 
+to be defined for INSERT and/or DELETE and/or UPDATE 
+operations for all tables in the database.
+----------------------
+User: kattunga
+Logged In: YES 
+user_id=100026
+
+I think that this feature will very important to make 
+easier replication system and log utilities.
+I think it need a litle more priority.</text></argument><argument name="title"><text>Universal Insert/Delete/Update triggers</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_451922</text></argument><argument name="resources"><set/></argument></extension>

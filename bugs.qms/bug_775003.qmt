@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>775003</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : UDF/Built-In Functions
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : None
+Submitted By : paulvink
+Assigned to  : skidder
+----------------------
+log( x, y ) should return the x-based log of y, according 
+to the description in ib_udf.sql. But in fact it calculates 
+and returns ln x / ln y. This is the y-based log of x, and 
+the _inverse_ of what it should return.
+
+Observed under Windows SS 1.0.0, 1.0.3 and 1.6 Alpha, 
+but clearly universal if you look at the source in ib_udf.c
+
+A patch - which simply swaps numerator and 
+denominator in the one-line function body - has been 
+posted yesterday to firebird-devel.
+
+Leaving the code intact and changing the description is 
+also an option, but I would strongly advise against that 
+because:
+
+a) in English and lots of other languages you name the 
+log base before the number. So it feels natural that a 
+function returning the base-a log of b should be called 
+as log( a, b ) -- just as div( a, b ) divides a by b, not b 
+by a.
+
+b) We also have the UDF log10. If you call log10( 100 ), 
+the base is before the number. Again, the most natural 
+thing would be if log10( 100 ) == log( 10, 100 ).
+
+Grtz,
+Paul Vinkenoog</text></argument><argument name="title"><text>log( x, y ) in fact returns log( y, x )</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_775003</text></argument><argument name="resources"><set/></argument></extension>

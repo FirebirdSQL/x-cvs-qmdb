@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>567931</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : ded
+Assigned to  : nobody
+----------------------
+  ANY user can drop procedures, generators, exceptions. 
+Tables, indices and triggers are not affected. To 
+reproduce:
+
+1. Connect as SYSDBA
+2. Create Procedure Test As Begin Exit; End
+3. Disconnect and connect as any user
+4. Drop Procedure Test - successfully.
+
+  Interesting is the next: if before step 4 try to 
+
+Execute Procedure Test
+
+exception 551 will be raised and after it step 4 will 
+raise expected exception 607 - unsuccessful metadata 
+update -ERASE RDB$PROCEDURES failed -no permission for 
+delete access to PROCEDURE TEST.
+
+Confirmed on builds WI-V1.0.0.794, LI-V6.2.796.
+
+Best regards, Alexander V.Nevsky.</text></argument><argument name="title"><text>Metadata security hole</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_567931</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>451798</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : tord
+Assigned to  : bellardo
+----------------------
+When using the new FIRST clause, the result set is 
+truncated before aggregation like &quot;group by&quot; or &quot;count
+()&quot;.
+
+The following script shows the problem:
+
+/*
+* This sql-script tests for the first-bug
+*
+* set ISC_USER and ISC_PASSWORD, then call
+*    isql -i first.sql
+*/ 
+create database &quot;first.gdb&quot;;
+
+create table A (
+	id integer not null
+);
+create table B (
+	id integer not null,
+	A integer not null,
+	v integer
+);
+insert into A (id) values (1);
+insert into A (id) values (2);
+insert into A (id) values (3);
+insert into B (id, A, v) values (1, 1, 1);
+insert into B (id, A, v) values (2, 1, 1);
+insert into B (id, A, v) values (3, 2, 2);
+insert into B (id, A, v) values (4, 2, 2);
+insert into B (id, A, v) values (5, 3, 3);
+insert into B (id, A, v) values (6, 3, 3);
+commit;
+select first 1
+	count(*)
+from
+	a;
+select first 2 
+	a.id, sum(b.v)
+from 
+	A, B
+where 
+	a.id = b.a
+group by
+	a.id
+order by
+	a.id;
+commit;
+drop database;
+
+
+Expected Output is:
+     COUNT
+==========
+         3
+
+        ID         SUM
+========== ===========
+         1           2
+         2           4
+
+Actual Output (Build 347) is:
+     COUNT
+==========
+         1
+
+        ID         SUM
+========== ===========
+         1           2
+
+----------------------
+User: bellardo
+Logged In: YES 
+user_id=79108
+
+Fixed as of build 391</text></argument><argument name="title"><text>FIRST is applied before aggregation</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_451798</text></argument><argument name="resources"><set/></argument></extension>

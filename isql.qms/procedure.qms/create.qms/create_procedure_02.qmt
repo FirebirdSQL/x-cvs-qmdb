@@ -1,9 +1,23 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE PROCEDURE - Input parameters
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+
+SET TERM ^;
+CREATE PROCEDURE test( 
+  p1 SMALLINT, p2 INTEGER, p3 FLOAT, p4 DOUBLE PRECISION, p5 DECIMAL(9,3), p6 NUMERIC(10,4),
+  p7 DATE, p8 TIME, p9 TIMESTAMP, p10 CHAR(40), p11 VARCHAR(60), p12 NCHAR(70))
+AS
+BEGIN
+  POST_EVENT 'Test';
+END ^
+SET TERM ;^
+SHOW PROCEDURE test;
+
+DROP DATABASE;
+</text></argument><argument name="description"><text>CREATE PROCEDURE - Input parameters
 
 Dependencies:
 CREATE DATABASE
-</text></argument><argument name="stdout"><text>Procedure text:
+</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>Procedure text:
 =============================================================================
 
 BEGIN
@@ -23,18 +37,4 @@ P9                                INPUT TIMESTAMP
 P10                               INPUT CHAR(40)
 P11                               INPUT VARCHAR(60)
 P12                               INPUT CHAR(70)  CHARACTER SET ISO8859_1
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
-
-SET TERM ^;
-CREATE PROCEDURE test( 
-  p1 SMALLINT, p2 INTEGER, p3 FLOAT, p4 DOUBLE PRECISION, p5 DECIMAL(9,3), p6 NUMERIC(10,4),
-  p7 DATE, p8 TIME, p9 TIMESTAMP, p10 CHAR(40), p11 VARCHAR(60), p12 NCHAR(70))
-AS
-BEGIN
-  POST_EVENT 'Test';
-END ^
-SET TERM ;^
-SHOW PROCEDURE test;
-
-DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE PROCEDURE - Input parameters</text></argument><argument name="test_id"><text>skopalik_0157</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE PROCEDURE - Input parameters</text></argument><argument name="test_id"><text>skopalik_0157</text></argument><argument name="target_group"><text>.*</text></argument></extension>

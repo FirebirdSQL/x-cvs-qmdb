@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Check for correct content of RDB$TRIGGER_MESSAGES in empty database.</text></argument><argument name="stdout"><text>RDB$TRIGGER_NAME                RDB$MESSAGE_NUMBER RDB$MESSAGE                                                                    
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>select * from RDB$TRIGGER_MESSAGES;
+commit;
+</text></argument><argument name="description"><text>Check for correct content of RDB$TRIGGER_MESSAGES in empty database.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>RDB$TRIGGER_NAME                RDB$MESSAGE_NUMBER RDB$MESSAGE                                                                    
 =============================== ================== ============================================================================== 
 
 RDB$TRIGGER_9                                    0 grant_obj_notfound                                                             
@@ -40,6 +42,4 @@ RDB$TRIGGER_31                                   0 no_write_user_priv
 RDB$TRIGGER_32                                   0 no_write_user_priv                                                             
 RDB$TRIGGER_33                                   0 no_write_user_priv                                                             
 
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>select * from RDB$TRIGGER_MESSAGES;
-commit;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>pcisar</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$TRIGGER_MESSAGES</text></argument><argument name="test_id"><text>pcisar_0028</text></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument></extension>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$TRIGGER_MESSAGES</text></argument><argument name="test_id"><text>pcisar_0028</text></argument><argument name="target_group"><text>.*</text></argument></extension>

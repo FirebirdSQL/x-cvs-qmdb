@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Check the correct content of RDB$COLLATIONS on empty DB.</text></argument><argument name="stdout"><text>RDB$COLLATION_NAME              RDB$COLLATION_ID RDB$CHARACTER_SET_ID RDB$COLLATION_ATTRIBUTES RDB$SYSTEM_FLAG   RDB$DESCRIPTION RDB$FUNCTION_NAME               
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>select * from RDB$COLLATIONS;
+commit;
+</text></argument><argument name="description"><text>Check the correct content of RDB$COLLATIONS on empty DB.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>RDB$COLLATION_NAME              RDB$COLLATION_ID RDB$CHARACTER_SET_ID RDB$COLLATION_ATTRIBUTES RDB$SYSTEM_FLAG   RDB$DESCRIPTION RDB$FUNCTION_NAME               
 =============================== ================ ==================== ======================== =============== ================= =============================== 
 
 NONE                                           0                    0                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
@@ -113,6 +115,4 @@ KSC_DICTIONARY                                 1                   44           
 BIG_5                                          0                   56                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
 GB_2312                                        0                   57                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
 
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>select * from RDB$COLLATIONS;
-commit;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>pcisar</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$COLLATIONS</text></argument><argument name="test_id"><text>pcisar_0003</text></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument></extension>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$COLLATIONS</text></argument><argument name="test_id"><text>pcisar_0003</text></argument><argument name="target_group"><text>.*</text></argument></extension>

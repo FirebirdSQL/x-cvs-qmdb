@@ -1,0 +1,169 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>422240</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : robocop
+----------------------
+We have two stored procedures and want to do 
+
+select *
+from proc1('AAA') p1 left join proc2('AAA') p2 on 
+(p1.id=p2.id)
+
+if I try to execute this query - server crashes.
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+When the PLAN bug was fixed for 0.95, this issue in the 
+example provided by Karsten disappeared. Regarding the 
+original bug report, a simple left join of two imaginary 
+procedures is far from enough to determine if there's some 
+special case that still fails.
+
+----------------------
+User: kstrobel
+Logged In: YES 
+user_id=63101
+
+Here is a test case that allows to reproduce this (?) bug.
+
+After running the script below, try to prepare this SELECT (I did it with IBConsole and IBExpert):
+--- snip ---
+SELECT anp.*, ka.* FROM &quot;Angebotspos&quot; anp
+LEFT JOIN &quot;ProKomponentenaufteilung&quot;(anp.&quot;Dummy-PK&quot;) ka ON (1=1)
+WHERE anp.&quot;Angebotsnummer&quot;='X' AND anp.&quot;Variante&quot;=1
+AND anp.&quot;Ebene-3&quot;=0
+ORDER BY anp.&quot;Ebene-1&quot;, anp.&quot;Ebene-2&quot;, ka.&quot;RPosSort&quot;
+--- snip ---
+
+This will sometimes crash the server and most often return trashed PLAN information (#||+'&amp;&amp;5 ...).
+
+Platform: IB6.0.1.6 (certified eval) on WinNT (sorry, I didn't test it with FB)
+
+Karsten Strobel
+strobel@ait-augsburg.de
+
+-------- HERE -------- IS -------- THE -------- SCRIPT --------
+/* 00100 */
+SET SQL DIALECT 3;
+SET NAMES ISO8859_1;
+CREATE DATABASE 'c:\test.gdb' USER 'SYSDBA' PASSWORD 'masterkey';
+SET TERM ^ ;
+
+/* 01000 */
+CREATE TABLE &quot;Angebotspos&quot; (
+  &quot;Dummy-PK&quot; INTEGER NOT NULL,
+  &quot;Angebotsnummer&quot; VARCHAR(30) NOT NULL,
+  &quot;Variante&quot; SMALLINT NOT NULL,
+  &quot;Positionsart&quot; CHAR(2) NOT NULL CONSTRAINT &quot;chPositionsart&quot; CHECK (&quot;Positionsart&quot; IN 
+('HP','UM','UE','GP','KM','KV','KE','BM')),
+  &quot;Ebene-1&quot; INTEGER NOT NULL,
+  &quot;Ebene-2&quot; INTEGER NOT NULL,
+  &quot;Ebene-3&quot; INTEGER NOT NULL,
+  &quot;Ebene-4&quot; INTEGER NOT NULL,
+  &quot;Anzahl&quot; DECIMAL(18,3),
+  &quot;EP&quot; DECIMAL(18,2),
+  &quot;HK&quot; DECIMAL(18,2),
+  &quot;Steuerungspos-Referenz&quot; INTEGER,
+  CONSTRAINT &quot;pkAngebotspos&quot; PRIMARY KEY (&quot;Dummy-PK&quot;)
+)
+^
+ALTER TABLE &quot;Angebotspos&quot;
+ADD CONSTRAINT &quot;fkAngebotspos_Steuerungspos&quot; FOREIGN KEY (&quot;Steuerungspos-Referenz&quot;) REFERENCES 
+&quot;Angebotspos&quot; (&quot;Dummy-PK&quot;) ON UPDATE CASCADE ON DELETE SET NULL
+^
+CREATE INDEX &quot;IdxANP_Ebenen_1_2&quot; ON &quot;Angebotspos&quot; (&quot;Ebene-1&quot;, &quot;Ebene-2&quot;)
+^
+CREATE INDEX &quot;IdxANP_Ebenen_3&quot; ON &quot;Angebotspos&quot; (&quot;Ebene-3&quot;)
+^
+
+/* 06190 */
+CREATE PROCEDURE &quot;ProGeraeteAnzahl&quot;(&quot;ADummy-PK&quot; INTEGER) RETURNS (&quot;RGeraeteAnz&quot; DECIMAL(18,3))
+AS
+DECLARE VARIABLE &quot;LAngebotsnummer&quot; VARCHAR(30);
+DECLARE VARIABLE &quot;LVariante&quot; SMALLINT;
+DECLARE VARIABLE &quot;LEbene-1&quot; INTEGER;
+DECLARE VARIABLE &quot;LEbene-2&quot; INTEGER;
+DECLARE VARIABLE &quot;LEbene-3&quot; INTEGER;
+BEGIN
+  &quot;RGeraeteAnz&quot; = 1; /* default (even if ADummy-PK is invalid) */
+  SELECT &quot;Angebotsnummer&quot;, &quot;Variante&quot;, &quot;Ebene-1&quot;, &quot;Ebene-2&quot;, &quot;Ebene-3&quot;
+  FROM &quot;Angebotspos&quot;
+  WHERE &quot;Dummy-PK&quot;=:&quot;ADummy-PK&quot; AND &quot;Ebene-4&quot;&lt;&gt;0
+  INTO :&quot;LAngebotsnummer&quot;, :&quot;LVariante&quot;, :&quot;LEbene-1&quot;, :&quot;LEbene-2&quot;, :&quot;LEbene-3&quot;;
+  IF (&quot;LAngebotsnummer&quot; IS NOT NULL) THEN
+  BEGIN
+    SELECT &quot;Anzahl&quot; FROM &quot;Angebotspos&quot;
+    WHERE &quot;Angebotsnummer&quot;=:&quot;LAngebotsnummer&quot; AND &quot;Variante&quot;=:&quot;LVariante&quot; AND
+          &quot;Ebene-1&quot;=:&quot;LEbene-1&quot; AND &quot;Ebene-2&quot;=:&quot;LEbene-2&quot; AND &quot;Ebene-3&quot;=:&quot;LEbene-3&quot; AND &quot;Ebene-4&quot;=0
+    INTO :&quot;RGeraeteAnz&quot;;
+  END
+  SUSPEND;
+END
+^
+
+/* 06200 */
+CREATE PROCEDURE &quot;ProKomponentenaufteilung&quot;(&quot;ADummy-PK&quot; INTEGER)
+RETURNS (
+  &quot;RPositionsart&quot; CHAR(2), &quot;RPosSort&quot; SMALLINT,
+  &quot;REP&quot; DECIMAL(18,2), &quot;RHK&quot; DECIMAL(18,2))
+AS
+DECLARE VARIABLE &quot;LAngebotsnummer&quot; VARCHAR(30);
+DECLARE VARIABLE &quot;LVariante&quot; SMALLINT;
+DECLARE VARIABLE &quot;LEbene-1&quot; INTEGER;
+DECLARE VARIABLE &quot;LEbene-2&quot; INTEGER;
+BEGIN
+  SELECT &quot;Angebotsnummer&quot;, &quot;Variante&quot;, &quot;Ebene-1&quot;, &quot;Ebene-2&quot;
+  FROM &quot;Angebotspos&quot;
+  WHERE &quot;Dummy-PK&quot;=:&quot;ADummy-PK&quot; AND &quot;Positionsart&quot; IN ('HP','UM','UE')
+  INTO :&quot;LAngebotsnummer&quot;, :&quot;LVariante&quot;, :&quot;LEbene-1&quot;, :&quot;LEbene-2&quot;;
+  IF (&quot;LAngebotsnummer&quot; IS NULL) THEN EXIT;
+  &quot;RPosSort&quot; = 1;
+  WHILE (&quot;RPosSort&quot; &lt;= 3) DO
+  BEGIN
+    IF (&quot;RPosSort&quot; = 1) THEN &quot;RPositionsart&quot; = 'KM'; ELSE
+      IF (&quot;RPosSort&quot; = 2) THEN &quot;RPositionsart&quot; = 'KV'; ELSE &quot;RPositionsart&quot; = 'KE';
+    
+    SELECT SUM(anp.&quot;EP&quot; * ga.&quot;RGeraeteAnz&quot;), SUM(anp.&quot;HK&quot; * ga.&quot;RGeraeteAnz&quot;)
+    FROM &quot;Angebotspos&quot; anp
+    LEFT JOIN &quot;ProGeraeteAnzahl&quot;(anp.&quot;Dummy-PK&quot;) ga ON (1=1)
+    WHERE &quot;Angebotsnummer&quot;=:&quot;LAngebotsnummer&quot; AND &quot;Variante&quot;=:&quot;LVariante&quot; AND
+          &quot;Ebene-1&quot;=:&quot;LEbene-1&quot; AND (&quot;Ebene-2&quot;=:&quot;LEbene-2&quot; OR :&quot;LEbene-2&quot;=0) AND
+          &quot;Ebene-3&quot;&lt;&gt;0 AND anp.&quot;Positionsart&quot;=:&quot;RPositionsart&quot;
+    INTO :&quot;REP&quot;, :&quot;RHK&quot;;
+     
+    SUSPEND;
+    &quot;RPosSort&quot; = &quot;RPosSort&quot; + 1;
+  END
+END
+^
+
+/* 09100 */
+SET TERM ; ^
+COMMIT ;
+
+----------------------
+User: mapopa
+Logged In: YES 
+user_id=85089
+
+why don't you try to execute the second 
+procedure proc2 inside the first one 
+so that you do'nt need a join
+something like this :
+
+proce1()
+...
+for select xxx from yyy where xxx=&quot;AAA&quot;
+do begin 
+execute procedure proc2(&quot;AAA&quot;)...
+end 
+...
+
+and this way you could pass some parameters to 
+the second procedure and return 
+from the first proc with values you need</text></argument><argument name="title"><text>Left join with stored procedure</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_422240</text></argument><argument name="resources"><set/></argument></extension>

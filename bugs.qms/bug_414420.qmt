@@ -1,0 +1,108 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>414420</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+InterBase will not sort correctly the result set of a table joined with a stored procedure (inner join), 
+if an ascending sort on an indexed field is requested.
+
+To expose the bug we need to join a table with a stored procedure; here's the test metadata 
+(tested with dialect 1):
+
+CREATE TABLE MY_TABLE 
+(
+  K	VARCHAR(10) NOT NULL,
+  D1	INTEGER,
+  D2	INTEGER,
+  V1	VARCHAR(10),
+  PRIMARY KEY (K)
+);
+
+CREATE PROCEDURE SELECT_ME 
+RETURNS
+(
+  DATA VARCHAR(10)
+)
+AS
+begin
+  data = 'one';
+  suspend;
+  data = 'two';
+  suspend;
+  data = 'three';
+  suspend;
+end
+
+Let's populate my_table with some test data:
+
+insert into my_table values ('one', 1, 99, 'zz');
+insert into my_table values ('two', 2, 98, 'yy');
+insert into my_table values ('three', 3, 97, 'xx');
+
+The following query exposes the bug:
+
+select *
+from my_table t join select_me p
+  on (t.k = p.data)
+order by t.d1
+
+The ordering is correct on every field we put in the ORDER BY clause, UNLESS that field is also 
+indexed. Here are the correct results of the query:
+
+K                    D1           D2 V1         DATA
+========== ============ ============ ========== ==========
+one                   1           99 zz         one
+two                   2           98 yy         two
+three                 3           97 xx         three
+
+If we now do:
+
+CREATE INDEX I1 ON MY_TABLE(D1);
+
+the same query returns the following results:
+
+K                    D1           D2 V1         DATA
+========== ============ ============ ========== ==========
+one                   1           99 zz         one
+three                 3           97 xx         three
+two                   2           98 yy         two
+
+In short, if an inner join between a table and a stored procedure is performed, ordering will work 
+only on non-indexed fields. Please note that:
+- if we do a left join instead the problem disappears.
+- if we remove the index the problem also disappears.
+- if we order by t.k (the table's primary key) the results are always correct.
+- if we request a descending order the problem also disappears.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Bug in the optimizer.
+
+----------------------
+User: achi
+Logged In: YES 
+user_id=145338
+
+If you agregate on such a query then this is not working
+correctly anymore, i.e.
+
+select k, sum(d1), sum(d2)
+from my_table t join select_me p on (t.k = p.data)
+group by k
+
+can return something like (with some more test datas)
+K1    sum_D1    sum_D2
+----------------------
+one   3         224
+two   2         393
+one   1         220
+three 4         322
+
+I guess the engine is trying to do the same sort as in the
+problem above - but the result set is not really ordered</text></argument><argument name="title"><text>wrong order by in table join storedproc</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_414420</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>227760</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+For what I remember (and understand) from a conversation with Diane Brown, zero-length field names aren't valid and should be banned. Currently, IB in dialect 3 allows constructions like these:
+
+create table &quot;&quot; (&quot;&quot; int);
+commit;
+create index &quot;&quot; on &quot;&quot;(&quot;&quot;);
+
+set term ^;
+create procedure &quot;p&quot; returns(&quot;&quot; int)
+as begin
+   for select &quot;&quot; from &quot;&quot; into :&quot;&quot; do
+   begin
+      &quot;&quot; = :&quot;&quot; * :&quot;&quot;;
+      suspend;
+   end
+end ^
+set term ^;
+commit;
+create role &quot;&quot;;
+grant select on &quot;&quot; to &quot;&quot;;
+grant execute on procedure &quot;p&quot; to &quot;&quot;;
+
+insert into &quot;&quot; values(1);
+insert into &quot;&quot; values(2);
+insert into &quot;&quot; values(3);
+commit;
+
+Then,
+select * from &quot;p&quot;
+works perfectly. The proc is returning the square of the table's field if someone doesn't understand.
+
+C.</text></argument><argument name="title"><text>Zero-length db object names shouldn't be allowed</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_227760</text></argument><argument name="resources"><set/></argument></extension>

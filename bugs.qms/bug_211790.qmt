@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>211790</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : IBGuardian
+Group        : Fixed v0.9-4
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : tamlin
+----------------------
+Guardian window shows dates of 2000 year as dd/mm/100
+instead of dd/mm/00.
+</text></argument><argument name="title"><text>Year 2000 incompliance in guardian</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_211790</text></argument><argument name="resources"><set/></argument></extension>

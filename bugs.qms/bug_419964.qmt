@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>419964</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : bellardo
+Assigned to  : bellardo
+----------------------
+	I have run into a buffer overrun problem in 
+&quot;remote/interface.c&quot;.  The version string is too long 
+for the sprintf on line 933.  Here is the string: &quot;UP-
+T0.9.4.101 Firebird Test1/tcp (cse-air-
+dhcp-153.ucsd.edu)/P10&quot;.  The buffer allocated is only 
+64 bytes long.  Looking at the string I feel the buffer 
+needs to be bigger.  The version includes the dns name, 
+which is in no way constrained to &lt; 64 characters.
+
+----------------------
+User: bellardo
+Logged In: YES 
+user_id=79108
+
+fixed in build &gt;= 1.148
+
+-John</text></argument><argument name="title"><text>buffer overflow in remote/interface.c li</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_419964</text></argument><argument name="resources"><set/></argument></extension>

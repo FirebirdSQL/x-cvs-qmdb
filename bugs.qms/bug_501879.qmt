@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>501879</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : alexpeshkoff
+Assigned to  : nmcc
+----------------------
+An error appears to be with udf, having both sum() and Group By data
+in parameters.
+This bug is new for Firebird RC - it worked OK in Interbase 6.01 and beta Firebird.
+OS - Windows NT 4.0
+FB - build from ...tar.gz 06.01.2002 (MSVC 6.0)
+select fails with following error message:
+Dynamic SQL Error
+SQL error code = -104
+invalid column reference
+
+Minimum select, causing this bug (1):
+select GroupField1, SomeUDF(sum(SumField), GroupField2)
+from SomeTable
+group by GroupField1, GroupField2
+
+While following code works OK (2):
+select GroupField1, Udf1(sum(SumField)), Udf2(GroupField2)
+from SomeTable
+group by GroupField1, Udf2(GroupField2)
+
+Attempt to use SomeUDF(sum(SumField), GroupField2) in group by
+(and, I think, it's right) causes an error.
+
+As I mentioned in the beginning, this bug is new for Firebird. In interbase 6.01,
+(1) works OK, and (2) may be used in a bit simpler form:
+select GroupField1, Udf1(sum(SumField)), Udf2(GroupField2)
+from SomeTable
+group by GroupField1, GroupField2
+- don't use UDF's in group by, just field names.
+
+Bug is easily repeated with any Database &amp; any UDF with 2 or more params.
+
+----------------------
+User: nmcc
+Logged In: YES 
+user_id=37966
+
+Already reported by Christian Pradelli and fixed in CVS as
+of build 713 (8-Jan-2002).
+
+----------------------
+User: nmcc
+Logged In: YES 
+user_id=37966
+
+Already reported by Christian Pradelli and fixed in CVS as
+of build 713 (8-Jan-2002).</text></argument><argument name="title"><text>UDF fails in select with Group By clause</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_501879</text></argument><argument name="resources"><set/></argument></extension>

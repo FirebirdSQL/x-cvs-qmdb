@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>452120</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : tord
+Assigned to  : nobody
+----------------------
+When you include an explicit plan in a CREATE VIEW
+statement, the plan is silently ignored.
+
+Demonstration:
+&lt;snip&gt;
+/*
+* This sql-script tests for the viewplan-bug
+*
+* set ISC_USER and ISC_PASSWORD, then call
+*    isql -i viewplan.sql
+*/ 
+create database &quot;viewplan.gdb&quot;;
+
+create table a (
+	b integer not null
+);
+create index a_b on a(b);
+
+create view view_a(b) as
+select b
+from a
+where b &lt; 2
+plan (a natural);
+commit;
+
+set plan;
+set echo;
+select * from view_a;
+select b from a where b &lt; 2
+plan (b natural);
+commit;
+
+drop database;
+&lt;snip&gt;
+
+----------------------
+User: dimitr
+Logged In: YES 
+user_id=61270
+
+I tend to think that a PLAN option should be disallowed in the VIEW 
+declaration until this issue is fixed. We've already done the same thing for 
+FIRST/SKIP in v1.5, so why should PLAN be different? Once all these 
+problems are solved, we will allow these options again.</text></argument><argument name="title"><text>CREATE VIEW ignores PLAN</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_452120</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Check for correct content of RDB$USER_PRIVILEGES in empty database.</text></argument><argument name="stdout"><text>RDB$USER                        RDB$GRANTOR                     RDB$PRIVILEGE RDB$GRANT_OPTION RDB$RELATION_NAME               RDB$FIELD_NAME                  RDB$USER_TYPE RDB$OBJECT_TYPE 
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>select * from RDB$USER_PRIVILEGES;
+commit;
+</text></argument><argument name="description"><text>Check for correct content of RDB$USER_PRIVILEGES in empty database.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>RDB$USER                        RDB$GRANTOR                     RDB$PRIVILEGE RDB$GRANT_OPTION RDB$RELATION_NAME               RDB$FIELD_NAME                  RDB$USER_TYPE RDB$OBJECT_TYPE 
 =============================== =============================== ============= ================ =============================== =============================== ============= =============== 
 
 SYSDBA                          SYSDBA                          S                            1 RDB$ROLES                       &lt;null&gt;                                      8               0 
@@ -9,6 +11,4 @@ SYSDBA                          SYSDBA                          D               
 SYSDBA                          SYSDBA                          R                            1 RDB$ROLES                       &lt;null&gt;                                      8               0 
 PUBLIC                          SYSDBA                          S                            0 RDB$ROLES                       &lt;null&gt;                                      8               0 
 
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>select * from RDB$USER_PRIVILEGES;
-commit;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>pcisar</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$USER_PRIVILEGES</text></argument><argument name="test_id"><text>pcisar_0031</text></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument></extension>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$USER_PRIVILEGES</text></argument><argument name="test_id"><text>pcisar_0031</text></argument><argument name="target_group"><text>.*</text></argument></extension>

@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>623992</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : paluch
+Assigned to  : nobody
+----------------------
+Mixing database url might cause data lost. This 
+behaviour was observed on this environment:
+* FirebirdSS-1.0.0.796-0 running on RedHat 7.3
+* InterSolv ODBC client (+MS Access) has enterred  
+path with double '//' like:
+  1.2.3.4://opt/interbase/data.gdb
+* Java client (using either firebirdsql or interclient) is 
+using path with simple slash like:
+jdbc:firebirdsql:1.2.3.4/3050:/opt/interbase/data.gdb
+* Java is using autocommit as by default.
+
+Then following things happen:
+1. Somebody opens ODBC connection (using // in path)
+2. Java client is doing some insert/updates (autocommit)
+3. These changes are visible by other java clients too,
+    but not on ODBC connection.
+4. ODBC connection is closed
+5. All data changes made by java clients when that 
+ODBC connection was done - HAD BEEN LOST.
+
+* The problem does NOT occure when ODBC path does 
+not include two '//', for example (no other change):
+Database name: 1.2.3.4:/opt/interbase/data.gdb
+
+It seems that mixing these two path to database file 
+might cause some strange things. Unfortunately the 
+problem was reproduced on 1 of 2 databases only.
+
+Has anyone idea why this happen? (Maybe two different 
+paths that point to same file might cause this problem?)
+
+----------------------
+User: paluch
+Logged In: YES 
+user_id=630153
+
+Hi folks!
+  I made debug verson of firebird and traced super/jrd/whybk.c 
+isc_attach_database () and ISC_expand_filename() and 
+found, that ISC_expand_filename() did not remove leading 
+double slash if the path does not contain symbolic links on 
+the disk (if the path contains symbolic links, then leading 
+slash is removed because of link expansion). Here is a brief 
+summary (IP is changed, but path is real):
+
+DB URL: 1.2.3.4:/var/lib/interbase/strecl.gdb
+Breakpoint 1, isc_attach_database 
+(user_status=0x409c569c, file_length=29,
+    
+file_name=0x8260228 &quot;/var/lib/interbase/strecl.gdb\016&amp;\b\030
+&quot;,
+    handle=0x409c56ec, dpb_length=55,
+(gdb) print expanded_filename
+$1 = &quot;/var/lib/interbase/strecl.gdb\0...&quot;
+
+Result: passed
+---------------------------------
+DB URL: 1.2.3.4://var/lib/interbase/strecl.gdb
+
+Breakpoint 1, isc_attach_database 
+(user_status=0x409c569c, file_length=30,
+    file_name=0x82c40a0 &quot;//var/lib/interbase/strecl.gdb&quot;, 
+handle=0x409c56ec,
+    dpb_length=55,
+(gdb) print expanded_filename
+$3 = &quot;//var/lib/interbase/strecl.gdb\0...
+
+Result: failed ( leading // is not removed in expanded 
+filename).
+-----------------------------------------
+DB URL: 1.2.3.4:/var/lib/interbase//strecl.gdb
+Breakpoint 1, isc_attach_database 
+(user_status=0x409c569c, file_length=30,
+    file_name=0x82c40a0 &quot;/var/lib/interbase//strecl.gdb&quot;, 
+handle=0x409c56ec,
+(gdb) print expanded_filename
+$4 = &quot;/var/lib/interbase/strecl.gdb\0
+
+Result: passed.
+-----------------------------------------------------------------------------------
+NOTE: The leading '//' does not mind if database file is on 
+symlink path, for example:
+URL: 1.2.3.4: /opt/interbase/test1.gdb
+and the path is:
+/opt -&gt; /usr/opt/interbase/test1.gdb
+Then even URL: 1.2.3.4://opt/interbase/test1.gdb
+is correctly expanded to:
+/usr/opt/interbase/test1.gdb
+
+Has somebody any comments?</text></argument><argument name="title"><text>Double // in path might cause corruption - found _cause_</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_623992</text></argument><argument name="resources"><set/></argument></extension>

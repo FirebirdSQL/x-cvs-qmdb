@@ -1,5 +1,12 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>BUG: Transliterate problem (if you use UNICODE_FSS for SET NAMES, it's work)
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+
+CREATE GENERATOR &quot;national_characters&quot;;
+COMMIT;
+SELECT * FROM RDB$GENERATORS WHERE RDB$GENERATOR_NAME NOT LIKE '___$%';
+
+DROP DATABASE;
+</text></argument><argument name="description"><text>BUG: Transliterate problem (if you use UNICODE_FSS for SET NAMES, it's work)
 
 CREATE GENERATOR - national character in gen. name
 
@@ -7,15 +14,8 @@ Dependencies:
 CREATE DATABASE
 Basic SELECT
 
-FIXME: use of national characters in test definition</text></argument><argument name="stdout"><text>RDB$GENERATOR_NAME              RDB$GENERATOR_ID RDB$SYSTEM_FLAG
+FIXME: use of national characters in test definition</text></argument><argument name="author"><text>skopalik_</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>RDB$GENERATOR_NAME              RDB$GENERATOR_ID RDB$SYSTEM_FLAG
 =============================== ================ ===============
 
 national_characters                                      9          &lt;null&gt;
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
-
-CREATE GENERATOR &quot;national_characters&quot;;
-COMMIT;
-SELECT * FROM RDB$GENERATORS WHERE RDB$GENERATOR_NAME NOT LIKE '___$%';
-
-DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik_</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE GENERATOR - national character in gen. name</text></argument><argument name="test_id"><text>skopalik_0141</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE GENERATOR - national character in gen. name</text></argument><argument name="test_id"><text>skopalik_0141</text></argument><argument name="target_group"><text>.*</text></argument></extension>

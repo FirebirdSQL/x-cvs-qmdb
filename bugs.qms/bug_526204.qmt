@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>526204</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GPRE
+Group        : Fixed v1.0.x
+Status       : Closed
+Resolution   : Fixed
+Submitted By : andrewcza
+Assigned to  : fsg
+----------------------
+When using gpre with cobol Gpre does not always 
+generate the correct variable declarations.
+
+I have attached a zip file with sample code to 
+duplicate and show the problem.
+
+The Zip file contains
+ esql.create.ecob  (The ESQL Cobol Source)
+ esql.create.ecob.cbl (The Generated code from GPRE)
+ esql.insert.ecob   (The EQSL Cobol Source)
+ esql.insert.ecob.cbl  (The Generated code from GPRE)
+
+To Duplicate the problem run gpre as follows
+gpre -co esql.create.ecob
+This will Generate esql.create.ecob.cbl
+Problem 1)
+  edit esql.create.ecob.cbl
+Line 26 reads as follows
+01  isc_1db PIC X(8) VALUE IS &quot;demo.gdb&quot;.
+But in Line 77 It is called as follows
+-     BY REFERENCE isc-1db, BY REFERENCE 
+gds__database, BY VALUE 10,
+
+The problem is that isc-1db is NOT the same as isc_1db 
+and gpre needs to be fixed to resolve this problem.
+As a Temporary work around in My cobol Program I am 
+currently doing a redefine.
+
+Problem 2)
+Create a database called demo.gdb with a table called 
+FRIEND
+CREATE TABLE FRIEND(
+                                        FIRSTNAME  CHAR
+(15),
+                                        LASTNAME   CHAR
+(20),
+                                        CITY       CHAR
+(15),
+                                        STATE      CHAR
+(2),
+                                        AGE        
+INTEGER);
+
+Then run gpre as follows
+gpre -co -d demo.gdb esql.insert.ecob
+This will generate esql.insert.ecob.cbl
+edit esql.insert.ecob.cbl
+Line 130 Reads as follows
+-     BY REFERENCE gds__trans, BY VALUE 1
+Line 140 Reads as follows
+     IF gds__trans NOT = 0 AND gds__0 NOT = 0 THEN
+Line 142 Reads as follows
+-     BY REFERENCE gds__trans, BY VALUE 0
+The problem is that gds__trans is not defined anywhere.
+I got around this in my Cobol program by adding a 
+refedine for ISC_TRANS 
+This problem also need to fixed.
+
+Regards
+Andrew Cameron
+
+----------------------
+User: fsg
+Logged In: YES 
+user_id=70223
+
+I have submitted the fix today.</text></argument><argument name="title"><text>GPRE Cobol Variable Problems</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_526204</text></argument><argument name="resources"><set/></argument></extension>

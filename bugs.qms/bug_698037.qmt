@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>698037</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : dominiq
+Assigned to  : nobody
+----------------------
+I am using Firebird 1.0 (WI-V1.0.2.908), gds32.dll 
+(WI-V1.0.2.908) and Delphi 5.
+
+Consider following table:
+
+CREATE TABLE TEST (
+    TEST_ID  INTEGER NOT NULL,
+    DESCR    VARCHAR(10) CHARACTER SET NONE 
+NOT NULL
+);
+ALTER TABLE TEST ADD CONSTRAINT FK_TEST 
+PRIMARY KEY (TEST_ID);
+
+when I try to fetch one record with varchar column 
+using
+isc_dsql_exec_immed2 I get the following error:
+'Unable to complete network request to 
+host &quot;localhost&quot;.
+Error reading data from the connection.
+unknown Win32 error 10054.
+
+When I fetch int column this way it works fine, 
+when I fetch row without parameters (insqlda = nil)
+it also works fine.
+
+Here is the code I use:
+
+var
+  inx, outx: PXSQLDA;
+  i: Integer;
+begin
+  GetMem(inx, XSQLDA_LENGTH(1));
+  GetMem(outx, XSQLDA_LENGTH(1));
+
+  inx.version := SQLDA_VERSION1;
+  inx.sqln := 1;
+  inx.sqld := 1;
+
+  inx.sqlvar[0].sqltype := SQL_LONG;
+  inx.sqlvar[0].sqllen := 4;
+  GetMem(inx.sqlvar[0].sqldata, 4);
+  i := 3;
+  Move(i, inx.sqlvar[0].sqldata^, 4);
+
+  outx.version := SQLDA_VERSION1;
+  outx.sqln := 1;
+  outx.sqld := 1;
+  outx.sqlvar[0].sqltype := SQL_TEXT or 1;
+  outx.sqlvar[0].sqllen := 10;
+  GetMem(outx.sqlvar[0].sqldata, 10);
+  GetMem(outx.sqlvar[0].sqlind, 2);
+
+  isc_dsql_exec_immed2(@FStatusVector, 
+@FConnection.Handle,
+    @FTransaction.Handle, 0,
+    'SELECT DESCR FROM TEST WHERE TEST_ID = ?;', 
+3, inx, outx);
+
+
+{...}
+</text></argument><argument name="title"><text>isc_dsql_exec_immed2 in/out XSQLDA</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_698037</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,98 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>462800</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : mvs
+Assigned to  : nobody
+----------------------
+FB Version: LI-T1.0.0.352 Firebird Beta2 
+
+Today i've found next bug:
+
+There are following records appeared in 
+RDB$FORMATS table:
+
+RDB$RELATION_ID    RDB$FORMAT
+
+232    5
+232    5
+
+e.g. query:
+
+select a.rdb$relation_id, a.rdb$format from 
+rdb$formats a
+group by a.rdb$relation_id, a.rdb$format
+having  count(a.rdb$format)&gt;1
+
+returns records !!!
+
+Also in RDB$RELATIONS table the field RDB$RELATION_ID 
+= 232, field RDB$FORMAT = 4 !
+
+e.g. query:
+
+select a.rdb$format, a.rdb$relation_name from 
+rdb$relations a
+ where exists (select * from rdb$formats b
+                where b.rdb$relation_id = 
+a.rdb$relation_id
+                  and b.rdb$format &gt; a.rdb$format)
+
+returns records too!
+
+How i've found the bug?
+I've tried to create FOREIGN KEY of table to itself:
+
+/* Table COMPL_GROUP and PK (already exists)*/
+
+CREATE TABLE COMPL_GROUP (
+    ID_COMPL_GROUP INTEGER NOT NULL,
+    ID_PARENT INTEGER,
+    TLEVEL INTEGER NOT NULL,
+    NAME VARCHAR(16) NOT NULL);
+
+ALTER TABLE COMPL_GROUP ADD PRIMARY KEY 
+(ID_COMPL_GROUP);
+
+Execution of ...
+
+alter table COMPL_GROUP
+add constraint FK_COMPL_GROUP_TREE3
+foreign key (ID_PARENT)
+references COMPL_GROUP(ID_COMPL_GROUP)
+on delete CASCADE
+
+... rises following error set:
+
+violation of FK constraint &quot;&quot;.
+violation of FK constraint &quot;INTEG_331&quot; on table 
+COMPL_GROUP.
+
+There are following record appeared in 
+RDB$FORMATS table:
+
+RDB$RELATION_ID = 232, RDB$FORMATS = 5
+
+Though, RDB$FORMATS equals 4 in RDB$RELATIONS record 
+with RDB$RELATION_ID == 232 .
+
+Second attempt do add constraint rises:
+
+Invalid insert or update value(s): object columns are 
+constrained - no 2 table rows can have duplicate 
+column values.
+attempt to store duplicat value (visible to active 
+transactions) in unique index &quot;RDB$INDEX_16&quot;.
+
+But now there are TWO records in table RDB$FORMATS:
+RDB$RELATION_ID = 232, RDB$FORMATS = 5
+
+
+----------------------
+User: awharrison
+Logged In: YES 
+user_id=66088
+
+I incorrectly added a unique index on RDB$FORMATS which has been removed.
+The duplicate formats are ugly, but not dangerous.</text></argument><argument name="title"><text>Not unique pair in RDB$FORMATS</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_462800</text></argument><argument name="resources"><set/></argument></extension>

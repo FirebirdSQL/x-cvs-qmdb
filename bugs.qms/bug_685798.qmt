@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>685798</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : meiji_kimura
+Assigned to  : nobody
+----------------------
+I've been developped an application using 
+InterBase/FireBird for one 
+year. I found two defects on LIKE clause with using 
+character set 
+'S_JIS0208' and long VARCHAR. 
+(This report is one of them)
+
+This defect depends on data. I reproduct this defect to 
+SELECT with LIKE CLAUSE (like '%Japanease-word%')
+to the specific database(*GDB) When I issues n-time 
+fetch, connection has lost, after that IBServer.exe down 
+abnormally.
+
+If you need, I can supply *.GDB files and script for isql 
+in order to reproduct these defects.(the database file is 
+very large, then I don't attach it to this submit.)
+
+Platform: Windows
+Version: IB 6.0 
+Opensource edition, 6.0.2 by M.E.R, and FB 1.0, 1.0.2.</text></argument><argument name="title"><text>SELECT statement using LIKE clause terminate IBServer.exe ab</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_685798</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>216733</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9
+Status       : Closed
+Resolution   : Fixed
+Submitted By : dbecker
+Assigned to  : nobody
+----------------------
+The number of generators you can have is dependant on (page size - unknown overhead) / size of generator.  IB allows you to create generators past this limit with no complaint, but these generators will return random data and corrupt the database if incremented.
+
+IB seems to limit generators to one page, but no range checking is done.  This is particularly bad on databases with small page sizes which migrate from ODS 9 to ODS 10, since the size of generates doubles from 32 bit to 64 bit, seriously reducing the limit.  On a 1024 page size, this limit is somewhere less than 128 generators.
+
+For example try the following sequence of events:
+
+CREATE DATABASE &quot;development:c:\temp\gen_bug.gdb&quot; USER &quot;SYSDBA&quot; PASSWORD &quot;masterkey&quot; PAGE_SIZE=1024;
+
+CREATE GENERATOR GEN_1;
+SELECT GEN_ID(GEN_1, 1) FROM RDB$DATABASE;
+
+     GEN_ID 
+=========== 
+          1 
+
+CREATE GENERATOR GEN_2;
+SELECT GEN_ID(GEN_2, 1) FROM RDB$DATABASE;
+
+     GEN_ID 
+=========== 
+          1 
+
+... and so on ...
+
+CREATE GENERATOR GEN_116;
+SELECT GEN_ID(GEN_116, 1) FROM RDB$DATABASE;
+
+     GEN_ID 
+=========== 
+  809041926 
+
+Notice the random value returned on the 116th generator.  Every generator beyond this one will return such bogus data as it reads from page locations in the database which do not contain generators.  When it writes this data back to the page, it corrupts the existing data.
+
+NOTE: The exact point at which you start to see bad data varies depending on the other data in your database, and other factors.  You may need to run this test several times before you start to see bad data cropping up if you test in a brand new database.  An existing database with data will probably show bad results right away.
+
+QUICK FIX: Put range checking in place and return an error when the storage space for generators is exhausted.
+
+LONG-TERM FIX: Revamp the generators mechanism to allow it to allocate and use more pages as needed.
+
+----------------------
+User: patrickgriffin
+Fix implemented as designed in prior followup.
+
+11/2000
+...pat
+----------------------
+User: nobody
+Sadly, there is both range checking and a mechanism to add new generator
+pages.  It just has a bug - two bugs - which cause it to get the range wrong
+by a factor of 32.  The fix involves changing the pgc structure in pag.h to
+include a new element.
+
+typedef struct pgc {
+    struct blk	pgc_header;
+    SLONG	pgc_high_water;		/* Lowest PIP with space */
+    SLONG	pgc_ppp;		/* Pages per pip */
+    SLONG	pgc_pip;		/* First pointer page */
+    int		pgc_bytes;		/* Number of bytes of bit in PIP */
+    int		pgc_tpt;		/* Transactions per TIP */
+    int                  pgc_gpg;            /*generators per generator page */
+} *PGC;
+
+and changing PAG_init in pag.c to initialize that value correctly.  A desireable,
+though not essential, change would be the addition of a generator page
+defintion to ods.h.
+
+typedef struct gpg {
+      struct pag  gpg_header;
+      SLONG       gpg_sequence;   /* Sequence number */
+      SLONG       gpg_waste [3];  /* overhead carried for backward compatibility*/
+      SINT64    gpg_values [1];    /* Generator vector */
+ } *GPG;
+
+The 12 wasted bytes allow this definition to map onto the existing
+definition, which avoids changing the stored database format and
+requiring users to backup and restore their databases.
+
+Ann</text></argument><argument name="title"><text>Too Many Generators Can Corrupt Database</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_216733</text></argument><argument name="resources"><set/></argument></extension>

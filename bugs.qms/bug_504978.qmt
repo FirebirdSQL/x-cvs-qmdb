@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>504978</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GPRE
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : sboyd
+Assigned to  : nobody
+----------------------
+GPRE seems to be truncating variables to a shorter length that IB5.x 
+did.  For example,
+
+DECLARE 
+db0_accounts_ac_credit_comments_insert
+CURSOR FOR 
+.....
+
+causes an error stating that 
+
+symbol 
+DB0_ACCOUNTS_AC_CREDIT_COMMENTS_ is already in use.  Presumably 
+because the truncation causes it to conflict with other names like 
+db0_accounts_ac_credit_comments_fetch and others.
+
+I am 
+using FB RC2 build 679.  This all worked fine under IB 5.x.</text></argument><argument name="title"><text>GPRE variable names being truncated</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_504978</text></argument><argument name="resources"><set/></argument></extension>

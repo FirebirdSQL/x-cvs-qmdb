@@ -1,0 +1,126 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>582534</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : nobody
+----------------------
+Marton Rusko (ruskom) reported:
+
+If I perform the following statements, ISQL will report 
+incorrect values for the column f2 for rows 'a' and 'c'.
+
+In fact, it will report 0 (zero) but the column actually 
+contains NULL.
+
+create table TESTTABLE ( f1 varchar(2) ); 
+
+insert into TESTTABLE values('a'); 
+insert into TESTTABLE values('b'); 
+insert into TESTTABLE values('c'); 
+alter table TESTTABLE add f2 integer NOT NULL; 
+update TESTTABLE set f2=1 where f1='b'; 
+
+And now the select: 
+select * from TESTTABLE; 
+
+result: 
+
+b,1 
+a,0 
+c,0 
+
+To test for NULL:
+
+select * from TESTTABLE where f2 is NULL; 
+
+result: 
+
+a,0 
+c,0
+----------------------
+User: prenosil
+Logged In: YES 
+user_id=89535
+
+IMHO the behaviour is as designed/intended.
+
+When you prepare SELECT statement and the column
+is defined as NOT NULL, this fact is indicated
+by even number in SQLTYPE (in XSQLDA structure).
+In this case you have to allocate buffer for data (SQLDATA),
+but not buffer for null indicator variable (SQLIND)
+(because you do not need it under normal circumstances).
+
+If you do want null indicator even for not null column,
+just set the lowest bit in SQLTYPE.
+
+----------------------
+User: ronaldmak
+Logged In: YES 
+user_id=71414
+
+Default Value should be set when a new &quot;NOT NULL&quot; field is 
+added.
+
+ALTER TABLE TestTable
+ADD f2 INTEGER DEFAULT 0 NOT NULL;
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Alexander,
+
+Thanks for the great example!
+
+I have changed the entry category to 'Client/GDS32' since we 
+have already shown that the engine knows that the columns 
+is NULL -- so the problem is in the client interface.
+----------------------
+User: ded
+Logged In: YES 
+user_id=188889
+
+  Visualisation is'nt main problem. This shows that null 
+flag for null containing records in columns defined as not 
+null is not transmitted to client correctly:
+
+create table test
+(id integer not null,
+ constraint t_id primary key (id));
+
+commit;
+
+insert into test (id) values (1);
+
+commit;
+
+alter table test add inn integer not null, add inl integer, 
+add d
+timestamp not null;
+
+commit;
+
+Now using TIBQuery
+
+  iqrTest.SQL.Add(select * from test');
+  iqrTest.Open;
+  For I:=0 To iqrTest.Fields.count-1 do
+   begin
+     S:=iqrTest.Fields[I].FieldName;
+     if iqrTest.Fields[I].IsNull then S:=S+' NULL'
+     else S:=S+' '+iqrTest.Fields[I].AsString;
+     mmTest.Lines.Add(S);
+   end;
+
+mmTest contains lines
+
+ID 1
+INN 0
+INL NULL
+D 17.11.1858
+
+my opinion - this is very dangerous. And gbak is not fulled 
+by this null convertion - gbk is unrestorable.</text></argument><argument name="title"><text>Integer NULL reported as Zero</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_582534</text></argument><argument name="resources"><set/></argument></extension>

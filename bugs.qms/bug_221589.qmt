@@ -1,0 +1,81 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>221589</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : kattunga
+Assigned to  : robocop
+----------------------
+if you do for example:
+
+   select field1 * field2 from mytable
+or
+   select field1 * (1+field2/100) from mytable
+
+and both fields are numeric type (interger)
+like numeric(9,2), the result are incorrect.
+
+christian
+----------------------
+User: cwangler
+We are using dialect 1 with IB6.01 and are likely experiencing the
+case 1 bug (the areas of our application showing random data do
+have select constructs with numeric calculations).
+
+I'm just wondering what it would take to fix this bug.  In the case 1 
+example, there should not be any numeric overflow as the values
+involved are not that large...
+
+  select cast(3500 as numeric(9,4))*cast(1 as numeric(9,2)) from mytable 
+  the exact result is: -794.927296
+
+...so I'd guess it would either need a compatible type for the internal
+calculation, or needs correct conversion from whatever the internal
+type is to whatever is expected by a dialect 1 client.
+
+Wouldn't the internal calculation be done with a 64bit integer?  If that's
+the case, then the correct conversion is all we'd need, with an exception
+raised if the value is outside the bounds of the resulting type.
+
+BTW, I would have thought that the priority of this bug would be set
+higher, since wrong data is produced... this kind of thing can (and has 
+for us) led to incorrect data being produced/stored.
+
+Corey.
+----------------------
+User: robocop
+Well, I think it's time to set this bug straight:
+
+1) Case 1 is a bug. IB5.6 will throw an exception due to a numeric overflow instead of giving silently a totally wrong result, as tested by Geoff Worboys for me. Therefore, there's a problem in IB6 dialect 1. The only other alternative for dialect 1 is to promote the result and intermediate operations to double precision and deliver a numeric(p,s) with p&gt;9. If we want to emulate IB5.X, then an exception should be thrown.
+
+2) Case 2 is AS DESIGNED for what I understood from a private exchange with Chris Jewell. The SQL standard allows some freedom in the implementation (I don't know the details) and Chris chose a particular implementation that uses intermediate results in the precision and scale that results from the operands. Particularle tricky are multiplication and division: here seems to be the freedom to implement. This means no double precision is used internally, but integral values. That remembers me a person that wanted to get a rounded sum() and not a truncated one in dialect 3 several months ago. The field was defined as numeric(5,2) for example and the only solution I suggested was to compute not
+sum(field) but the convoluted
+sum(cast(field as numeric(6,3)) and cast the result (the total sum) back to one decimal place less: numeric(6,2).
+[Misc: Unfortunately, mi exchange wasn't as completed as I wanted, since Chris Jewell left Borland some days ago, hence the communication broke. If people have more doubts regarding dialect 3 and numeric operations, we'll have to ask Diane Brown for insight into the SQL standard.]
+
+C.
+----------------------
+User: kattunga
+I detect 2 problems.
+1) It happen only in dialect 1. Do this
+   select field1*field2 from mytable
+where:
+       field1 numeric(9,2) value -&gt; 1
+       field2 numeric(9,4) value -&gt; 3500
+
+the result is: -794.967296  instead of: 3500
+
+2) in dialect 1 and 3
+   select field1*(1-field2/100) from mytable
+where:
+       field1 numeric(9,2) value -&gt; 10
+       field2 numeric(9,2) value -&gt; 10.5
+
+the result is: 9  instead of: 8.95
+
+If I use float instead of numeric the problem not
+apear.
+I have an idea of the cause of this problems, but I
+think that the way in what I store the data should not
+modify the results of the mathematical operations.
+</text></argument><argument name="title"><text>numeric fields and mathematical operations</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_221589</text></argument><argument name="resources"><set/></argument></extension>

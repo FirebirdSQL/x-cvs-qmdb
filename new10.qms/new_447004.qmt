@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>447004</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : UDF/Built-In Functions
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : robocop
+----------------------
+The new library FBUDF has been designed to use the new 
+support for descriptors, thus enabling support for 
+detecting null values.</text></argument><argument name="title"><text>New UDF Library using Descriptors</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_447004</text></argument><argument name="resources"><set/></argument></extension>

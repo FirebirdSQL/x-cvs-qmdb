@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>436085</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+After installing Firebird 0.9.4 on a Linix RHat 7.1
+i386 system isql gave the foloowing error message:
+Use CONNECT or CREATE DATABASE to specify a database
+SQL&gt; connect &quot;examples/employee.gdb&quot;;
+Internal error: Unexpected isc_info_value 0
+Database:  &quot;examples/employee.gdb&quot;, User: sysdba
+Server version too old to support the isql command
+SQL&gt; 
+</text></argument><argument name="title"><text>isql internal error on SS0.9.4</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_436085</text></argument><argument name="resources"><set/></argument></extension>

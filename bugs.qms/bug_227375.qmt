@@ -1,0 +1,155 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>227375</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : nmcc
+----------------------
+The database has the following table:
+
+  CREATE TABLE TWODATE(
+    TWODATEID   INTEGER NOT NULL,
+    DATEBEGIN   DATE,
+    DATEEND     DATE,
+  CONSTRAINT PK_TWODATE PRIMARY KEY (TWODATEID));
+
+
+The table contains several records. Some of the values in the two date fields are null.
+
+Furthermore the database has the following view:
+
+  CREATE VIEW CALCDIFF (TWODATEID, DIFFYEAR) AS
+    select TwoDateID, extract(year from datebegin) - extract(year from dateend)
+    from twodate;
+
+The following Select statement causes a &quot;lost connection to database&quot; - error:
+
+SELECT DiffYear, count(*) FROM CalcDiff Group by DiffYear;
+
+The error occures only, when
+ - there are null values in the database
+ - there is a subtraction between the two extract statements
+ - the select has a &quot;group by&quot; statement
+
+
+Used environment:
+ - Interbase 6.01 Dialect 3 on Windows NT 2000
+ - IB-Connection: IBConsole and IBObjects
+ 
+Thanks to everybody who takes time for further analysation of this bug!
+
+----------------------
+User: nmcc
+Fix to jrd/evl.c commited cvs. 
+Change will be in builds of version xx-T0.9.4.49 Firebird Test1
+or newer.
+
+
+
+----------------------
+User: nmcc
+This is not specific to date/time fields, I have reproduced it with an 
+integer field. It is a NULL value in the group by calculation which 
+causes the server to try to access a null pointer resulting in a
+segmentation fault on *nix.
+(bug summary updated).
+
+I have a patch which I am currently testing, with it your example now 
+returns :-
+
+SQL&gt; select * from timebug;
+
+           A             B             C 
+============ ============= ============= 
+
+           1 00:09:53.0000 00:09:53.0000 
+           1        &lt;null&gt;        &lt;null&gt; 
+
+SQL&gt; select c from timebug group by c;
+
+            C 
+============= 
+
+00:09:53.0000 
+       &lt;null&gt; 
+
+SQL&gt; 
+
+The other examples also no longer result in a fatal error.
+
+
+----------------------
+User: robocop
+Attention, please! Te bug is more serious than you might expect. My example uses only one date field:
+
+CREATE TABLE &quot;DATEBUG&quot; 
+(
+  &quot;A&quot;	INTEGER,
+  &quot;B&quot;	DATE,
+  &quot;C&quot;	 COMPUTED BY (extract(day from b)-extract(day from b))
+);
+commit;
+insert into datebug(a, b) values(1, current_date);
+insert into datebug(a, b) values(1, NULL);
+commit;
+
+You can see that &quot;C&quot; should return zero always. I'm working on dialect 3 and NT4. Then,
+
+select c
+ from datebug
+group by c
+
+kills the server immediately. But this is not the whole tale: you do not need the extract() call, hence, this bug can happen more often than at first glance:
+
+create view v_datebug(b2) as select b-b from datebug;
+
+select * from v_datebug
+group by b2
+
+This also causes an immetiate AV in IB. If you pay attention, I'm only doing a subtraction of two dates, no extract() involved, so any grouping on (date-date) will nuke the server. 
+
+Hence, I think this issue is rather serious.
+
+create view v_datebug2(a) 
+as select current_date-0 from rdb$database;
+select * from v_datebug2
+group by a;
+=&gt; It doesn't cause problems.
+
+create view v_datebug3(a) 
+as select current_date-current_date from rdb$database;
+select * from v_datebug3
+group by a;
+=&gt; It doesn't cause problems.
+
+create view v_datebug4(a) 
+as select b-0 from datebug;
+select * from v_datebug4
+group by a;
+=&gt; It kills the server, too.
+
+create view v_datebug5(a) 
+as select cast(b as timestamp) from datebug;
+select * from v_datebug5
+group by a;
+=&gt; It kills the server, too.
+
+create table timebug(a int, b time,
+ c computed by(cast(b as time)));
+insert into timebug(a, b) values(1, current_time);
+insert into timebug(a, b) values(1, NULL);
+commit;
+
+In this case, I'm only casting b as its own data type (time) and making this the computed field. Then,
+
+select c from timebug
+group by c
+
+will kill the server, too. This is pathetic, because that's a superfluous cast.
+
+Initial conclusion: if a grouping happens in a computed or calculated-in-a-view field and the operation to produce such field involves two table fields, one table field with itself or one table field and an scalar quantity and the field (or both fields) is of type date, timestamp or time, the server will die with a memory access error. Worse, if the computed field is the result of a simple cast over a date/time field, the problem exists, too.
+
+Therefore, I've changed the title of this bug report since the extract() case is a very specific example of the general failure.
+
+C.</text></argument><argument name="title"><text>Grouping on derived fields processing NULL data kills IB</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_227375</text></argument><argument name="resources"><set/></argument></extension>

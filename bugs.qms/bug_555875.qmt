@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>555875</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : ded
+Assigned to  : nobody
+----------------------
+  Optimizer rejects explicitly added plan which is 
+built by optimizer itself when query contains OR in 
+where clause and have Primary key.
+
+
+CREATE TABLE TEST (
+    ID INTEGER NOT NULL,
+    A INTEGER,
+    B INTEGER);
+
+ALTER TABLE TEST ADD CONSTRAINT PK_TEST PRIMARY KEY 
+(ID);
+
+CREATE INDEX TAB ON TEST (A, B);
+CREATE INDEX TBA ON TEST (B, A);
+
+SET PLAN;
+
+select * from test where a=1 or b=1;
+
+PLAN (TEST INDEX (TAB,TBA))
+- showed plan.
+
+Now trying to explicitly add this plan builded by 
+optimizer
+
+select * from test where a=1 or b=1
+PLAN (TEST INDEX (TAB,TBA));
+
+exception 284 index TAB cannot be used in the specified 
+plan
+
+If table have not Primary key plan is accepted. Seems 
+it affects all versions of IB/FB.
+
+Alexander V.Nevsky.</text></argument><argument name="title"><text>Optimizer rejects own Plan</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_555875</text></argument><argument name="resources"><set/></argument></extension>

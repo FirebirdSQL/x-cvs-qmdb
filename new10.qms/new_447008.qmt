@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>447008</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : seanleyne
+----------------------
+With the introduction of IB 6.0 the default settings 
+for newly created databases, under Win32, was chnaged 
+to OFF.  This change was made to improve database 
+performance but at the expense of database 
+integrity/recovery.</text></argument><argument name="title"><text>Win32 Forced Writes Default = ON</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_447008</text></argument><argument name="resources"><set/></argument></extension>

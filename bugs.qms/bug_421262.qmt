@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>421262</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+It's obviously wrong. BLOBs can't be passed by value 
+and a mechanism should not be specified in an script. 
+Internally, BY DESCRIPTOR is used. This is only a bug 
+when reporting metadata information.
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Was fixed partially. Now, I remembered that this funny tool 
+uses two different routines to display (SHOW command) 
+metadata in interactive mode and to extract metadata when 
+invoked with -x or -a in batch mode.
+Now, I've fixed show.e, too.</text></argument><argument name="title"><text>ISQL reports UDF BLOB parameter BY VALUE</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_421262</text></argument><argument name="resources"><set/></argument></extension>

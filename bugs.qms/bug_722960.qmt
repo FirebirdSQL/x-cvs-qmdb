@@ -1,0 +1,276 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>722960</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : zhangp88
+Assigned to  : nobody
+----------------------
+  I discover a problem in the Firebird 1.5
+
+
+  Please use the attached database to test. First Please 
+restore the Database.
+
+
+
+
+1.  Use SQL: 
+
+
+   ------------------------
+
+
+    Select * from YLK A
+
+
+    where PH = '0021'          
+
+
+          and  HPBH = '492'
+
+
+          and  CD = 'MG'
+
+
+          and  JLDW = 'JIAN'
+
+
+          and  JZDW = 'DUN'
+
+
+          and  CK = '8K'
+
+
+          and  HW = '1.8'
+
+
+          and  SH='1.81' 
+
+
+   ---------------------------
+
+
+   Can not fetch the data 
+
+
+
+
+2. But only get rid of anyone term in the 'Where'condition 
+, While fetch the data,
+
+
+   For instance:
+
+
+   ------------------------
+
+
+    Select * from YLK A
+
+
+    where PH = '0021'          
+
+
+          and  HPBH = '492'
+
+
+          and  CD = 'MG'
+
+
+          and  JLDW = 'JIAN'
+
+
+          and  JZDW = 'DUN'
+
+
+          and  CK = '8K'
+
+
+      /*    and  HW = '1.8' */
+
+
+          and  SH='1.81' 
+
+
+   -------------------------
+
+
+    Select * from YLK A
+
+
+    where PH = '0021'          
+
+
+          and  HPBH = '492'
+
+
+          and  CD = 'MG'
+
+
+      /*    and  JLDW = 'JIAN'*/
+
+
+          and  JZDW = 'DUN'
+
+
+          and  CK = '8K'
+
+
+          and  HW = '1.8'
+
+
+          and  SH='1.81' 
+
+
+ ----------------------------------
+
+
+
+
+3. Or Not use the Index 'YLK_IDX1',  While fetch the data 
+too,
+
+
+   For instance:
+
+
+  ------------------------------
+
+
+    Select * from YLK A
+
+
+    where PH = '0021'          
+
+
+          and  HPBH = '492'
+
+
+          and  CD = 'MG'
+
+
+          and  JLDW = 'JIAN'
+
+
+          and  JZDW = 'DUN'
+
+
+          and  CK = '8K'
+
+
+          and  HW = '1.8'
+
+
+          and  SH='1.81' 
+
+
+    Plan (YLK NATURAL)
+
+
+  -----------------------------
+
+
+
+
+4. Or only get rid of anyone term in the Index 'YLK_IDX1' 
+, While fetch the data too,
+
+
+   As the step:
+
+
+   a) drop Index 'YLK_IDX1'
+
+
+   b) create index IDX_YLK on YLK (PH,HPBH,CD,JLDW,
+JZDW,CK,HW)  /* Not included 'SH' */
+
+
+   c)     ------------------------
+
+
+            Select * from YLK A
+
+
+            where PH = '0021'          
+
+
+             and  HPBH = '492'
+
+
+             and  CD = 'MG'
+
+
+             and  JLDW = 'JIAN'
+
+
+             and  JZDW = 'DUN'
+
+
+             and  CK = '8K'
+
+
+             and  HW = '1.8'
+
+
+             and  SH='1.81' 
+
+
+          ---------------------------
+
+
+          Can fetch the data 
+
+
+
+
+
+
+5. If Set the Field 'SH' to Integer, Such As Value 1 , 
+While fetch the data too,
+
+
+   ------------------------
+
+
+    Select * from YLK A
+
+
+    where PH = '0021'          
+
+
+          and  HPBH = '492'
+
+
+          and  CD = 'MG'
+
+
+          and  JLDW = 'JIAN'
+
+
+          and  JZDW = 'DUN'
+
+
+          and  CK = '8K'
+
+
+          and  HW = '1.8'
+
+
+          and  SH='1' 
+
+
+   -------------------------
+
+
+
+
+
+
+   I don't know it's bug or not! But It can't work on my 
+computer (Windows 2K). 
+
+
+   Who Can tell me, Why?
+</text></argument><argument name="title"><text>Firebird 1.5 Bug for the Index</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_722960</text></argument><argument name="resources"><set/></argument></extension>

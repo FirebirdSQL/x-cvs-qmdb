@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>509995</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : seanleyne
+Assigned to  : robocop
+----------------------
+Georg Schafer reported:
+
+Another problem is that the API-Funktion that delivers 
+the actual users attached on a database doesn't work 
+correct on huge connection numbers.
+The usernames are returned in a limited buffer, and 
+therefore you can't see all of them when the number of 
+users exceeds some certain limit depending on the 
+length of the names.  
+We often have more than 100 connections to one 
+database, but we can only see 83 of them ...
+----------------------
+User: groovbird
+Logged In: YES 
+user_id=17128
+
+I concur. I was trying to find out the limit of our server 
+by creating connections one after another, and my limit is 
+set at 102. Now it turns out the connections themselves are 
+not the limit, just the userlist. Ok then. Not really a 
+showstopper, but quite annoying. </text></argument><argument name="title"><text>API List of connected users truncated</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_509995</text></argument><argument name="resources"><set/></argument></extension>

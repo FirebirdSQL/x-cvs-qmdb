@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>423810</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Security Issues
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+try to connect to a database with user=SYSDBA 
+passord=masterke
+It seems that password legth is truncated to 8 char.
+Looking in isc4.gdb, PASSWD ( in table users) is 
+defined as &quot;PASSWD AS VARCHAR(32) CHARACTER SET 
+OCTETS;&quot;.
+
+----------------------
+User: nobody
+Logged In: NO 
+
+It's not supposed to be an error, i think
+
+We can find an little explanation in the Data Definitio 
+Guide, in the Borland's Interbase 6.0 Manuals, page 45, 
+section &quot;Specifying user name and password&quot;
+----------------------
+User: prenosil
+Logged In: YES 
+user_id=89535
+
+While it can be good idea to allow longer passwords
+than (documented) 8 characters, I would like to point out
+that PASSWD contains two times encrypted password,
+and thus its length does not have to be the same
+as number of significant characters in real pasword.</text></argument><argument name="title"><text>password lenght</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_423810</text></argument><argument name="resources"><set/></argument></extension>

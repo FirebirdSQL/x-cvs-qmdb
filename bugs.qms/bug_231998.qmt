@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>231998</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Data Types/On-Disk Struc(ODS)
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : kdv
+Assigned to  : robocop
+----------------------
+Andrew Velikoredchanin found interesting behavior in dialect 1, 
+when numeric expression is being casted to a varchar.
+
+For example:
+select cast(22 / 7 as varchar(20)) from rdb$database 
+will give
+ 
+' 3.142857142857143'
+
+as a result (note that there is a space before first digit).
+
+If not an expression, but numeric value is casted, all is ok, i.e. no space before casted result.
+
+Dialect 3 does not have this problem.
+no difference between integer and numeric values - 22.0 / 7.0 will give space before first digit.
+
+Tested on FB for Windows 0.9.4.41. Connection was made through gds32.dll of the same build.
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+The fix is in sync with what dialect 3 would do, even if 
+from the string-length perspective is weird. In dialect 1:
+select cast(22/7 as varchar(5)) from rdb$database;
+3.14
+select cast(-22/7 as varchar(5)) from rdb$database;
+-3.14
+Notice in the case of the positive result, there seems to a 
+missing position. This is because the initial space has 
+been trimmed. Otherwise, the positive quantity would return 
+one decimal digit more than the negative counterpart, that 
+seems to be even more confusing. In contrast, in dialect 3, 
+you can't cast a number to a string where it doesn't fit:
+SQL&gt; select cast(22.000/7.000 as varchar(5)) from 
+rdb$database;
+Statement failed, SQLCODE = -413
+conversion error from string &quot;&quot;
+
+If you need that facility in dialect 3, please use the 
+SUBSTRING built-in function in firebird:
+SQL&gt; select substring(22.000/7.000 from 1 for 5) from 
+rdb$database;
+
+SUBSTRING
+=====================
+3.142
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+If you change it to become
+select cast(22 / -7 as varchar(20)) from rdb$database;
+you will see that the first position is used by the minus 
+sign.
+
+C.</text></argument><argument name="title"><text>space before CASTed numeric expression in dialect 1</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_231998</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>543285</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Testing/TCS/QMDB
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : bellardo
+Assigned to  : nobody
+----------------------
+The TCS test case C_SQL_PRED_16 (and probably others too) has poor error handling.  If the database that it (the test) expects to find is missing it enters into an infinite loop.  The loop is caused by an EXEC SQL WHENEVER ERROR GO TO ERR; which then tries to close a statement cursor and of course fails resulting in an infinite goto loop when the expected database isn't present.
+
+It is simply a poorly coded test case.</text></argument><argument name="title"><text>poor error handling in TCS test case</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_543285</text></argument><argument name="resources"><set/></argument></extension>

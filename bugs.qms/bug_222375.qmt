@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>222375</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Security Issues
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+First, let me say that a clarification is need. If Firebird can rely solely on rdb$user_privileges, then this report is not critical. Otherwise, the results of records being overwritten silently on rdb$security_classes is an issue. The following is an almost unedited copy from an article I wrote on the NG:
+
+- Create a table with 31-byte name.
+- Create a second table with the same name, except that it differs only in the last, 31th character.
+- Grant permissions to userA on the first table and to userB on the second table.
+- Go to see rdb$user_privileges and you'll see your entries as they should be.
+- Go to rdb$security_classes: with rdb$ as a prefix, 31-4=27, oh what a brilliant person I am.
+Here's your 27-byte limitation: what happened to this
+table? Both entries were mapped to the same record, same security class! As a result of that, the second GRANT overwrote the information for the first one, because rdb$security_classes.rdb$security_class used
+sql$&lt;table_name&gt;
+hence the last 4 bytes were ignored. Feature? Undocumented limitation? Bug?
+
+So, what LangRef says could be refurbished as:
+&lt;Some objects, such as security class names, are restricted in practice to 27 bytes in length.&gt;
+
+The final part comes from Ivan Prenosil:
+
+Or perhaps something like
+&lt;Table names should not exceed 27 bytes, otherwise you can expect problems with privileges....&gt;
+
+I shortly played with these things and found out that
+-when creating new table, two entries are inserted into rdb$security_classes, one SQL$tab_name, one SQL$DEFAULTx.
+-so I tried to create new table with name DEFAULT1 and it overwrote already existing row in rdb$security_classes;
+ I do not know what exact consequencies it will cause though.
+
+C. (On behalf of Ivan, too.)</text></argument><argument name="title"><text>Grants overwrite previous rdb$security_classes entries</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_222375</text></argument><argument name="resources"><set/></argument></extension>

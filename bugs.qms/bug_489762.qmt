@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>489762</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : None
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : kdv
+Assigned to  : nobody
+----------------------
+Vlad Filippov in russian IB conference reported interesting bug
+with trigger on view with union. 
+Let's show script, you will find what is happening as a comments to it:
+
+/* begin script */
+
+CREATE TABLE A (ID INT);
+CREATE TABLE B (ID INT);
+
+COMMIT;
+
+CREATE VIEW VW_C(ID, INCLUDED_IN_B)
+AS
+  SELECT ID, CAST(0 AS INT)
+  FROM A
+  WHERE NOT EXISTS (SELECT ID FROM B WHERE ID = A.ID)
+
+  UNION ALL
+
+  SELECT ID, CAST(1 AS INT)
+  FROM B;
+
+COMMIT;
+
+SET TERM ^ ;
+
+CREATE TRIGGER VW_C_BU FOR VW_C
+ACTIVE BEFORE UPDATE POSITION 0
+AS
+BEGIN
+  IF (NEW.INCLUDED_IN_B = 1) THEN
+  BEGIN
+    IF (OLD.INCLUDED_IN_B = 0) THEN
+      INSERT INTO B(ID)
+      VALUES(NEW.ID);
+  END
+  ELSE
+    DELETE FROM B
+    WHERE ID = OLD.ID;
+END^
+
+SET TERM ; ^
+
+COMMIT;
+
+INSERT INTO A(ID) VALUES(1);
+COMMIT;
+
+/* SELECT * FROM VW_C; */
+/* will return one record based on data in table A */
+
+/* this update in theory will insert record into A and delete same
+record from B, according to trigger source*/
+
+UPDATE VW_C SET INCLUDED_IN_B = 1 WHERE ID = 1;
+
+COMMIT;
+
+/*END SCRIPT*/
+
+
+Last update statement must insert record into table B. But this does not happen.
+I've traced trigger with debug udf, and found that
+
+1. trigger is being called (it can be checked by inserting exception as a first line
+   in trigger body)
+2. all new. and old. values are NULLs. This was checked with udf Check_Point from
+   udfDemo, which output all passed values to console
+
+All was tested with Firebird 1.0.0 builds 555 (RC1), 608 and 641 
+for Windows, W2K SP2, Dialect 3 database.</text></argument><argument name="title"><text>trigger on view with union receive nulls</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_489762</text></argument><argument name="resources"><set/></argument></extension>

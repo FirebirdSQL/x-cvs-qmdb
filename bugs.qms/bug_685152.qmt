@@ -1,0 +1,92 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>685152</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Group        : None
+Status       : Closed
+Resolution   : Fixed
+Submitted By : woodsplitter
+Assigned to  : nobody
+----------------------
+Config:
+Firebird 1.5 beta 2, SuperServer
+Windows NT 4 SP6a
+
+As soon as I installed 1.5b2, I tried to run the
+kinterbasdb (Python driver) test suite against it, but
+the test suite caused the Firebird server process to
+hang.  Eventually I distilled a simple Python program
+(source code at end of this message) about which I've
+made these observations:
+------
+1.5beta1 (and 1.0.2, for that matter):
+  works fine in both local and remote mode
+
+1.5beta2:
+  - local mode: permanently hangs the Firebird server
+process
+  - remote mode: segfaults the Firebird server process
+------
+
+The problem occurs upon a client call to the C API
+function isc_dsql_free_statement with the DSQL_close
+argument.  Here's the statement in the kinterbasdb
+source code that gives rise to the problem:
+------
+isc_dsql_free_statement( cursor-&gt;status_vector,
+&amp;(cursor-&gt;stmt_handle), DSQL_close );
+------
+
+Before someone screams, &quot;This is a kinterbasdb problem,
+not a Firebird problem!&quot;, let me make it quite clear
+that I believe this to be a Firebird server bug.  I'm
+smart enough to know the difference between a client
+process crash and a server process crash, and I'm
+intimately familiar with kinterbasdb.
+
+Even if kinterbasdb were the most atrociously written,
+abusive body of C client code in the world, it
+shouldn't be able to make the Firebird server process
+crash.  Also, this trivial test program works fine on
+Firebird 1.0.2 and Firebird 1.5-beta1, as does the more
+extensive test suite that originally brought this bug
+to my attention.
+
+In saying this, I'm not trying to be an ass, just to
+forestall the claim that it's a problem with my C code
+rather than with the Firebird server.
+
+Thank you.
+
+
+Here's the Python program:
+-------------------------------------
+import kinterbasdb
+
+# Local (commented out at present): 
+#con = kinterbasdb.connect('/temp/ibtest.db', 'sysdba',
+'pass')
+
+# Remote:
+con = kinterbasdb.connect('localhost:/temp/ibtest.db',
+'sysdba', 'pass')
+
+print 'Server version:', con.server_version
+
+cur = con.cursor()
+
+cur.execute(&quot;select 33 as blah from rdb$database&quot;)
+print cur.fetchone()
+
+con.commit()
+
+# The following line invokes the C API function 
+# isc_dsql_free_statement, which segfaults/hangs 
+# the server process.
+cur.close()
+
+con.close()
+----------------------
+User: woodsplitter
+Logged In: YES 
+user_id=414645
+
+The &quot;beta 2, build 2284&quot; Win32 binaries issued by Dmitry on
+2003-02-12 fix the problem.  Thanks!</text></argument><argument name="title"><text>1.5b2 server crashes upon isc_dsql_free_statement</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_685152</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>774987</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : UDF/Built-In Functions
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : paulvink
+Assigned to  : nobody
+----------------------
+ltrim and rtrim (both in ib_udf.c) return NULL if given an 
+empty string as argument.
+
+Additionally, rtrim stops short of checking the first 
+character in the string, so it trims a string constisting of 
+1 or more spaces to ' ' (string with one space) instead 
+of '' (empty string). ltrim doesn't have this bug.
+
+I've seen this in Windows SS 1.0.0, 1.0.3 and 1.6 Alpha, 
+but from the source it's obvious that this is an all-
+versions thing.
+
+Patches for both functions have been posted to firebird-
+devel on 20 July 2003. They tested OK under the 
+abovementioned versions.
+
+Grtz,
+Paul Vinkenoog</text></argument><argument name="title"><text>ltrim('') and rtrim('') return NULL; rtrim forgets 1st char</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_774987</text></argument><argument name="resources"><set/></argument></extension>

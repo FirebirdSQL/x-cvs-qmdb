@@ -12,6 +12,7 @@
 
 -->
 
+<class kind="test">firebird.FirebirdTestBase</class>
 <class kind="test">firebird.FirebirdISQLTest</class>
 
 

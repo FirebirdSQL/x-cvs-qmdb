@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>508594</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : myilmaz
+Assigned to  : arnobrinkman
+----------------------
+bad plan with view 
+test case
+
+CREATE TABLE TABLE1
+(
+  T1F1 INTEGER NOT NULL PRIMARY KEY,
+  T1F2 VARCHAR(40)
+);
+
+CREATE TABLE TABLE2
+(
+  T2F1 INTEGER NOT NULL PRIMARY KEY,
+  T2F2 INTEGER,
+  T2F3 VARCHAR(40),
+  FOREIGN KEY (T2F2) REFERENCES TABLE1(T1F1)
+);
+
+CREATE VIEW VIEW1
+AS
+  SELECT * FROM TABLE1;
+
+CREATE VIEW VIEW2
+AS
+  SELECT * FROM TABLE2;
+
+SELECT *
+FROM TABLE1 T1
+LEFT JOIN TABLE2 T2 ON T1.T1F1 = T2.T2F2
+/* 
+ USED PLAN JOIN (T1 NATURAL,T2 INDEX (RDB$FOREIGN10))
+*/
+
+SELECT *
+FROM VIEW1 V1
+LEFT JOIN VIEW2 V2 ON V1.T1F1 = V2.T2F2
+/*
+ USED PLAN JOIN (V1 TABLE1 NATURAL,V2 TABLE2 NATURAL)
+*/
+
+----------------------
+User: nobody
+Logged In: NO 
+
+We ran into similar issue, this time with just tables. It
+seems that doing a mix of inner and left outer joins on the
+same table have often broken plan.
+
+And the best part of it, if we try to force the correct plan
+(by using PLAN clause), Firebird just crashes :-(
+
+If someone is actually interested, I can mail entire DB
+along with the SQL used.</text></argument><argument name="title"><text>LEFT JOIN with VIEWs</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_508594</text></argument><argument name="resources"><set/></argument></extension>

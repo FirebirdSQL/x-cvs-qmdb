@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>458855</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : prenosil
+Assigned to  : robocop
+----------------------
+The syntax of GRANT command is:
+GRANT &lt; privileges&gt; ON [TABLE] { tablename | viewname}
+   TO { &lt;object&gt; | &lt;userlist&gt; | GROUP UNIX_group} ...
+
+I do not know proper usage of GROUPs,
+but if you execute these two commands
+
+GRANT SELECT ON T TO       ALPHA;
+GRANT SELECT ON T TO GROUP BETA;
+
+and then extract database metadata, you get
+
+GRANT SELECT ON T TO ALPHA
+GRANT SELECT ON T TO BETA
+
+i.e. GROUP keyword is missing.
+
+The information is stored correctly in system table:
+SELECT RDB$USER, RDB$USER_TYPE
+  FROM RDB$USER_PRILILEGES
+ WHERE RDB$RELATION_NAME='T'
+
+RDB$USER   RDB$USER_TYPE 
+========== ============= 
+ALPHA                  8 
+BETA                  12 &lt;&lt;&lt;&lt;
+
+(The keyword GROUP is also missing in RDB$TYPES)
+</text></argument><argument name="title"><text>Extracting metadata for GRANT command</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_458855</text></argument><argument name="resources"><set/></argument></extension>

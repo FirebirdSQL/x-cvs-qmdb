@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>523452</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Feature v1.5
+Status       : Open
+Resolution   : Invalid
+Submitted By : fabianobonin
+Assigned to  : dimitr
+----------------------
+/* master */
+create table t1 (
+  t1_id integer not null,
+  t1_code varchar(10),
+  t1_sum_t2_value numeric(11,2) default 0 not null );
+
+/* detail */
+create table t2 (
+  t2_id integer not null,
+  t1_id integer,
+  t2_value numeric(11,2) default 0 not null );
+
+alter table t1 add primary key (t1_id);
+
+alter table t2 add primary key (t2_id);
+
+insert into t1 values (1, 'invoice 1', 0);
+insert into t1 values (2, 'invoice 2', 0);
+insert into t1 values (3, 'invoice 3', 0);
+insert into t1 values (4, 'invoice 4', 0);
+
+insert into t2 values (1, 1, 5);
+insert into t2 values (2, 1, 10);
+insert into t2 values (3, 2, 5);
+insert into t2 values (4, 2, 10);
+insert into t2 values (5, 3, 5);
+insert into t2 values (6, 3, 10);
+
+
+select
+  ( select first 1 t2.t2_value from t2 where t2.t1_id 
+= t1.t1_id ) as some_field
+from
+  t1;
+/* works */
+
+select
+  ( select first 1 t2.t2_value from t2 where t2.t1_id 
+= t1.t1_id ORDER BY t2.t2_id DESC ) as some_field
+from
+  t1;
+/* token unknown - order */
+
+----------------------
+User: nobody
+Logged In: NO 
+
+  Ann, I, I too ask to for it as a new feature. Or LAST, no 
+difference. We have this and some other feature requests but 
+decided don't bother you with it until FB1 release and wait 
+some time while you'll celebrate this great achievement. I'm 
+not Anonimus, just forgot my SF password as usual.
+
+Best regards, Alexander V.Nevsky.
+
+----------------------
+User: awharrison
+Logged In: YES 
+user_id=66088
+
+The SQL standards (89, 92, 99) distinguish between a query statement
+and a query expression.  Only a select statement is a query statement.
+Subselects are query expressions.  Query expressions do not include an
+order by clause.
+
+If you think we should change the code to allow order by statements
+in query expressions, you should ask for it as a new feature. This is not
+a bug.</text></argument><argument name="title"><text>Allow ORDER BY in subquery</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_523452</text></argument><argument name="resources"><set/></argument></extension>

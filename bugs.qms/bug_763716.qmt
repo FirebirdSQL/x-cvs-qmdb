@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>763716</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : rrokytskyy
+Assigned to  : nobody
+----------------------
+isc_seek_blob takes three parameters: blob id, offset
+and seek mode. offset is defined as SLONG which allows
+us to address only 2GB blobs. Unfortunately change of
+parameter type requires also change of the wire protocol.
+
+Ann W. Harrison suggests to add new call, for example,
+isc_seek_blob2 that takes 64 bit offset and deprecate
+current.</text></argument><argument name="title"><text>isc_seek_blob 2GB limit</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_763716</text></argument><argument name="resources"><set/></argument></extension>

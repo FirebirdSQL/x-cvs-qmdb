@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>725898</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : Fixed
+Submitted By : loa
+Assigned to  : alexpeshkoff
+----------------------
+inf.c/get_counts has buffer overrun in simple &quot;for&quot;
+
+for (relation_id = 0, ptr = vector-&gt;vcl_long;
+     relation_id &lt; vector-&gt;vcl_count &amp;&amp; buffer &lt; end; 
+++relation_id)
+
+fix is:
+
+for (relation_id = 0, ptr = vector-&gt;vcl_long;
+     relation_id &lt; vector-&gt;vcl_count &amp;&amp; p &lt; end; 
+++relation_id)
+
+----------------------
+User: alexpeshkoff
+Logged In: YES 
+user_id=423445
+
+Confirmed and fixed</text></argument><argument name="title"><text>inf.c/get_counts buffer overrun</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_725898</text></argument><argument name="resources"><set/></argument></extension>

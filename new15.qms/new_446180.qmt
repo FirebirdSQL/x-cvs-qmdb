@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>446180</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Feature v1.5
+Status       : Open
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : dimitr
+----------------------
+Add functionality to engine to allow for database 
+aliases to be defined in a server side text/INI file 
+(FBAlias.INI) to assist in resolving client database 
+names.
+
+This would allow for clients to specify as database 
+string like server:alias, and have the server resolve 
+the 'alias' value into the full 'path\database.gdb' 
+string.
+----------------------
+User: cubud
+Logged In: YES 
+user_id=476953
+
+I agree.  Currently if you move your database you have to 
+re-release every client, or give every client the ability 
+to read settings to discover where the DB is (which is the 
+same kind of things as a do-it-yourself alias).
+----------------------
+User: nobody
+Logged In: NO 
+
+This feature would be really great!</text></argument><argument name="title"><text>Server-side database aliases</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_446180</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>576067</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : jjm2a
+Assigned to  : nobody
+----------------------
+Hi,
+
+With big request [13 Ko] and more Union (21), Firebird 
+1.0 796 give message :
+ibserver.exe: terminated abnormally (-1)
+
+I try to create another request very simple with 21 Union,
+SELECT FIRST(5) FROM T1
+UNION
+SELECT FIRST(5) FROM T1
+..
+
+There is no problem..
+
+With 40 Union.. no Problem..
+
+I try to reproduce test with on view and 4 Left join..
+
+SELECT First(5) * FROM MySmallComplexView
+UNION
+SELECT First(5) * FROM MySmallComplexView
+UNION
+...
+With 15, 20, 25 UNION
+
+No problem..
+
+With 40 union :
+
+&lt;&lt;
+Unsuccessful execution caused by system error that 
+does not preclude
+successful execution of subsequent statements.  bad 
+BLR -- invalid stream.
+&gt;&gt;
+
+This test is very easy to reproduce
+
+Sorry if this have already know issue :-)
+
+Regards
+JJM
+----------------------
+User: jjm2a
+Logged In: YES 
+user_id=571436
+
+I forgot, this problem appear in Win32 platform
+
+JJM</text></argument><argument name="title"><text>Lost connexion with Big request</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_576067</text></argument><argument name="resources"><set/></argument></extension>

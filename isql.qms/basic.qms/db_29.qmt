@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Check for correct content of RDB$TRIGGERS in empty database.</text></argument><argument name="stdout"><text>RDB$TRIGGER_NAME                RDB$RELATION_NAME               RDB$TRIGGER_SEQUENCE RDB$TRIGGER_TYPE RDB$TRIGGER_SOURCE   RDB$TRIGGER_BLR   RDB$DESCRIPTION RDB$TRIGGER_INACTIVE RDB$SYSTEM_FLAG RDB$FLAGS 
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>select * from RDB$TRIGGERS;
+commit;
+</text></argument><argument name="description"><text>Check for correct content of RDB$TRIGGERS in empty database.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>RDB$TRIGGER_NAME                RDB$RELATION_NAME               RDB$TRIGGER_SEQUENCE RDB$TRIGGER_TYPE RDB$TRIGGER_SOURCE   RDB$TRIGGER_BLR   RDB$DESCRIPTION RDB$TRIGGER_INACTIVE RDB$SYSTEM_FLAG RDB$FLAGS 
 =============================== =============================== ==================== ================ ================== ================= ================= ==================== =============== ========= 
 
 RDB$TRIGGER_1                   RDB$USER_PRIVILEGES                                0                3             &lt;null&gt;               c:0            &lt;null&gt;               &lt;null&gt;               1         0 
@@ -210,6 +212,4 @@ BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
 
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>select * from RDB$TRIGGERS;
-commit;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>pcisar</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$TRIGGERS</text></argument><argument name="test_id"><text>pcisar_0029</text></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument></extension>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$TRIGGERS</text></argument><argument name="test_id"><text>pcisar_0029</text></argument><argument name="target_group"><text>.*</text></argument></extension>

@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223514</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+-----Original Message-----
+From: DJK GreenSystems
+Sent: Jueves 26 de Octubre de 2000 3:12
+To: Claudio Valderrama C.
+Subject: Re: Metadata
+
+You should do the following:
+
+These two procedures expect an order and an order-line number. The following will make IB crash:
+// Show al possible parties on stock, with the same characteristics
+select * from GET_ORDVRD(258,1)
+// Show the status of the stock (matched, alternatives etc)
+select * from INKORDVRDSTATUS(258,1)
+// First one
+select * from GET_ORDVRD(258,1)
+
+I did have more problems. This is the most easy one to regenerate, because it can be done only with Interbase. Making changes to one of the procedures will lead that the system does not crash, but that it happened on other places.
+[snip]
+I would be very glad if this problem will be solved. We have a number of small customers, we want to work with Interbase. Please keep in touch.
+
+Regards,
+Dirk-Jan van der Kooij
+-----End of Original Message-----
+
+Now, what happens after the sequence of procedures is executed is simply that IB crashes due to a memory problem. Such sequence (see above) is shown again here:
+select * from GET_ORDVRD(258,1);
+select * from INKORDVRDSTATUS(258,1);
+select * from GET_ORDVRD(258,1);
+
+Example database will be available at
+http://www.cvalde.com/bugs/gstest3.zip
+Please try it as confidential. The person that sent me it several months ago gave me permission to share it but he doesn't want to show his business logic to all the world, of course. I had to post the backup because the error can't be reproduced by simply preparing the execution of procedures; they have to be run with minimal data.
+
+C.
+
+----------------------
+User: dimitr
+Logged In: YES 
+user_id=61270
+
+I'm able to reproduce it in v1.0, but v1.5 doesn't have this bug, so I've 
+marked it as fixed.</text></argument><argument name="title"><text>IB crashes with two procedures intermixed.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223514</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>424307</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : andreik
+Assigned to  : nobody
+----------------------
+Hi,
+
+GBAK overwrites BK file before starting back up 
+process. So if you have database with valuable data 
+and backup copy of it. And your database file gets
+corrupted so GBAK cannot proceed and you will
+execute command gbak -b &lt;database&gt; &lt;backup&gt;
+
+gbak will erase backup file then checks database
+file and after encountering error will stop
+process so you will loose your backup file forever.
+
+In my example I had GDB file and BK. GDB file
+was in 5.6 format and server was of 6.0.
+I forgot for version of GDB file and run gbak.
+It deleted my BK file and raises error message that
+GDB of wrong ODS version.
+
+The right behavior would be to overwrite BK file
+only after successfull process is done.
+
+
+----------------------
+User: kdv
+Logged In: YES 
+user_id=12130
+
+The right behavior will be not to overwrite anything at all 
+by default. Isn't it? For example, if you run command
+
+&gt;gbak -b a.gdb a.gbk -v -y out.txt
+
+twice, the second time it will give error message that it 
+can't overwrite out.txt. If simple log (output) file can't 
+be overwritten by default, why gbak can overwrite old 
+backup or any file name specified as backup file)?</text></argument><argument name="title"><text>GBAK overwrites BK file</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_424307</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223793</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : prenosil
+Assigned to  : robocop
+----------------------
+In the file
+  interbase\jrd\alt.c
+function
+  isc_add_user() (and also isc_modify_user, isc_delete_user)
+there is line
+    if (strlen (user_data-&gt;user_name) &gt; 32)
+
+so this function allows adding usernames 32 characters long!</text></argument><argument name="title"><text>isc_add_user() allows adding 32-char usernames</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223793</text></argument><argument name="resources"><set/></argument></extension>

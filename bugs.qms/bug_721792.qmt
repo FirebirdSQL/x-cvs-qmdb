@@ -1,0 +1,122 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>721792</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : paul_reeves
+Assigned to  : nobody
+----------------------
+Known Systems Impacted :
+
+NT 4.0 Workstation SP 6a
+2000 SP 3
+
+
+Bug Description :
+
+Whenever and local or remote client connects to the
+database through TCP/IP (including
+localhost:c:\whatever.gdb), the FB engine allocates
+memory (presumably indirectly through a WinAPI function
+call) from a Kernel Mode device driver.
+
+This device driver has a tag name of AfdB, a filename
+of afd.sys, and is described by Microsoft as &quot;Ancillary
+Function Driver for WinSock&quot;.
+
+After the connection is made, even if no other activity
+takes place, the FB engine continues to allocate memory
+from AfdB. This memory comes from Windows Non-Paged
+memory pool, which is a finite resource. After x number
+days of running, this memory pool is exhausted and
+Windows crashes with various insufficient memory errors
+(usually starts with applications api calls returning
+failure
+errors.)
+
+It appears that each connection made to the FB engine
+starts this process going, so if you have multiple
+connections, the exhaustion of the Non-Paged memory
+pool will occur faster.
+
+Now, when a connection disconnects from the server, the
+Non-Paged memory that it used from AfdB is released.
+The problem occurs when connections persist over a
+period of days, or if other processes have already
+depleted the available Non-Paged memory.
+
+
+Viewing the Bug :
+
+Since the actual non-paged memory is allocated from a
+device driver, it's usage is not easily visible. If you
+just watch the ibserver process in the task manager,
+you will see no unusual memory usage. However, if you
+view the Performance tabs Kernel Memory data, you will
+note the Nonpaged memory slowly growing (since it is
+measured
+in K, it takes some time to see).
+
+Fortunately, Microsoft has supplied a tool to help
+troubleshoot Kernel Mode Memory Leaks called
+poolmon.exe. This program displays different kernel
+memory usages by tag (and again the tag of interest
+is AfdB).
+
+Once you have installed and run poolmon, you can
+observe the Diff and Bytes for the AfdB process.
+Connect through TCP/IP to the FB server a few times
+(I'd suggest writing a quick program to automate
+several simultaneous connections, but just using one
+isql will also show the problem, but will take more
+time to become obvious), and
+you will notice the Diff and Bytes increase over time.
+Again, once you disconnect this memory is released, but
+it will keep growing until that time.
+
+
+Errata :
+
+- This bug was very difficult to find, given that it
+isn't a true
+leak (the memory is eventually regained upon 
+disconnection or server shutdown), and that it involved
+the actual &quot;leak&quot; occurring in a kernel mode device.
+Plus, since it goes away on disconnection, it took a
+while to eliminate my applications as being the cause
+of the
+leak. I believe this bug has not been found before
+since it requires a continuous connection for a long
+period of time, which is not typical for a RDBMS, and
+is also not a memory leak.
+
+However, it has the nasty consequence that one
+connection left over enough days can cause the entire
+system to crash through memory starvation, which can
+cause problems with hard drive corruption, etc.
+
+- I had the opportunity to test InterBase 5.6 for this
+same issue, and found that this bug does in fact exist
+in IB 5.6 as well.
+
+- While AfdB seems to be the driver most impacted, it
+is possible that other resources are also being
+consumed by the continuous connection.
+
+References :
+
+How to Use Poolmon : MS KB Article Q177415
+Poolmon Location :
+
+  On NT4 it is on the OS Install CD, located in
+Support\Debug\platform.
+
+  On 2000, it is also on the OS Install CD, located in the
+support.cab file under the \Support\Tools folder.
+
+  Note that for both, a registry entry detailed in the
+above KB article is required.
+
+Regards,
+
+Bill Morrison</text></argument><argument name="title"><text>Long runnning connection causes mem leak in OS kernel device</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_721792</text></argument><argument name="resources"><set/></argument></extension>

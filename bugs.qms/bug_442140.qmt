@@ -1,0 +1,165 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>442140</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : rafs
+Assigned to  : nobody
+----------------------
+Please check why I'm getting error that i don't have 
+select rights on a
+table when i select from a view who has select rights 
+on the table.
+
+To Check te problem :
+
+1. Restore the DB
+2. Create a new user
+3. Make the user member off CALS_USER
+4. Login with that user and the role CALS_USER
+5 Execute the following statement.
+
+SELECT * FROM VW_OBJECTS.
+
+
+I'm getting the following error : &quot;No Select/Read 
+rights on table
+catalog$lookup_info.
+
+Why ?
+
+Regards,
+Raf Schandevyl
+
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Unfortunately, Raf is correct. There's a bug in the way 
+permissions are checked. The server does invalid 
+CMP_post_access() calls when dealing with sub-select's (or 
+nested select's to be clear) in view's. In fact, it will 
+try to verify that the user and not the view or the view's 
+owner have rights over the underlying table(s). Of course, 
+the idea of only granting users rights on the view is 
+defeated by this bug: db admin should give users straight 
+rights over underlying tables or try to solve the problem 
+with selectable procedures. The problem seems to be inside 
+CMP:pass1() where this code exists:
+case nod_max:
+    case nod_min:
+    case nod_average:
+    case nod_from:
+    case nod_count:
+    case nod_count2:
+    case nod_total:
+	ignore_dbkey (tdbb, *csb, (RSE) node-&gt;nod_arg 
+[e_stat_rse], view);
+	break;
+It will be executed before
+    case nod_rse:
+    case nod_stream:
+and
+    case nod_aggregate:
+are executed. Inside ignore_dbkey, the following call 
+causes the bug:
+if (relation = tail-&gt;csb_relation)
+    CMP_post_access (tdbb, csb, relation-&gt;rel_security_name,
+	(tail-&gt;csb_view) ? tail-&gt;csb_view : view,
+	NULL_PTR, NULL_PTR, SCL_read, object_table,
+	relation-&gt;rel_name);
+Since ignore_dbkey fires before the other cases, it doesn't 
+have a chance to get called with the &quot;view&quot; parameter or 
+the &quot;csv_view&quot; variable correctly set. Then, the reques to 
+check security is made on behalf of the user instead of on 
+behalf of the view. Hence, the user is denied access to the 
+table(s) in the nested select.
+Raf's database was very complex and involved many grants, 
+so I simplified the case. In this database, only v4 can be 
+used when CVC (replace it with your user) connects with 
+role RV.
+
+SET SQL DIALECT 3; 
+ 
+/* CREATE DATABASE 'h:/temp/view_subsel.gdb' PAGE_SIZE 4096 
+ */
+
+/* Table: T, Owner: SYSDBA */
+CREATE TABLE T (A INTEGER);
+
+/* View: V1, Owner: SYSDBA */
+CREATE VIEW V1 (X, Y) AS
+ select 1, (select first 1 a from t) from rdb$database;
+
+/* View: V2, Owner: SYSDBA */
+CREATE VIEW V2 (X, Y) AS
+ select 1, (select first 1 a from t) from t;
+
+/* View: V3, Owner: SYSDBA */
+CREATE VIEW V3 (X, Y) AS
+ select a, (select first 1 a from t) from t;
+
+/* View: V4, Owner: SYSDBA */
+CREATE VIEW V4 (U, V) AS
+ select x.a, y.a from t x left join t y on x.a = y.a;
+
+/* View: V5, Owner: SYSDBA */
+CREATE VIEW V5 (X, Y) AS
+ select 1, (select a from t where a=0) from rdb$database;
+
+/* Grant role for this database */
+
+/* Role: RV, Owner: SYSDBA */
+CREATE ROLE RV;
+
+/* Grant permissions for this database */
+GRANT SELECT ON T TO VIEW V1;
+GRANT SELECT ON T TO VIEW V2;
+GRANT SELECT ON T TO VIEW V3;
+GRANT SELECT ON T TO VIEW V4;
+GRANT SELECT ON T TO VIEW V5;
+GRANT SELECT ON V1 TO ROLE RV;
+GRANT SELECT ON V2 TO ROLE RV;
+GRANT SELECT ON V3 TO ROLE RV;
+GRANT SELECT ON V4 TO ROLE RV;
+GRANT SELECT ON V5 TO ROLE RV;
+GRANT RV TO CVC;
+
+----------------------
+User: rafs
+Logged In: YES 
+user_id=65292
+
+Please Claudio give me an E-mail address where I can send 
+something.  I'm still heving trouble sending the 
+attachement to you.
+
+Regards,
+Raf Schandevyl
+----------------------
+User: rafs
+Logged In: YES 
+user_id=65292
+
+To Claudio.  I'm trying to mail directly to you but always 
+get errors 
+Your message did not reach some or all of the intended 
+recipients.
+
+      Subject:	Firebird bug [ #442140 ]
+      Sent:	17/08/2001 15:14
+
+The following recipient(s) could not be reached:
+
+      'Claudio Valderrama' on 17/08/2001 15:14
+            No transport provider was available for 
+delivery to this recipient.
+----------------------
+User: rafs
+Logged In: YES 
+user_id=65292
+
+I had attached a backup off my DB (Empty), but it didn't 
+pass. Please contact me if You need the DB.</text></argument><argument name="title"><text>ROLES &amp; GRANT FOR VIEWS NOT WORKING</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_442140</text></argument><argument name="resources"><set/></argument></extension>

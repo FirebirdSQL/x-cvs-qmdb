@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>446238</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Feature v1.5
+Status       : Open
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : dimitr
+----------------------
+Each db connection should be assigned a unique 
+identifier which should be available as a system 
+variable for use in triggers/SP and SELECTs.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+The wishlist also included - CONNECTION_ID, CONNECTION_IP, 
+CONNECTION_COMPUTER_NAME</text></argument><argument name="title"><text>Connection ID/User IP/Computer Name variables</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_446238</text></argument><argument name="resources"><set/></argument></extension>

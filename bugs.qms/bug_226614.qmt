@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>226614</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : bellardo
+Assigned to  : bellardo
+----------------------
+The temp buffer in FUNCTIONS_entrypoint is 128 characters, but when it is called by ISC_lookup_entrypoint which is called by obj_init (intl.c) it is passed a path with MAX_PATH_LEN &gt; 128, and a name with no length limit (currently &lt; 20).  If the length of the path and name were less than 128, everything was fine.  If it was greator you get a segfault.
+----------------------
+User: bellardo
+Buffer size increased.  Will commit to tree with Darwin port.</text></argument><argument name="title"><text>temp buffer in FUNCTIONS_entrypoint too small</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_226614</text></argument><argument name="resources"><set/></argument></extension>

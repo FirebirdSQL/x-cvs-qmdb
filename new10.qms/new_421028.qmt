@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>421028</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : nobody
+Assigned to  : tamlin
+----------------------
+In IB start the affinity mask would be setted automatically to the first processor.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+This is a Windows NT/2000 issue.
+
+At startup the engine will look in the IBConfig file for 
+the new &quot;CPU_AFFINITY_MASK&quot; value to determine the CPU mask 
+to use for the server process. The default setting is CPU 0 
+(the first CPU).
+
+The value is a bit-mask, accordingly, a mask value of &quot;3&quot; 
+represents CPU 0 and CPU 1 and &quot;8&quot; represents CPU 4.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Database maintenance</text></argument><argument name="title"><text>Automatic Affinity in ibserver startup</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_421028</text></argument><argument name="resources"><set/></argument></extension>

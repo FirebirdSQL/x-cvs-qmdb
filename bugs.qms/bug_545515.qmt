@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>545515</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : willo
+Assigned to  : nobody
+----------------------
+Hi,
+
+Found an issue:
+
+create procedure foo returns( v varchar(40) )
+as
+begin
+  v = 'bar';
+  suspend;
+end !!
+
+create procedure bar returns( v varchar(40) )
+as
+begin
+  for select v from foo into :v do
+    suspend;
+end !!
+
+alter procedure foo returns( v varchar(40) )
+as
+begin
+  v = 'foo';
+  suspend;
+end !!
+
+select * from foo
+value
+-------
+foo
+
+select * from bar
+value
+-------
+bar
+
+if you were to do:
+alter procedure bar returns( v varchar(40) )
+as
+begin
+  for select v from foo into :v do
+    suspend;
+end !!
+
+then you get
+
+select * from bar
+value
+-------
+foo
+
+Regards,
+  Willo
+----------------------
+User: helebor
+Logged In: YES 
+user_id=60469
+
+Worse, if you don't recompile the dependent procedures yourself manually, e.g. with RECREATE PROCEDURE, 
+and then you gbak the database, you will be unable to restore the gbak.</text></argument><argument name="title"><text>SP's do not recompile dependands</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_545515</text></argument><argument name="resources"><set/></argument></extension>

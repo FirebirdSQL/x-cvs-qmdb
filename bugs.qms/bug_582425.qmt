@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>582425</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : boris00
+Assigned to  : nobody
+----------------------
+Let's crash a DB together!
+
+-------------------------- snipsnap ------------------------
+
+/*
+Attention: This test crashes the database.
+Error &quot;internal gds software consistency check (wrong record length
+(183))&quot;
+will be raised
+The database can't be used anymore without having it fixed before!
+*/
+ 
+/* Step 1: DDL */
+
+SET SQL DIALECT 3; 
+ 
+CREATE DATABASE 'bstest.gdb' PAGE_SIZE 1024 
+ DEFAULT CHARACTER SET ISO8859_1;
+
+CREATE TABLE &quot;TEST&quot; (&quot;ID&quot; INTEGER NOT NULL
+);
+
+COMMIT WORK;
+SET AUTODDL OFF;
+SET TERM ^ ;
+
+CREATE TRIGGER &quot;TEST_BU&quot; FOR &quot;TEST&quot; 
+ACTIVE BEFORE UPDATE POSITION 0
+AS
+BEGIN
+        delete from &quot;TEST&quot; where id=old.id;
+END ^
+
+COMMIT WORK ^
+SET TERM ; ^
+
+
+/* Step 2: DML */
+
+insert into &quot;TEST&quot; values (1);
+insert into &quot;TEST&quot; values (2);
+insert into &quot;TEST&quot; values (3);
+insert into &quot;TEST&quot; values (4);
+insert into &quot;TEST&quot; values (5);
+insert into &quot;TEST&quot; values (6);
+commit;
+
+/* fine so far */
+
+update &quot;TEST&quot; set id=-1 where id=1;
+rollback;  /* error */</text></argument><argument name="title"><text>DB crashes if trigger BU deletes own row</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_582425</text></argument><argument name="resources"><set/></argument></extension>

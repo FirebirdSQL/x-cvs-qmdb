@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>228431</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+gbak under Linux is coredumping while loading a database backup made by gbak v5.
+the bug is deterministic and does not concern the official borland gbak for v6 and
+is related to the database content - only one of 3 different database backups generated
+the bug.
+Details:
+    System - Redhat 7
+    Firebird - 0.9-4 CS
+    Database in question: about 150MB, no triggers, no stored procedures - pure data
+        but about a dozen of generators.
+    Returning to official gbak the bug disappeared.
+
+
+----------------------
+User: patrickgriffin
+I was wondering if any additional information is available on this problem.
+
+Were any extra parameters specified for the GBAK restore? 
+
+Have you tried     gbak v    to try to narrow down where the problem is?
+
+Also, you mentioned generators and I curious about them.  
+If you still have the original database available could you try this:
+
+select rdb$generator_name,
+       rdb$generator_id
+from rdb$generators
+
+And let me know the results?
+
+Thanks,
+&amp;pat</text></argument><argument name="title"><text>gbak cannot restore backup made by IB v5</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_228431</text></argument><argument name="resources"><set/></argument></extension>

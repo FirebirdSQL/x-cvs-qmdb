@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223058</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : prenosil
+Assigned to  : nobody
+----------------------
+The feature that allows you to connect to IB server through
+several other IB servers, like
+  &quot;alpha:beta:\\gamma\delta:C:\InterBase\db.gdb&quot;
+does not work, if one of the &quot;relay&quot; servers
+(i.e. alpha, beta, gamma from above example) is IB6.
+
+IB6 will allow connection,
+but when trying to execute any command you will get
+  &quot;Dynamic SQL Error
+  -SQL error code = -901
+  -feature is not supported&quot;</text></argument><argument name="title"><text>Multi-hop server ability broken</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223058</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,62 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223060</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : prenosil
+Assigned to  : nobody
+----------------------
+Suppose you have table
+
+  CREATE TABLE tab (field INTEGER  CHECK(field&gt;=0) );
+  CREATE INDEX idx ON tab (field);
+
+with lots of rows where field=0.
+When you execute these two statements
+
+  SELECT * FROM tab WHERE field &gt;= 1
+  SELECT * FROM tab WHERE field &gt; 0
+
+they both will return the same result set,
+they both will use the same plan,
+however the second one (with &gt;) will be much slower.
+The difference is caused by internal processing
+of &quot;&gt;=&quot; and &quot;&gt;&quot; clauses when using indexes.
+
+When you execute
+  SELECT * FROM tab WHERE field &gt;= 1
+IB will use index to locate all values &gt;=1, o.k.
+
+When you execute
+  SELECT * FROM tab WHERE field &gt; 0
+IB will use index to locate all values &gt;=0 !!!
+i.e. ALL rows from our test table !!!
+
+
+Why nobody noticed it ?
+- for columns with more even distribution of values
+  the speed difference is minimal
+- IB usually evaluates condition twice
+  1. it first locates row by index
+     (not always correctly as you can see)
+  2. after fetching row it evaluates the condition again
+     (in this case it discards rows where field=0,
+     that should have been filtered out by index)
+
+
+How can you verify this theory ?
+- start (W)ISQL
+  and update one row where value is 0.
+  Do not commit.
+
+- start another (W)ISQL and start transaction
+  SET TRANSACTION READ COMMITTED NO RECORD_VERSION NO WAIT
+
+  Now, first execute faster query (where field &gt;= 1).
+  You will get correct answer.
+
+  Then execute slow query (where field &gt; 0).
+  You will get &quot;lock conflict&quot; error.
+  It means that IB tries to internally fetch
+  row that does not meet criteria (value&gt;0)
+  and that should have been skipped when using index properly.</text></argument><argument name="title"><text>Slow processing of GREATER-THEN operator</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223060</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Check for correct content of RDB$TYPES in empty database.</text></argument><argument name="stdout"><text>RDB$FIELD_NAME                  RDB$TYPE RDB$TYPE_NAME                     RDB$DESCRIPTION RDB$SYSTEM_FLAG 
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>select * from RDB$TYPES;
+commit;
+</text></argument><argument name="description"><text>Check for correct content of RDB$TYPES in empty database.</text></argument><argument name="author"><text>pcisar</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>RDB$FIELD_NAME                  RDB$TYPE RDB$TYPE_NAME                     RDB$DESCRIPTION RDB$SYSTEM_FLAG 
 =============================== ======== =============================== ================= =============== 
 
 RDB$FIELD_TYPE                        14 TEXT                                       &lt;null&gt;               1 
@@ -145,6 +147,4 @@ RDB$CHARACTER_SET_NAME                57 GB2312                                 
 RDB$CHARACTER_SET_NAME                57 DOS_936                                    &lt;null&gt;               1 
 RDB$CHARACTER_SET_NAME                57 WIN_936                                    &lt;null&gt;               1 
 
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>select * from RDB$TYPES;
-commit;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>pcisar</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$TYPES</text></argument><argument name="test_id"><text>pcisar_0030</text></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument></extension>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$TYPES</text></argument><argument name="test_id"><text>pcisar_0030</text></argument><argument name="target_group"><text>.*</text></argument></extension>

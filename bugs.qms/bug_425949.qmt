@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>425949</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+This line crash INTERBASE 6.0 and FIREBIRD
+select count(*),adresy.rdb$db_key from adresy
+
+adresy-this is any table
+
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Firebird 0.95 no longer crashes with it. The fix was taken 
+from Borland's sources that correspond to the IB certified 
+version, so it should be fixed in the certified IB version, 
+too.</text></argument><argument name="title"><text>CRASH ERROR</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_425949</text></argument><argument name="resources"><set/></argument></extension>

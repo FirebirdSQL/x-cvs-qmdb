@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>483795</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : creynolds
+Assigned to  : nobody
+----------------------
+Given the following table and view definition:
+
+CREATE TABLE table1 (
+  keyfield INTEGER NOT NULL, 
+  field1 INTEGER NOT NULL);
+
+CREATE TABLE table2 (
+  keyfield INTEGER NOT NULL, 
+  field2 INTEGER NOT NULL);
+
+CREATE VIEW test1 ( keyfield, field1 ) AS
+SELECT keyfield, field1
+FROM table1
+UNION
+SELECT keyfield, field1
+FROM table1;
+
+CREATE VIEW test2 ( keyfield, field2 ) AS
+SELECT keyfield, field2
+FROM table2
+UNION
+SELECT keyfield, field2
+FROM table2;
+
+the following statement crashes the server:
+
+SELECT *
+FROM test1 i, test2 j
+WHERE i.keyfield = j.keyfield
+AND j.field2 = (SELECT MAX(x.field2) FROM test2 x)
+
+Claudio's comments on this bug:
+
+Finally I got to the right place. The problem happens 
+in the optimizer, in the routine gen_sort_merge(), 
+when it calls a routine named computable() during the 
+prepare phase. After that routine calls itself 4 times
+recursively, it finds a null pointer and game over, 
+take your bags and go to home. A node pointer with the 
+value 0xb is no fun for the operating system, that 
+kills the process:
+
+for (end = ptr + node-&gt;nod_count; ptr &lt; end; ptr++)
+    if (!computable (csb, *ptr, stream, idx_use))
+return FALSE;
+
+ptr is okay, but *ptr is 0xb, hence it enter a new 
+recursive call with &quot;node&quot; argument being 0xb, and the 
+first line does DEV_BLKCHK (node, type_nod); that will 
+check node-&gt;nod_type == type_nod. Of course, 0xb is 
+not a valid address to be dereferenced, hence goodbye.
+
+It seems that the server didn't like the total absence 
+of indices.
+:-)</text></argument><argument name="title"><text>Query using VIEW with UNION causes crash</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_483795</text></argument><argument name="resources"><set/></argument></extension>

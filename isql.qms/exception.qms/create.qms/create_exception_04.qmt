@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE EXCEPTION - too long message
-
-Dependencies:
-CREATE DATABASE
-Basic SELECT
-</text></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 
 CREATE EXCEPTION test '01234567890123456789012345678901234567890123456789012345678901234567890123456789';
 
 DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
+</text></argument><argument name="description"><text>CREATE EXCEPTION - too long message
+
+Dependencies:
+CREATE DATABASE
+Basic SELECT
+</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdout"><text/></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
 
 unsuccessful metadata update
 -DEFINE EXCEPTION failed
 -arithmetic exception, numeric overflow, or string truncation
-</text></argument><argument name="title"><text>CREATE EXCEPTION - too long message</text></argument><argument name="test_id"><text>skopalik_0139</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="title"><text>CREATE EXCEPTION - too long message</text></argument><argument name="test_id"><text>skopalik_0139</text></argument><argument name="target_group"><text>.*</text></argument></extension>

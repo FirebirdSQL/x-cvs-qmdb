@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>619635</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : wquick
+Assigned to  : nobody
+----------------------
+Firebird 1.0 field date index no return with line with date
+'01/01/0202'
+
+Select * from diario
+where (diario.date &gt;'01/01/0100') and 
+(diario.date&lt;'01/01/1980')
+
+no return lines with date = '10/01/0202'.
+
+     I'm brazil , sorry my english is bad.</text></argument><argument name="title"><text>Field date index no return line date</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_619635</text></argument><argument name="resources"><set/></argument></extension>

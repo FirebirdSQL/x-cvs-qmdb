@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>583317</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : eku
+Assigned to  : nobody
+----------------------
+If the API function isc_start_transaction is called
+with more than 16 databases the process overwrites
+it's own stack in GDS_START_TRANSACTION (local array
+tebs of size 16) and aborts with a segmentation
+violation.
+
+The API documentation does not note any limitation on
+the number of databases!
+
+FIX: don't use a static sized array.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Erik,
+
+I just want to point out that it is unusual to use the multi-
+database features of Firebird.  
+
+To try and access more than 16 database, puts you in a 
+league of your own!
+
+This, however, does *not* dismish the severity of the error.
+
+By the way, I have changed the description for this entry to 
+better reflect the exact nature of the problem.</text></argument><argument name="title"><text>Multi-database ISC_START_TRANSACTION results in abend</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_583317</text></argument><argument name="resources"><set/></argument></extension>

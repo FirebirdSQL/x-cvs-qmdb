@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>551138</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : andreik
+Assigned to  : nobody
+----------------------
+hi,
+
+
+specifying parameter -z in gbak utility command line
+while backuping or restoring database together with 
+using
+service manager (parameter -se)
+results in gbak fault on client machine, but
+server process continues execution.
+
+
+for example, if one would run the command:
+
+
+gbak -b win2000server:k:\bases\gedemin\gdbase.gdb 
+k:\bases\gedemin\gdbase.bk -se 
+win2000server:service_mgr -z
+
+the next error message appears:
+
+gbak: ERROR: Error writing data to the connection.
+gbak: Exiting before completion due to errors
+
+but checking server load you will see that process 
+continues.</text></argument><argument name="title"><text>gbak fails if parameters -z and -se used</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_551138</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,218 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>221960</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+In testing classic 6.01 on Linux (pressing it pretty hard),
+I get:
+database file appears corrupt ()
+-wrong page type
+-page xxxx is of wrong type (expected 7, found 5)
+
+I cannot give you any details to really help reproduce the
+bug, apart from the fact that there were 5 clients attached
+and hammering the server, and a backup taking place about
+half the time.
+
+I have, however, managed to get the error twice in a 48 hour period. Both times I was unable to get the database
+into a state where I could successfully back it up using
+gfix, and had to start the testing again with a fresh (empty) database.
+
+Looking at the log file, I have an &quot;INET/inet_error: read errno=104&quot;. I'm not sure if this is the cause or result.
+I also have another &quot;page xxx is of wrong type (expected 7, found 5)&quot; error reported in the log file for a different page, with the following additional information:
+&quot;internal gds software consistency check (record disappeared (186))&quot;
+
+----------------------
+User: skidder
+Logged In: YES 
+user_id=495356
+
+This had to be fixed in Firebird 1.5, but needs to be carefully 
+tested again
+----------------------
+User: mweissenbacher
+Logged In: YES 
+user_id=231195
+
+i think i was hit by this problem recently, i have asked for help 
+in ib-support under the title &quot;ibserver running at 100%&quot;. the 
+cause of all these problems mentioned there was one little 
+thing: i had two java programs connecting to the database. 
+one from localhost, one from another host. the program that 
+connected from the other host was some kind of data-insert-
+program. after running this program the records did not 
+appear in the database, altough they were successfully 
+inserted and commited by the data-insert-program. 
+additionally, &quot;wrong page type&quot; errors appeared in the 
+database. i had to backuprestore it or it would lose all data 
+after some additional time. after two days of intensive search i 
+found the problem by looking at the server properties/log page 
+in ibexpert. i noticed that the same database was open twice 
+by the server, so it was like the server accessing two different 
+databases, but in fact it was the same file, hence the 
+corruption problem! the output looked like this:
+
+Database Info
+---------------------------------------------------------------------------
+Number of connections: 17
+Number of databases: 2
+Databases: /opt/interbase/databases/agro.gdb
+           opt/interbase/databases/agro.gdb
+
+
+this occured using firebird 1.0 SS on linux. the problem was, 
+that the two clients connected to the server with two different 
+connection strings:
+jdbc:interbase://localhost//opt/interbase/databases/agro.gdb
+jdbc:interbase://localhost/opt/interbase/databases/agro.gdb
+
+so this little slash missing was causing us very heavy 
+problems with the database. after i made sure that all clients 
+connected using the same string with the / all problems 
+disappeared. 
+----------------------
+User: nobody
+Logged In: NO 
+
+I had similar problems (Included the INET/inet_error: read errno=104) , 
+both with orphan pages, corrupted indexes , and decompresion errors..
+
+Cause : Bad RAM.
+
+Solution : Try changing the RAM chips.
+
+----------------------
+User: uldis
+Logged In: YES 
+user_id=553771
+
+I got the same error once when I switched from WinNT Super 
+to RedHat Classic. And the only problem was, that I did 
+decrese the number of cache pages for database before 
+switching from Super to Classic. After some users loged in, 
+the RAM of server was used completely.
+So, after decresing the number of buffers to optimal, error 
+disappeared with out any other operations. 
+----------------------
+User: nobody
+Logged In: NO 
+
+I got this error too! 
+I installed the FB6 SS beta2 in my redhat 6.2, 2.2.16 kernel,
+
+today, and create a database, then create a table, just
+id, nameofuser, useraddress, 3 fields. and then run a
+program to insert for 1,000,000 data entry just for test, 
+after it, i run isql, connect it, i run this, 
+
+select count(*) from mytable 
+
+it shows this, 
+
+------------- begin ----------------------        
+COUNT
+============
+Statement failed, SQLCODE = -902 database file appears 
+corrupt ()
+-wrong page type
+-page 1845 is of wrong type (expected 5, found 0) ---------------- end ---------------------------- 
+
+how can i fix this bug?
+
+
+sorry, again,
+
+I move the database file to a win2000 computer, and run
+under borland IB server 6.01, It runs well...
+
+but i move it again from win2000 to linux then it tell
+me, it has wrong page.
+
+why? why?? why???
+----------------------
+User: nobody
+Logged In: NO 
+
+I got this error too!
+
+I installed the FB6 SS beta2 in my redhat 6.2, 2.2.16 kernel, 
+today, and create a database, then create a table, just
+id, nameofuser, useraddress, 3 fields. and then run a 
+program to insert for 1,000,000 data entry just for test, after it, i run isql, connect it, i run this, 
+
+select count(*) from mytable
+
+it shows this,
+
+------------- begin ----------------------
+
+       COUNT
+============
+Statement failed, SQLCODE = -902
+
+database file appears corrupt ()
+-wrong page type
+-page 1845 is of wrong type (expected 5, found 0)
+
+---------------- end ---------------------------- 
+
+how can i fix this bug?
+----------------------
+User: nobody
+Logged In: NO 
+
+It happened,Can someone help me to fix it?it has many data 
+in it!
+
+Luckey@21cn.com
+2001.4.3
+
+----------------------
+User: jlprado
+Logged In: YES 
+user_id=133889
+
+We have been experiencing data base corruptions in many 
+customers, in many random situations.
+
+There is no problem with the machines nor electric power. 
+The ibServer process doesn't stop.
+
+We use a database normaly for about a week, and then, we 
+start receiving the classic error massage:
+&quot;Database file appears corrupt (wrong type page) - page 
+xxxx is of wrong type&quot;
+
+Some times, we get this errors at two conecutive days.
+
+We are searching for solutions for this problem for about 3 
+months, now. And then we have looked at this text:
+
+in ReleaseNotes.pdf
+of InterBase 6.0 Field Test
+November 1999
+
+At the last page ( 36 th ), in the list of known bugs and 
+workarounds, we can find this bug:
+60338 Competing Garbage Collector processes corrupt the 
+database
+
+We couldn't find any information on these known bugs at 
+Borland's Site, nor Community.
+
+We are suspecting, that the IBServer's Garbage Collection 
+Thread may be competing with the GBAK automatic garbage 
+collection.
+
+Can anyone confirm that this can/may cause the database 
+corruptions we are experiencing?
+
+We do about 4 scheduled backups per day for each database, 
+so if this is a bug, we can just turn the GBAK's garbage 
+collection OFF.
+
+Thanks for any help.
+</text></argument><argument name="title"><text>Classic Wrong Page Type Error</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_221960</text></argument><argument name="resources"><set/></argument></extension>

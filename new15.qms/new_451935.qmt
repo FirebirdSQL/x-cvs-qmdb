@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>451935</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Feature v1.5
+Status       : Open
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : dimitr
+----------------------
+This would allow for procedures and triggers to be 
+created or altered without concern for whether the 
+function already exists.
+----------------------
+User: tonycavanna
+Logged In: YES 
+user_id=415884
+
+Oracle also allows you to do this with views ie...
+
+create or replace myview as select ...</text></argument><argument name="title"><text>REPLACE for procedures and triggers</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_451935</text></argument><argument name="resources"><set/></argument></extension>

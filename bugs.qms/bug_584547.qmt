@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>584547</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : ded
+Assigned to  : nobody
+----------------------
+  LI-V6.2.796 Classic. Trying to restore database as 
+multy-file I made error in command line - forgot root 
+slash in third file pathname:
+
+gbak -c /dir1/dir2/db.gbk /dir1/dir2/db.gdb 250000 
+/dir1/dir2/db1.gdb 250000 dir1/dir2/db2.gdb
+
+there were /dir1/dir2/db.gdb and /dir1/dir2/db1.gdb 
+files created, I could'nt find file db2.gdb anywhere 
+but gbak finished normally saying &quot;closing, exiting and 
+going home&quot;. More, when I checked database header there 
+was not any info about secondary files at all - 
+physically database was stored in two files but 
+logically was presented as single file database. Very 
+dangerous bug I think which could lead to database 
+loss, gbak should be more attentive than me :), at 
+least should'nt create corrupted database without any 
+error messages.
+
+Best regards, Alexander V.Nevsky.</text></argument><argument name="title"><text>Error in gbak command not served correct</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_584547</text></argument><argument name="resources"><set/></argument></extension>

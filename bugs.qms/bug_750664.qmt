@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>750664</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : None
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : prenosil
+Assigned to  : nobody
+----------------------
+Firebird 1:
+
+When trying to update generator in Read-Only database,
+then subsequent disconnect will take very long time
+(about 2 minutes).
+
+----------
+
+Firebird 1.5:
+
+When trying to update generator in Read-Only database,
+then subsequent disconnect will take very long time,
+and the database file will remain locked such that
+new connections are not possible.
+
+----------
+
+It IS possible to update generator's value
+(by GEN_ID or SET GENERATOR)
+in Read-Only transaction (in Read-Write database).
+</text></argument><argument name="title"><text>READ_ONLY database and generators</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_750664</text></argument><argument name="resources"><set/></argument></extension>

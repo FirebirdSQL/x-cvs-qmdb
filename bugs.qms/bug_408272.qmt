@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>408272</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : mat000
+Assigned to  : nobody
+----------------------
+execution of query like:
+&quot;insert into MyTable select * from MyTable&quot;
+force IBServer to produce infinite insertion cycle
+----------------------
+User: dschnepper
+Logged In: YES 
+user_id=72348
+
+I remember being bit by this &quot;problem&quot; with IB 3.2, back in 
+1991.  I don't know what SQL says about this type of 
+problem, and I don't know if it's easily solvable.  The 
+intent of this comment is to point out that this is not any 
+kind of new problem, but has existed in the product for at 
+least 10 years.
+David Schnepper
+9 Nov 2001</text></argument><argument name="title"><text>infinite insertion cycle</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_408272</text></argument><argument name="resources"><set/></argument></extension>

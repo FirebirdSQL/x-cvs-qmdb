@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>495127</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Charsets/Collations 
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : julio_gyn
+Assigned to  : nobody
+----------------------
+The character set used on create of system tables 
+d'ont is compatible with brazilian characters (a, o...) if i use:
+
+SELECT RDB$EXCEPTION_NAME, RDB$EXCEPTION_NUMBER, 
+RDB$MESSAGE
+FROM RDB$EXCEPTIONS
+
+raise a exeption:
+
+Arithmetic exception, numeric overflow, or string 
+truncation
+Cannot transliterate character between character sets
+Statement: SELECT RDB$EXCEPTION_NAME, 
+RDB$EXCEPTION_NUMBER, RDB$MESSAGE
+FROM RDB$EXCEPTIONS
+----------------------
+User: julio_gyn
+Logged In: YES 
+user_id=254620
+
+The Character Set used in connection is win1252 and 
+description of exception is 'Nao e Possivel DELETAR a 
+tabela filha porque tabela pai nao existe.'
+----------------------
+User: nobody
+Logged In: NO 
+
+  The same with WIN1251 and WISQL32. More, when I tried 
+Metadata - Show - Exceptions, I got &quot;There are no exceptions 
+in this database&quot;. If I connect with charset NONE, both 
+query and &quot;show exceptions&quot; works. Being connected via 
+IBExpert with WIN1251 I can see all exceptions without any 
+problems. Maybe it's tool problem, IBExpert don't use second 
+connection to get user defined exceptions. Server 
+LI-T6.2.659, client WI-T6.2.632.</text></argument><argument name="title"><text>Character Set of System Tables</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_495127</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>228135</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+-----Original Message-----
+From: Ondrej Kelle
+Sent: Domingo 7 de Enero de 2001 6:19
+To: Claudio Valderrama
+Subject: RE: [IBO] NULL incorrectly returned as 0 through a left outer join view
+
+Hello Claudio,
+
+Thanks for your response! I'm attaching the SQL scripts. Please create an empty test database. You can then connect to the database using isql and issue the following command:
+
+input 'create all.sql';
+
+This should create the domains, tables, views etc. and insert some test data. With the test data please try the following:
+
+select pvb.project, pvb.mjr, pvb.mnr, pvb.rls, pvb.bld, b.id, b.priority,
+b.entered_by, b.closed, b.status 
+from bug b left outer join
+project_version_bug pvb 
+on (pvb.bug = b.id) where b.assigned_to = user;
+
+     PROJECT     MJR     MNR     RLS     BLD           ID PRIORITY
+ENTERED_BY                      CLOSED STATUS
+============ ======= ======= ======= ======= ============ ========
+=============================== ====== ======
+
+           1       0       0       0       0            1        1 SYSDBA
+N      A
+           1       0       1       0       0            1        1 SYSDBA
+N      A
+      &lt;null&gt;  &lt;null&gt;  &lt;null&gt;  &lt;null&gt;  &lt;null&gt;            2        1 SYSDBA
+N      A
+
+This is correct, you can see the null values where there are no records in project_version_bug for bug id 2.
+
+However, using the BUG_ASSIGNED view (which is defined with exactly the same SQL statement) I get the following:
+
+select * from bug_assigned;
+
+     PROJECT     MJR     MNR     RLS     BLD           ID PRIORITY
+ENTERED_BY                      CLOSED STATUS
+============ ======= ======= ======= ======= ============ ========
+=============================== ====== ======
+
+           1       0       0       0       0            1        1 SYSDBA
+N      A
+           1       0       1       0       0            1        1 SYSDBA
+N      A
+           0       0       0       0       0            2        1 SYSDBA
+N      A
+
+or even this:
+
+select * from bug_assigned where project is null;
+
+     PROJECT     MJR     MNR     RLS     BLD           ID PRIORITY
+ENTERED_BY                      CLOSED STATUS
+============ ======= ======= ======= ======= ============ ========
+=============================== ====== ======
+
+           0       0       0       0       0            2        1 SYSDBA
+N      A
+
+Here all the null values as a result of the left outer join are presented as
+zeros.
+
+Thanks a lot for your interest in this problem!
+TOndrej
+-----Original Message-----
+
+This is a case using one column to demonstrate even clearer the bug:
+select project
+from bug_assigned
+where project is null;
+=&gt; produces a zero as the result. The engine seems to recognize that the value is NULL so it honors the WHERE clause, but it returns zero. The view is very simple to be considered a boundary case.
+
+The scripts to create both data and metadata (see instructions at the top of the email I copied above) are available at
+http://www.cvalde.com/bugs/test_view.zip
+
+C.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+This is a trivial example:
+/* SF Bug #228135 */
+create table t(a int);
+insert into t values(1);
+create domain dom_u int not null;
+create table u(b dom_u);
+create view v as select t.a, u.b from t left join u on t.a 
+= u.b;
+commit;
+select * from v;
+
+/*
+           A            B
+============ ============
+
+           1            0
+*/
+
+Table U has no records, column B should be NULL instead!
+
+
+create view v2(a, c) as select t.a, u.b+0 from t left join 
+u on t.a = u.b;
+commit;
+select * from v2;
+
+/*
+           A                     C
+============ =====================
+
+           1                &lt;null&gt;
+*/
+
+By forcing an aggregate, we have done the trick. Now, the 
+trick is no longer necessary.</text></argument><argument name="title"><text>NULL is returned as zero through a left join in simple VIEW</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_228135</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>450405</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+In this example &quot;t t&quot; is any table. Here, it doesn't 
+matter that its name has an embedded space, it could 
+be named T0 or mytable as well. SYSDBA does:
+
+SQL&gt; create role &quot;for cvc&quot;;
+SQL&gt; create role &quot;for&quot;;
+SQL&gt; grant &quot;for cvc&quot; to user cvc;
+SQL&gt; grant select on table &quot;t t&quot; to &quot;for&quot;;
+SQL&gt; ^Z
+
+Now, cvc has ONLY the role &quot;for cvc&quot;.
+However, sysdba assigned role &quot;for&quot; the right to 
+select from the table. No user has been granted such 
+role. Also, no rights have been given to the role 
+granted to cvc, so it's useless.
+
+If cvc tries to use role &quot;for&quot;, it will be changed 
+internally to &quot;NONE&quot; because that user hasn't been 
+granted such role. However, cvc can play with the 
+legitim assigned role and do:
+
+H:\ibdev\fbbuild\interbase\dsql&gt;isql
+Use CONNECT or CREATE DATABASE to specify a database
+SQL&gt; connect c:/proy/fbtest.gdb user cvc password pw 
+role &quot;for cvc&quot;;
+Database:  c:/proy/fbtest.gdb, User: cvc, Role: for cvc
+SQL&gt; select * from &quot;t t&quot;;
+SQL&gt;
+
+Whoops! The engine allowed the request! Internally, 
+when the ACL is checked, the ACL and the role are 
+compared at some time, and since the ACL is length-
+counted, it will stop at the third position, since the 
+role that has legitim rights is &quot;for&quot;. At this time, 
+check_string() queries the next character in the 
+current role. In the case of
+&quot;for cvc&quot;, it's a blank, so the routine decides that 
+both roles are the same and accept the credentials. It 
+didn't check that there may be more valid characters 
+after a couple of embedded blanks.
+
+The example is convoluted, but relying on the admin 
+doing always the sensible decision is risky.
+
+C.</text></argument><argument name="title"><text>Tricky role defeats basic SQL security</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_450405</text></argument><argument name="resources"><set/></argument></extension>

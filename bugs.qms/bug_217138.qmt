@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>217138</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+Since I was able to reproduce the immediate crash by copying and pasting the code from the newsgroup and running the query against IB6 (SS) on NT, without having data in the tables, I will save the issue here, because it doesn't matter if it's SS or classic or what OS s being used:
+
+&quot;Ian Newby&quot; wrote in message news:39EC3851.4137A57F@wmeng.co.uk...
+
+Hi folks,
+
+Background: IB6 Classic Redhat Linux 6.2 Problem occurs using quickdesk,
+ibadmin etc/
+I have a simple SQL statement which always kills the connection.
+The SQL is as follows:
+
+Select distinct fm.code, fm.Description, fm.link
+from fullmenu fm join menu_groups mg on fm.code = mg.menu_id
+
+When I try and prepare this I get a &quot; Unable to complete network request
+to host &quot;10.0.0.200&quot;.  Error reading data from the connection &quot;
+
+and the connection is lost.
+
+Is it a bug, and is there a workaround?
+
+TIA Ian Newby
+
+The applicable data definition is as follows:
+CREATE DOMAIN D_GLOBAL_ID AS VARCHAR(15) NOT NULL ;
+CREATE DOMAIN D_LONG_DESC AS VARCHAR(200);
+CREATE DOMAIN D_GROUP AS INTEGER  DEFAULT 0 CHECK ((value is not null));
+
+CREATE DOMAIN D_GLOBAL_REF AS VARCHAR(15);
+CREATE DOMAIN D_ICON AS SMALLINT CHECK (((value is null) or (value
+between 0 and 8)));
+
+CREATE TABLE KNOWLEDGESTREAMS (
+        STREAM_ID D_GLOBAL_ID NOT NULL,
+        NAME D_LONG_DESC,
+        CONTENT_GROUPS D_GROUP,
+        CONSTRAINT PK_KNOWLEDGESTREAMS PRIMARY KEY (STREAM_ID)
+);
+
+CREATE TABLE MAINMENU (
+        MENU_ID D_GLOBAL_ID NOT NULL,
+        PARENT_ID D_GLOBAL_REF,
+        DESCRIPTION D_LONG_DESC,
+        CONTENT_GROUP D_GROUP NOT NULL,
+        ICON D_ICON,
+        CONSTRAINT PK_MAINMENU PRIMARY KEY (MENU_ID)
+);
+
+ALTER TABLE MAINMENU ADD CONSTRAINT FK_MAINMENU FOREIGN KEY (PARENT_ID)
+REFERENCES MAINMENU(MENU_ID) ON DELETE CASCADE ON UPDATE CASCADE;
+
+CREATE TABLE MENU_GROUPS (
+        MENU_ID D_GLOBAL_ID NOT NULL,
+        CONTENT_ID D_GLOBAL_ID NOT NULL
+);
+
+CREATE INDEX MENU_GROUPS_IDX1 ON MENU_GROUPS (MENU_ID);
+CREATE INDEX MENU_GROUPS_IDX2 ON MENU_GROUPS (CONTENT_ID);
+
+CREATE TABLE STREAMMENU (
+        STREAM_ID D_GLOBAL_ID NOT NULL,
+        PARENT D_GLOBAL_ID NOT NULL,
+        CONSTRAINT PK_STREAMMENU PRIMARY KEY (PARENT, STREAM_ID)
+);
+
+ALTER TABLE STREAMMENU ADD CONSTRAINT FK_STREAMMENU_PARENT FOREIGN KEY
+(PARENT) REFERENCES MAINMENU(MENU_ID) ON DELETE CASCADE;
+
+ALTER TABLE STREAMMENU ADD CONSTRAINT FK_STREAMMENU_STREAM_ID FOREIGN
+KEY (STREAM_ID) REFERENCES KNOWLEDGESTREAMS(STREAM_ID) ON DELETE
+CASCADE;
+
+CREATE VIEW FULLMENU (
+    CODE,
+    PARENT,
+    DESCRIPTION,
+    LINK,
+    CONTENT_GROUP
+) AS
+select menu_id,parent_id,description,cast(null as
+varchar(100)),content_group from mainmenu
+union all
+select m.stream_id, m.parent, s.name
+,cast('/servlets/uk.co.wmeng.intelus.KnowledgeStream?ACTION=DISPLAY&amp;ID='
+|| s.stream_id as varchar(100)),content_groups from streammenu m join
+knowledgestreams s on s.stream_id = m.stream_id
+;</text></argument><argument name="title"><text>JOIN including a complex view kills the server</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_217138</text></argument><argument name="resources"><set/></argument></extension>

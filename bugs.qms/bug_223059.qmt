@@ -1,0 +1,96 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223059</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : prenosil
+Assigned to  : robocop
+----------------------
+When IB updates VARCHAR string, it does not zero rest of the string.
+(when the row is decompressed in the buffer).
+
+e.g. you have table
+  CREATE TABLE t ( a VARCHAR(50) );
+  INSERT INTO t
+    VALUES ('abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmn');
+  COMMIT;
+
+When you update it by
+  UPDATE t SET a='XYZ';
+
+then IB creates new version of the row that should contain string:
+  'XYZ' + zero filled rest
+but it stores (in gdb file) this string instead:
+  'XYZdefghijklmnopqrstuvwxyz1234567890abcdefghijklmn'
+
+Because VARCHARs contain length of the string, client application
+will never notice any problem (i.e. it will always get correct result),
+but the gdb file can grow faster than expected
+(because such additional data can't be rle compressed),
+and database can get slower
+(because less useful data fit onto page).
+
+How can you test this behaviour ?
+- Either look at gdb file with hex-viewer, or
+- use gstat utility with parameter &quot;-r&quot;.
+
+After running example commands, you get these statistics:
+  Average record length: 57.00, total records: 1
+  Average version length: 9.00, total versions: 1
+    (57 = newest record version tooooo long)
+
+When you run the same test, but with CHAR column instead,
+you will see following statistics:
+  Average record length:  10.00, total records: 1
+  Average version length: 53.00, total versions: 1
+    (10 = CHAR column is always padded with spaces,
+          so rest of the string will be compressed, o.k.)
+    (53 = longer delta, but it will be garbage collected, o.k.)
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Let's see the new results after injecting in the engine the 
+code posted by Ann:
+
+H:\ibdev\fbbuild\interbase\interbase\bin&gt;gstat 
+c:/proy/fbtest.gdb -t TCLEAN -r
+
+Database &quot;c:/proy/fbtest.gdb&quot;
+
+Database header page information:
+[snip]
+    Variable header data:
+        *END*
+
+
+Database file sequence:
+File c:/proy/fbtest.gdb is the only file
+
+Database log page information:
+[snip]
+
+Analyzing database pages ...
+
+TCLEAN (166)
+    Primary pointer page: 233, Index root page: 234
+    Average record length: 12.00, total records: 1
+    Average version length: 55.00, total versions: 1, max 
+versions: 1
+    Data pages: 1, data page slots: 1, average fill: 2%
+    Fill distribution:
+         0 - 19% = 1
+        20 - 39% = 0
+        40 - 59% = 0
+        60 - 79% = 0
+        80 - 99% = 0
+
+We notice that we have two bytes more than in the CHAR 
+case. Not a surprise, since VARCHAR carries extra sizeof
+(USHORT) to handle the effective string length. The 
+important point is that our average record length went down 
+from 57 to 12, so the bug is fixed.
+
+C.</text></argument><argument name="title"><text>Updating VARCHAR does not clear old data</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223059</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>212263</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : rfm
+Assigned to  : fsg
+----------------------
+Workaround is to set ISC_USER / ISC_PASSWORD beforehand,
+or use unix authentication
+
+To reproduce (using windows): 
+unset ISC_USER and ISC_PASSWORD
+isql -x {some database} -user {some valid user} -password {some valid password}
+
+This apears to be a logic bug, rather than an option parsing bug.
+In isql.e -a and -x are handled differently from other cases which
+call newdb from do_isql</text></argument><argument name="title"><text>command line isql ignores -user / -password with -a or -x</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_212263</text></argument><argument name="resources"><set/></argument></extension>

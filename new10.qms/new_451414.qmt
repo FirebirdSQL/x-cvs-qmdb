@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>451414</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : nmcc
+----------------------
+Support for PLANONLY setting, allows for a 
+statement/query to be submitted to the engine and the 
+plan retrieved, without executing the statement/query.</text></argument><argument name="title"><text>New PLANONLY option</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_451414</text></argument><argument name="resources"><set/></argument></extension>

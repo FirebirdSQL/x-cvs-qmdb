@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>750662</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : None
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : prenosil
+Assigned to  : nobody
+----------------------
+When declaring blob filter, the parameters are not 
+checked,
+so it is possible to declare several filters with the same
+name and even with the same input/output sub_types.
+
+i.e. it is possible to execute identical declaration several 
+times
+
+DECLARE FILTER f
+  INPUT_TYPE   0
+  OUTPUT_TYPE -1
+ENTRY_POINT 'e'
+MODULE_NAME 'm';
+
+DECLARE FILTER f
+  INPUT_TYPE   0
+  OUTPUT_TYPE -1
+...
+</text></argument><argument name="title"><text>Multiple declaration of blob filters</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_750662</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,132 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>513296</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : alexjak
+Assigned to  : nobody
+----------------------
+I found this bug on FIREBIRD version WI-T6.2.679 RC-2
+
+How to reproduce this bug:
+
+first, some definitions:
+==================================
+/* Domain definitions */
+CREATE DOMAIN &quot;D_ADDITIONAL_INFO&quot; AS VARCHAR(200);
+CREATE DOMAIN &quot;D_BOOLEAN&quot; AS SMALLINT
+	 DEFAULT 0
+	 CHECK ((VALUE = 0) OR (VALUE = 1));
+CREATE DOMAIN &quot;D_BUNKER_ID&quot; AS INTEGER;
+CREATE DOMAIN &quot;D_BUNKER_NAME&quot; AS VARCHAR(40);
+CREATE DOMAIN &quot;D_DESTINATION_ID&quot; AS INTEGER;
+CREATE DOMAIN &quot;D_DESTINATION_NAME&quot; AS VARCHAR(40);
+CREATE DOMAIN &quot;D_DREGNUMAS&quot; AS NUMERIC(7, 3)
+	 DEFAULT 0;
+CREATE DOMAIN &quot;D_ELEM_ID&quot; AS INTEGER;
+CREATE DOMAIN &quot;D_ELEM_NAME&quot; AS VARCHAR(100);
+CREATE DOMAIN &quot;D_HEAT_CAPACITY&quot; AS NUMERIC(9, 3)
+	   DEFAULT 0
+	 CHECK (VALUE &gt;= 0);
+CREATE DOMAIN &quot;D_MIXER_ID&quot; AS INTEGER;
+CREATE DOMAIN &quot;D_MIXER_NAME&quot; AS VARCHAR(40);
+CREATE DOMAIN &quot;D_RECIPE_ID&quot; AS INTEGER;
+CREATE DOMAIN &quot;D_SCALES_ID&quot; AS INTEGER;
+CREATE DOMAIN &quot;D_SCALES_NAME&quot; AS VARCHAR(40);
+CREATE DOMAIN &quot;D_SCALES_ORDER&quot; AS INTEGER
+	 CHECK ((VALUE &lt;= 10) AND (VALUE &gt;= 1));
+CREATE DOMAIN &quot;D_SUM_WEIGHT&quot; AS NUMERIC(12, 3)
+	 DEFAULT 0;
+CREATE DOMAIN &quot;D_WEIGHT&quot; AS NUMERIC(9, 3);
+CREATE DOMAIN &quot;D_WHEN&quot; AS TIMESTAMP
+	 DEFAULT 'NOW';
+
+/* Table: T_RECIPES, Owner: SYSDBA */
+
+CREATE TABLE &quot;T_RECIPES&quot; 
+(
+  &quot;RECIPE_ID&quot;	&quot;D_RECIPE_ID&quot; NOT NULL,
+  &quot;ELEMENT&quot;	&quot;D_ELEM_ID&quot; NOT NULL,
+  &quot;QNT&quot;	&quot;D_WEIGHT&quot;   DEFAULT 0,
+  &quot;ADD1&quot;	&quot;D_ADDITIONAL_INFO&quot;,
+  &quot;ADD2&quot;	&quot;D_ADDITIONAL_INFO&quot;
+);
+
+/* View: V_RECIPES, Owner: SYSDBA */
+
+CREATE VIEW &quot;V_RECIPES&quot; (
+  &quot;RECIPE_ID&quot;, 
+  &quot;ELEMENT&quot;, 
+  &quot;QNT&quot;
+) AS
+ select r.RECIPE_ID, r.ELEMENT, SUM( r.QNT )
+from T_RECIPES r
+where ( r.QNT &gt; 0 )
+group by r.RECIPE_ID, r.ELEMENT
+;
+
+SET TERM ^ ;
+
+
+/* Triggers only will work for SQL triggers */
+
+CREATE TRIGGER &quot;TV_RECIPES&quot; FOR &quot;V_RECIPES&quot; 
+ACTIVE BEFORE DELETE POSITION 0
+AS
+BEGIN
+  delete from T_RECIPES r
+  WHERE ( r.ELEMENT = OLD.ELEMENT ) AND ( r.RECIPE_ID 
+= OLD.RECIPE_ID );
+END
+ ^
+
+COMMIT WORK ^
+SET TERM ;^
+==================================
+
+now, let's populate table T_RECIPES:
+
+INSERT INTO &quot;T_RECIPES&quot; 
+(&quot;RECIPE_ID&quot;, &quot;ELEMENT&quot;, &quot;QNT&quot;, &quot;ADD1&quot;, &quot;ADD2&quot;) VALUES 
+(1, 1, 200, NULL, NULL);
+INSERT INTO &quot;T_RECIPES&quot; 
+(&quot;RECIPE_ID&quot;, &quot;ELEMENT&quot;, &quot;QNT&quot;, &quot;ADD1&quot;, &quot;ADD2&quot;) VALUES 
+(1, 2, 500, NULL, NULL);
+INSERT INTO &quot;T_RECIPES&quot; 
+(&quot;RECIPE_ID&quot;, &quot;ELEMENT&quot;, &quot;QNT&quot;, &quot;ADD1&quot;, &quot;ADD2&quot;) VALUES 
+(1, 1, 100, NULL, NULL);
+INSERT INTO &quot;T_RECIPES&quot; 
+(&quot;RECIPE_ID&quot;, &quot;ELEMENT&quot;, &quot;QNT&quot;, &quot;ADD1&quot;, &quot;ADD2&quot;) VALUES 
+(1, 3, 900, NULL, NULL);
+
+
+and, finally, let's play with the view V_RECIPES :
+
+select * from V_RECIPES -&gt; gives us a table of three
+rows and three columns
+
+BUT !!!!!!
+
+delete from V_RECIPES where ELEMENT = 1;
+
+does nothing !!!!
+
+The problem is that OLD.ELEMENT and OLD.RECIPE_ID are 
+assigned to nulls when TRIGGER &quot;TV_RECIPES&quot; 
+FOR &quot;V_RECIPES&quot; is invoked. This problem dissappears 
+if the view doesn't use aggregation.
+
+----------------
+
+Best regards,
+
+Alex J.
+----------------------
+User: alexjak
+Logged In: YES 
+user_id=449555
+
+I think this bug has something in common with
+this one: 
+
+[ #489762 ] trigger on view with union receive nulls</text></argument><argument name="title"><text>no old TRIGGER values in AGGREGATE VIEWS</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_513296</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>672883</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : kukku234008
+Assigned to  : nobody
+----------------------
+#!/bin/bash 
+#Back up metadata 
+in /home/samba/interbae/data.gdb to data.mbk
+/opt/interbase/bin/gbak -user SYSDBA -pas 
+masterkey -B -
+metadata /home/samba/interbase/data.gdb /home/s
+amba/interbase/data.mbk
+echo 'completed backup'
+rm -f /home/samba/interbase/data1.gdb
+/opt/interbase/bin/gbak -user SYSDBA -pas 
+masterkey -
+R /home/samba/interbase/data.mbk /home/samba/i
+nterbase/data1.gdb
+
+exit
+
+#When I run this script against my database on server 
+version install by 
+#FirebirdSS-1.0.2.908-0.64IO.i386.rpm on Mandrake 8.2 
+it reports:
+#gbak: ERROR: lock manager out of room
+#gbak: Exiting before completion due to errors
+
+#But when I switch back to earlier version everything is 
+fine.</text></argument><argument name="title"><text>GBAK: Failed (FirebirdSS-1.0.2.908-0.64IO.i386.rpm )</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_672883</text></argument><argument name="resources"><set/></argument></extension>

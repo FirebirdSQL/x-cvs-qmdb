@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>796675</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : askln
+Assigned to  : nobody
+----------------------
+Given
+
+CREATE TABLE t (id INTEGER);
+
+the following statements give corresponding errors:
+
+1) SELECT ? FROM t =&gt; Data type unknown
+2) SELECT id + ? FROM t =&gt; expression evaluation not
+supported
+3) SELECT id * ? FROM t =&gt; Array/BLOB/DATE data types
+not allowed in arithmetic
+
+While 1) is technically correct, it is misleading in a
+sense that user believes that something like SELECT
+CAST(? AS INTEGER) might work, which of course does not :)
+So I think that only the second message is correct.
+
+Tested with FB 1.0.3 and 1.5RC5 on Windows, using IBX
+and IBO.
+
+----------------------
+User: askln
+Logged In: YES 
+user_id=757561
+
+Upon further experiments, found more incorrect messages /
+inconsistent behaviour:
+
+SELECT 'a' + 1 FROM t =&gt; expression evaluation not supported
+(should be &quot;type mismatch&quot;)
+CREATE TABLE t1 (id INTEGER, s VARCHAR(100));
+SELECT * FROM t1 WHERE s=1 =&gt; ok
+(1 gets converted to string)
+SELECT * FROM t1 WHERE 'a'=1 =&gt; conversion error from string &quot;a&quot;
+(it would be logical that 1 would convert to string also)
+SELECT * FROM t1 WHERE s||''=1 =&gt; Cannot transliterate
+character between character sets
+(what gives?)
+SELECT * FROM t1 WHERE s=id =&gt; Cannot transliterate
+character between character sets
+SELECT * FROM t1 WHERE s=id||'' =&gt; ok (!)
+(double-negative gives positive, I suppose ;))</text></argument><argument name="title"><text>Bad error messages on SELECT ? FROM</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_796675</text></argument><argument name="resources"><set/></argument></extension>

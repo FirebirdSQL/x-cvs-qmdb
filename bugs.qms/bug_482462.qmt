@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>482462</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : max_hennig
+Assigned to  : nobody
+----------------------
+Using a database with Forced Writes ON results in I/O 
+errors for some operations. Sometimes, server restart 
+is needed to continue working with the database.
+
+The following applies to Firebird 1.0 RC1 on Win2K (I 
+couldn't test other platforms).
+Beta2 DOES NOT have this problem.
+
+HOW TO REPRODUCE THE PROBLEM:
+
+From IBConsole, connect to some database with Forced 
+Writes option enabled. Select 'Properties' from the 
+popup menu (or 'Database Statistics' from the actions 
+list on the right). You will receive the following 
+error:
+
+I/O Error for file &quot;D:\TEST\TEST.GDB&quot;
+Error while trying to access file.
+The handle is invalid.
+
+The same problem was reproduced using IBWorkbench 
+(www.upscene.com).
+
+You can still set Forced Writes to OFF using gfix, but 
+if you do so while the database is open in IBConsole, 
+it will 'mess up' the server - you won't be able to 
+use the affected database until you restart the server 
+(anything you do will produce the same error message, 
+or another one:
+
+I/O error for file &quot;D:\TEST\TEST.GDB&quot;
+Error while trying to open file
+The process cannot access the file because it is being 
+used by another process. )
+----------------------
+User: awharrison
+Logged In: YES 
+user_id=66088
+
+Our first pass at locking the database file locked out gstat - we backed
+off to locking the database against shared writers which allows gstat
+and still prevents problems with connections through variations on the
+file name corrupting the database</text></argument><argument name="title"><text>new in RC1: I/O Error with Forced Writes</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_482462</text></argument><argument name="resources"><set/></argument></extension>

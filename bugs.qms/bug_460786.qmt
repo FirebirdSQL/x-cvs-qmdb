@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>460786</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : salescredit
+Assigned to  : skywalker
+----------------------
+Show Procedures command fails with a segmentation error
+when any stored procedures contain generator commands
+eg. ThisID = GEN_ID(GenNewId,1).
+
+Show Procedures works when generator related code is
+removed.
+
+Linux Redhat 7.1
+----------------------
+User: skywalker
+Logged In: YES 
+user_id=57768
+
+Fix has been applied to source, and tested.
+
+A new obj_generator type (id 14) had been created and it
+required new entries in local array in show.e for display to
+work correctly.
+
+generator works ok in procedure, just fails when typing to
+build description of procedure.
+
+Fix will appear in next version.
+----------------------
+User: skywalker
+Logged In: YES 
+user_id=57768
+
+Actually I've just been looking at exactly this problem.
+
+The cause has been intentified, and a fix is currently being
+tested.</text></argument><argument name="title"><text>Show Procedures command fails</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_460786</text></argument><argument name="resources"><set/></argument></extension>

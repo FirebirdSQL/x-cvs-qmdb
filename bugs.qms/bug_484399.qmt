@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>484399</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+The server will acknowledge NULL when returned by a 
+UDF. This can be seen when testing from QLI, using 
+GDML instead of DSQL.
+However, the DSQL layer never recognizes that a UDF 
+has returned NULL, hence we see either zero or a blank 
+string, depending on the UDF's return type. This bug 
+renders UDF-based NullIf() and other related functions 
+useless.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Teach MAKE_desc() in DSQL that UDFs can return NULL.</text></argument><argument name="title"><text>UDFs can't return NULL to DSQL</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_484399</text></argument><argument name="resources"><set/></argument></extension>

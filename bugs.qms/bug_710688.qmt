@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>710688</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Utilities gstat, gfix, gsec
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : tomisoft
+Assigned to  : nobody
+----------------------
+I have tested my own program for changing user 
+passwords. On Win32 (v1.0.2) platform is all OK, but on 
+Linux (same version 1.0.2.908-1 CS) it crashes with 
+message &quot;An error occurred while attempting to modify 
+the user record&quot;, error code 335544755. I use 
+isc_modify_user API function, but when I use gsec I get 
+same result. </text></argument><argument name="title"><text>Cannot change password on Linux</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_710688</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>447396</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : nobody
+----------------------
+The client and server will now use TCP port 3050 if no 
+entry in the Services file is found.
+
+This should solve a common client/server installation 
+problem.
+</text></argument><argument name="title"><text>TCP Port 3050 used by default</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_447396</text></argument><argument name="resources"><set/></argument></extension>

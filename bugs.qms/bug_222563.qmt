@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>222563</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Fixed v0.9
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+Let's name a cat, a cat. This is a bug involving metadata extraction. Given the following declaration:
+
+CREATE PROCEDURE p
+   (inparam  CHAR(10) CHARACTER SET unicode_fss)
+RETURNS
+   (outparam CHAR(10) CHARACTER SET unicode_fss)
+AS
+DECLARE VARIABLE
+   var CHAR(10) CHARACTER SET unicode_fss;
+BEGIN EXIT; END
+
+The macro-command SHOW PROCEDURE P will output:
+Parameters:
+
+INPARAM INPUT CHAR(30)  CHARACTER SET UNICODE_FSS
+OUTPARAM OUTPUT CHAR(30)  CHARACTER SET UNICODE_FSS
+
+As you can see, CHAR(10) becomes CHAR(30), because the tool is reading rdb$field_length instead of rdb$character_length for procedure's parameters. In the case of table's fields, the correct information is read and presented. The following command confirms that the engine itself is doing the right thing:
+
+SELECT rdb$field_length, rdb$character_length
+  FROM rdb$fields
+ WHERE rdb$field_name IN (
+   select rdb$field_source from rdb$procedure_parameters
+   where rdb$procedure_name = 'P' )
+
+rdb$field_length rdb$character_length
+================ ====================
+              30                   10
+              30                   10
+
+The same problem affects IBConsole as well as some third party tools. Thanks to Ivan Prenosil for his discovery.
+
+C.
+
+----------------------
+User: fsg
+Fixed it today, seems that I have to do it for show procedure
+
+FSG</text></argument><argument name="title"><text>isql extracts wrong sproc's parameters with UNICODE</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_222563</text></argument><argument name="resources"><set/></argument></extension>

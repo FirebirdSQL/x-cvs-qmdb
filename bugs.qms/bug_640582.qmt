@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>640582</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Linux ports
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : wftondorf
+Assigned to  : nobody
+----------------------
+FirebirdSS-1.0.0.821-HP11.tar.gz
+
+There is a bug in 
+Firebird for HP UX 11.
+The server does not recognize any 
+character sets different from ASCII.
+Using isql to create a 
+database with the character set WIN1252 results in the 
+error:
+Implementation of text subtype 53 not 
+located.
+
+The tables rdb$types and 
+
+RDB$CHARACTER_SET_NAME are identical with the ones 
+on wintel-systems. 
+
+Georg Ritter was able to reproduce this 
+bug.</text></argument><argument name="title"><text>HP-UX 11 port: No Character Sets</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_640582</text></argument><argument name="resources"><set/></argument></extension>

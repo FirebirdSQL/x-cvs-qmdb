@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>577796</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : valfrid
+Assigned to  : nobody
+----------------------
+When you try to create a multiple fields FK you receive 
+the following error even if the columns matches in size, 
+type and you have a PRIMARY KEY AND an UNIQUE 
+INDEX for these fields on the REFERENCES table.
+
+Unsuccessful metadata update
+STORE RDB$REF_CONSTRAINTS failed
+action cancelled by trigger (1) to preserve data integrity
+Name of Referential Constraint not defined in constraints 
+table
+
+----------------------
+User: ded
+Logged In: YES 
+user_id=188889
+
+What about this example from live database
+
+SHOW TABLE sso_sorq
+DZSTORE     INTEGER Not Null 
+DZCODE      INTEGER Not Null 
+DZOPER      INTEGER Not Null 
+ORSTORE     INTEGER Not Null 
+ORCODE      INTEGER Not Null 
+POINTLOAD   INTEGER Not Null 
+SORUNIQ     INTEGER Not Null 
+CONSTRAINT SOOR_PK:
+  Primary key (DZSTORE, DZCODE, DZOPER, ORSTORE, ORCODE, 
+POINTLOAD, SORUNIQ)
+CONSTRAINT SOOR_FKSOD:
+  Foreign key (DZSTORE, DZOPER, DZCODE)    References 
+SOSTSKLOPER (STORE, OPER, CODE)
+CONSTRAINT SOOR_FKSOR:
+  Foreign key (ORSTORE, ORCODE, POINTLOAD, SORUNIQ)    
+References SOST_OTGR (STORE, CODE, POINTLOAD, UNIQ)
+CONSTRAINT SOOR_HEADCR:
+  Foreign key (DZSTORE, DZOPER, ORCODE, ORSTORE)    
+References DZI_ORQ (DZSTORE, DZCODE, ORCODE, ORSTORE)
+
+Seems there is another reason for this exception. What 
+version of Firebird do you use? Are'nt there general indexes 
+on your master table which are full duplicates of PK on 
+which you are trying to make reference?</text></argument><argument name="title"><text>Can't have multi-field FKs</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_577796</text></argument><argument name="resources"><set/></argument></extension>

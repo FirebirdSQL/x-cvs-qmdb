@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>518282</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+FB RC2 on Win32. No information about other platforms 
+and flavors. Concatenating casts of simple literal 
+values to long characters whose resulting string 
+exceeds some threshold (that seems to be 64K-1) 
+trashes the engine. Any SELECT clause executed after 
+that sentence will kill the engine.
+
+SQL&gt; select cast(0 as char(64000)) from rdb$database;
+Statement failed, SQLCODE = -842
+
+Dynamic SQL Error
+-SQL error code = -842
+-Short integer expected
+
+=&gt; Correct, the engine protects basically against it. 
+However:
+
+SQL&gt; select cast(0 as char(32000))
+CON&gt; || cast(1 as char(32000))
+CON&gt; || cast(1 as char(4000)) from rdb$database;
+
+=====[snip]
+0    [snip]
+
+=&gt; Lot of blank lines. The other two values aren't 
+visible at the right or bottom, though. At this time, 
+the engine is trashed. The following example could 
+employ a user table instead:
+
+SQL&gt; select * from rdb$database;
+Statement failed, SQLCODE = -901
+
+connection lost to database
+
+SQL&gt; ^Z
+
+=&gt; The connection is lost because the engine died with 
+a memory access error (invalid memory address being 
+read).
+
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+This statement doesn't need any dummy helper. It kills the 
+engine immediately:
+
+SQL&gt; select cast(0 as char(32000)) || cast(1 as char
+(32000)) || cast(2 as
+CON&gt; char(32000)) from rdb$database;</text></argument><argument name="title"><text>casts to long char trashes the engine</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_518282</text></argument><argument name="resources"><set/></argument></extension>

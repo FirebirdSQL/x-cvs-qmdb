@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>625899</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Closed
+Resolution   : None
+Submitted By : alexpeshkoff
+Assigned to  : alexpeshkoff
+----------------------
+Bugcheck 291 occurs when update of that same record, 
+that fired a trigger, done in BEFORE UPDATE trigger.
+
+Testing environment - FB1.0, FB1.5 / Win32. 
+
+This bug appears to be FB/IB version and OS 
+independent, but if someone may check it with LINUX 
+and/or old Interbase versions, that should be useful.
+
+This small script (just 1 table with 2 fields, 1 trigger and 
+4 records) always raise bugcheck 291 - cannnot find 
+back record version. 
+I have added the following debugging in jrd/exe.cpp
+(modify):
+
+after 	case req::req_return:
+gds__log(&quot;I %p %p %p %6d %3d %6d %3d %s&quot;, 
+  org_rpb, org_rpb-&gt;rpb_record, org_rpb-&gt;rpb_prior,
+  org_rpb-&gt;rpb_page, org_rpb-&gt;rpb_line, 
+  org_rpb-&gt;rpb_b_page, org_rpb-&gt;rpb_b_line,
+  org_rpb-&gt;rpb_relation-&gt;rel_name);
+
+before VIO_modify
+gds__log(&quot;&lt; ... (all the rest is the same)
+after VIO_modify
+gds__log(&quot;&gt; ... (all the rest is the same)
+
+This is the output of this debugging (a bit stripped):
+OK (Server)	Sun Oct 20 15:18:29 2002
+I 02708CF4 02720D48 00000000    150   2      0   0 T1
+I 026F083C 026F55A8 00000000    150   3      0   0 T1
+I 02708464 026F2AA8 00000000    150   0      0   0 T1
+I 02707CEC 026F2D40 00000000    150   3      0   0 T1
+&lt; 02707CEC 026F2D40 00000000    150   3      0   0 T1
+&gt; 02707CEC 026F2D40 026F2D40    150   3    150   4 T1
+&lt; 02708464 026F2AA8 00000000    150   0      0   0 T1
+&gt; 02708464 026F2AA8 026F2AA8    150   0    150   5 T1
+I 02708514 026F2720 00000000    150   1      0   0 T1
+I 02707D9C 026F1680 026F1680    150   3    150   4 T1
+&lt; 02707D9C 026F1680 026F1680    150   3    150   4 T1
+&gt; 02707D9C 026F1680 00000000    150   3    150   6 T1
+&lt; 02708514 026F2720 00000000    150   1      0   0 T1
+&gt; 02708514 026F2720 026F2720    150   1    150   4 T1
+&lt; 026F083C 026F55A8 00000000    150   3      0   0 T1
+&gt; 026F083C 026F55A8 026F55A8    150   3    150   7 T1
+I 026F08EC 026F19F0 026F19F0    150   3    150   7 T1
+I 02708724 026F1D70 026F1D70    150   3    150   7 T1
+&lt; 02708724 026F1D70 026F1D70    150   3    150   7 T1
+&gt; 02708724 026F1D70 00000000    150   3    150   8 T1
+&lt; 026F08EC 026F19F0 026F19F0    150   3    150   7 T1
+
+OK (Server)	Sun Oct 20 15:18:29 2002
+Database: C:\INFOSYSTEM\BUG291.GDB
+	internal gds software consistency check 
+(cannot find record back version (291))
+
+OK (Server)	Sun Oct 20 15:18:29 2002
+
+
+OK (Server)	Sun Oct 20 15:18:29 2002
+Database: C:\INFOSYSTEM\BUG291.GDB
+	internal gds software consistency check 
+(cannot find record back version (291))
+
+OK (Server)	Sun Oct 20 15:18:29 2002
+
+You may see, that firebird lost that part of information 
+about back version of the record, that was stored in rpb. 
+Any ideas?
+
+----------------------
+User: alexpeshkoff
+Logged In: YES 
+user_id=423445
+
+Mentioned by me script is present in bugtracking system, 
+and called bug291.sql.</text></argument><argument name="title"><text>Bugcheck 291</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_625899</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>555839</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : UDF/Built-In Functions
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : dec666
+Assigned to  : nobody
+----------------------
+With FB1.0 i get the following error message:
+Dynamic SQL Error
+SQL error code = -104
+invalid column reference
+Statement: select field1, f_function(field2) as name
+from table
+group by field1,field2
+
+Query:
+select field1, f_function(field2) as name
+from table
+group by field1,field2
+
+Workaround is to have the group by as: group by
+field1,f_function(field2)
+
+The original query works with ib6 but the workaround
+does not function with ib6.</text></argument><argument name="title"><text>group by needs UDF's name</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_555839</text></argument><argument name="resources"><set/></argument></extension>

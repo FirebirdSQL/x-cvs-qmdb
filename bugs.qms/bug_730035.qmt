@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>730035</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : fireclaw
+Assigned to  : nobody
+----------------------
+We have developed an application environment that has 
+been in production for 2 years using Interbase as the 
+backend.  While testing the environment on Firebird 1.5 
+Alpha 5 and 1.5 RC1 we found there was a problem.  On 
+tables that have an integer ID as the first column that is 
+filled by a generator value we noticed some strange 
+behaviour.  When the application is running Firebird 
+crashes with the following errors:
+Windows - FB 1.5 RC1 - Application Error
+Linux - FB 1.5 RC1 - +++ killed by SIGSEGV +++
+
+After about 11 man hours of investigation we found that 
+there appears to be an incorrect handling of integers 
+within complex transaction contexes when committing.  
+We have tried to recreate some of our application 
+environment in a standalone application to duplicate the 
+bug but have failed so far but we are able to repeat the 
+error without a problem within our environment.
+
+The application is developed in Delphi 5 Enterprise and 
+IB Objects 3.6A
+Database software tested on and worked perfectly
+Linux - Interbase 6 (Open Source Version)
+Windows - Firebird 1.0.2
+Database software tested om and crashed
+Linux - Firebird 1.5 Alpha 5 (CS)
+Linux - Firebird 1.5 RC1 (CS)
+Windows - Firebird 1.5 RC1 (SS)
+
+We have isolated a few integers that work and fail and 
+upon looking at there binary representation it appears 
+that there is a problem when the rolls over on the 16 bit.
+101000001 0111111111111111    21069823   works
+101000001 1000000000000000    21069824   fails
+          
+101110001 0111111111111111    24215551   works
+101110001 1000000000000000    24215552   fails
+          
+The problem does not appear if we change the datatype 
+to be a numeric(13,2) or drop the column completely.
+
+We are more than willing to assist in testing the fix to 
+this bug.  We will continue to try and create a 
+standalone test case but we don't too much hope of 
+being able to recreate the exact conditions that are 
+obviously in the environment.
+----------------------
+User: fireclaw
+Logged In: YES 
+user_id=105430
+
+According to gstat the database dialect is 1.  The server is 
+installed with a stock standard firebird.conf file.  The sql 
+statement is a simple &quot;SELECT * FROM TABLE ORDER BY 
+FIELD&quot;
+
+We are able to reproduce the error by running a number of 
+applications that do not work in our environment on this test 
+database yet work perfectly on older versions.  We did a 
+number of UPDATE statements to change the numbers 
+stored for the ID and thats how we figured out it was a 
+problem with the handling of integers.
+----------------------
+User: skidder
+Logged In: YES 
+user_id=495356
+
+1) The best thing you could do (if you have any mean to 
+reproduce the bug) is to perform your test with DEV_BUILD 
+Firebird version and
+examine resulting &quot;core&quot; file with gdb. (stacktrace and related 
+variables).
+2) This is better to discuss problems of Firebird 1.5 (exceptionally 
+regressions) in fb-devel first before posting them to tracker
+3) your report is useless. It misses all important information. 
+Database and connection dialect, statement that causes the 
+problem, mean how you reproduce the problem, etc...
+It will have to de deleted as invalid if you don't add this information</text></argument><argument name="title"><text>Firebird 1.5 integer handling not behaving correctly</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_730035</text></argument><argument name="resources"><set/></argument></extension>

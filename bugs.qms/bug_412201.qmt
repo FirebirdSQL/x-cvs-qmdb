@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>412201</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+Hello,
+
+I need to exchange data between two (or more) 
+databases.
+I have a trigger which autogenerate a reference.
+When I exchange data between two databases 
+(replication) I need to desactivate this trigger when 
+there is &quot;insert&quot; clauses . I reactivate it after the 
+exchange.
+
+After 255 alter trigger XXX active/incative I have 
+a &quot;two many version&quot; problem and I need to 
+backup/restore database....
+
+Do you plan to correct it ?
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Ann H. added logic to restrict the incrementing of the 
+table format change counter to 'real' tables changes -- 
+fields, datatypes and sizes.  The counter incorrectly 
+including the activation/deactivation of triggers as a 
+metadata change.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+This is not a bug but a deficiency is your design.
+
+This can be accomplished using a couple of approaches 
+including.
+
+Only generate a reference if the reference value is null, 
+in this way the reference value will be not be re-assigned 
+for inserts.</text></argument><argument name="title"><text>Trigger Activate/Deactivate increases meta counter </text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_412201</text></argument><argument name="resources"><set/></argument></extension>

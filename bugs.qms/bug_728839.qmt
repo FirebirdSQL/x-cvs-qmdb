@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>728839</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+(I wish SF would allow longer item names.)
+Every UDF working on fields that belong to the optional
+table in a left (or right) join must receive a
+descriptor signaling null for fields that are null
+because the mandatory table didn't have a matching
+record in the optional table (hence all fields in the
+latter become null).
+However, Borland decided to create a fake descriptor of
+type char(1) and to &quot;nullify&quot; the pointer to the
+record's format for the optional table to signal
+&quot;possibly null&quot;, see join_to_nulls(). Therefore,
+instead of a descriptor signaling null, a udf receives
+a descriptor signaling char(1). Functions like nullif()
+and nvl() will fail logically; they don't crash.
+(Regardless of this bug, those udfs should be
+deprecated because we have coalesce and native nullif,
+respectively.)
+This bug affects all IB versions since outer joins were
+implemented. Hence, all FB versions in use carry the bug.</text></argument><argument name="title"><text>left join defeats udf by mangling a null descriptor</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_728839</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>520093</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : FreeBSD port
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : cuncua
+Assigned to  : nobody
+----------------------
+FreeBSD port of Firebird locks when using direct access (no inetd) in multiuser mode.
+
+When using 2 isql sessions (same I found with PHP) on the same database, the requests are serialized.
+
+Using Apache+PHP, the server crashed when using direct access. Application (just simple selects) works fine when using inetd daemon.
+
+OS: FreeBSD 4.3 - Firebird RC2 for FBSD4.3</text></argument><argument name="title"><text>Problem with direct access</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_520093</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>228467</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9-4
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : nobody
+----------------------
+Look at this URL: https://www.kb.cert.org/vuls/id/247371
+----------------------
+User: fsg
+I replaced this with a revolving door on 22.Dez.2000 :-)
+
+FSG</text></argument><argument name="title"><text>security bug with a hardcoded user with full rights to isc4</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_228467</text></argument><argument name="resources"><set/></argument></extension>

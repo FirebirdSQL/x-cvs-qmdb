@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>571022</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : michlv
+Assigned to  : nobody
+----------------------
+Hello,
+
+I have Firebird-1.0.0.796, 32bit I/O build from 
+firebird.sourceforge.net on Debian 2.2 Potato.
+
+On some cases firebird report error:
+INET/inet_error: select in packet_receive: error = 4
+
+errno 4 is EINTR - Interrupted system call
+
+But if I look to sources remote/inet.c in packet_receive 
+function, when select return EINTR error, select is 
+repeated.
+
+Why firebird report EINTR error?
+
+THREAD_ENTER may may change ERRNO?
+If yes, firebird may report diffrent value than raise error.
+
+Vladimir Michl</text></argument><argument name="title"><text>INET/inet_error: select in packet_receiv</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_571022</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>496787</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : skopalik
+Assigned to  : skidder
+----------------------
+When you try parametries inner SQL expresion,
+server or client library mix parameters.
+I tested in delphi with IBX4.62 and BDE5.11.
+
+SQL error code=-303
+
+select
+  (select 1 from rdb$database where  1=:ID)
+from rdb$database
+where 
+  'now' = :FROM
+
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Is it me, or does this example not make sense?  (You can't 
+assign a value to 'now').</text></argument><argument name="title"><text>Parameters missmatch</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_496787</text></argument><argument name="resources"><set/></argument></extension>

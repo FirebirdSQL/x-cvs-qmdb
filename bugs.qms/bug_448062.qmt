@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>448062</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+On behalf of Jason Wharton:
+
+I noticed that if you alter domain drop constraint and 
+then do this:
+
+alter domain .... add constraint check ...
+
+that the token constraint gets added into the blob 
+containing the check text.
+
+It is possible to do this
+
+alter domain .... add check ...
+
+and thereby omitting the constraint token altogether.
+
+Seems odd to me.
+
+CVC: Usually, rdb$fields.rdb$validation_source stores 
+things like
+CHECK (...)
+but with the ALTER DOMAIN syntax to include a 
+constraint, if you include the optional CONSTRAINT 
+token, you get in rdb$validation_source
+CONSTRAINT CHECK (...)
+this makes DDL extraction harder. It's inconsistent, 
+so I consider it a bug. Also, it's pointless since you 
+can't name the only possible constraint for a domain.
+
+C.</text></argument><argument name="title"><text>ALTER DOMAIN leaves CONSTRAINT word</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_448062</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>409769</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : nobody
+Assigned to  : robocop
+----------------------
+Query kind of:
+
+  SELECT 
+     Field1, Field2, ... ,
+     UDF1(Field1, ?Param1)
+  FROM 
+     TABLE1 
+
+don't work - message is &quot;unknown data type&quot;  
+         
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Now it works. For this, the DSQL layer has to load 
+information about UDF arguments that previously it didn't 
+have available.
+With udfs that use descriptors, the recognized parameter 
+type is always the formal parameter; the engine cannot 
+guess the actual parameter wanted by the user. Either 
+redeclare that udf with a different SQL name and use the 
+desired formal parameter or try adjusting the scale of the 
+input query parameter when the format argument is int and 
+the current parameter is numeric(9,4), for example. If a 
+UDF is declared to receive INT by descriptor, the engine 
+can pass it happily a numeric(p,s) quantity, then it's to 
+the udf to test the scale.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Our syntax allows that. However, the DSQL layer doesn't 
+retrieve information about parameters to know what their 
+type is. A fix is being tested, but the interaction with 
+descriptor-based UDFs will surprise developers.
+</text></argument><argument name="title"><text>UDF argument can't be query-parameter</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_409769</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,21 +1,21 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE VIEW
-
-Dependencies:
-CREATE DATABASE
-CREATE TABLE
-</text></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 CREATE TABLE tb(id INT);
 
 CREATE VIEW test (id,num,text) AS SELECT id,5 FROM tb;
 SHOW VIEW test;
 
 DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
+</text></argument><argument name="description"><text>CREATE VIEW
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdout"><text/></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
 
 Dynamic SQL Error
 -SQL error code = -607
 -Invalid command
 -number of columns does not match select list
 There is no view TEST in this database
-</text></argument><argument name="title"><text>CREATE VIEW</text></argument><argument name="test_id"><text>skopalik_0189</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="title"><text>CREATE VIEW</text></argument><argument name="test_id"><text>skopalik_0189</text></argument><argument name="target_group"><text>.*</text></argument></extension>

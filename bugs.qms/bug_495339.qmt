@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>495339</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : skopalik
+Assigned to  : nobody
+----------------------
+CREATE DATABASE &quot;localhost:d:\ibdata\test.gdb&quot;  
+USER &quot;sysdba&quot; PASSWORD &quot;masterkey&quot;
+ PAGE_SIZE 8192;
+
+create table a(
+ id integer
+ );
+
+insert into a values(1);
+
+select *
+from a B, rdb$database
+ left join a C on C.ID=B.ID;
+
+
+This select produce:
+Statement failed, SQLCODE = -508 
+no current record for fetch operation
+
+rdb$database may be any table.
+if You substitute left join to join result is OK.
+This error founded at FB beta2, FB RC1 and IB5.6</text></argument><argument name="title"><text>Left join fails with SQLCODE = -508</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_495339</text></argument><argument name="resources"><set/></argument></extension>

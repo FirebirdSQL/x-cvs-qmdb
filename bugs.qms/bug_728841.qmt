@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>728841</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+The Services API must attach to security db with
+unicode_fss charset, otherwise it must define a new spb
+for this purpose.
+The problem arises when this set of functions is used
+to define or alter users in the security db: it's
+possible to store not only the user, but the person's
+name and this field is unicode. However, since the
+Services API attachs itself to the security db using no
+specific charset, any personal name with international
+characters (above ASCII 127) will cause a
+transliteration error.
+Therefore, we allow users to specify their charset or
+we log in always behind scenes with unicode_fss.
+This bug affects IB6 and all Firebird versions.</text></argument><argument name="title"><text>Services API must attach to security db with unicode</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_728841</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>518350</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : robocop
+----------------------
+For lack of enough code in the DSQL layer, the ANSI 
+built-in substring() function loses the charset of 
+blob field, hence it makes the specification of a 
+collation impossible (it may be necessary for upper 
+and for sorting, since blobs don't have collations).
+
+SQL&gt; create table b(
+a char(3) character set iso_8859_1,
+b blob sub_type text character set iso_8859_1);
+
+SQL&gt; select upper(substring(a from 1 for 3) collate 
+es_es) from b;
+
+=&gt; no problem
+
+SQL&gt; select upper(substring(b from 1 for 3) collate 
+es_es) from b;
+Statement failed, SQLCODE = -204
+
+Dynamic SQL Error
+-SQL error code = -204
+-Data type unknown
+-COLLATION ES_ES is not valid for specified CHARACTER 
+SET
+
+The DSQL layer thinks that the blob's charset is none, 
+hence it rejects the collation. Probably a bug because 
+the DSC uses transposed fields to keep the charset in 
+char/varchar (sub_type) when compared to blobs 
+(scale), hence a direct assignment spoils the 
+information.
+
+The bug doesn't seem to affect JRD.
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Lack of a test for blob in dsql/make.c</text></argument><argument name="title"><text>substring loses blob's charset</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_518350</text></argument><argument name="resources"><set/></argument></extension>

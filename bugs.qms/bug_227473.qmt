@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>227473</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Fixed v0.9-4
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : patrickgriffin
+----------------------
+This is a rather subtle bug that might cause a db to change its original meaning if the metadata is extracted as an script and later a new db is created from such script. It seems that isql was planned with charset NONE in mind.
+
+Example, let's assume a database whose default character set is not NONE but WIN1250, namely, one whose rdb$database's rdb$character_set_name field is WIN1250 instead of NULL. Then given this declaration,
+create table none(n char character set none);
+isql extracts information as:
+
+SET SQL DIALECT 3;
+CREATE DATABASE 'D:\users\cvalde\proy\1252.gdb' PAGE_SIZE 1024 DEFAULT CHARACTER SET WIN1252;
+[snip]
+
+/* Table: NONE, Owner: SYSDBA */
+CREATE TABLE &quot;NONE&quot; 
+(
+  &quot;N&quot;	CHAR(1)
+);
+
+So, it's evident isql swallowed the charset specification, because it's NONE, so it assumed NONE is always the default. However, next time the script is submitted through the same isql.exe, since the db-wide charset is WIN1252, the table &quot;N&quot; will have a field named &quot;N&quot; whose charset will be WIN1252 and not NONE as initially created, because fields without charset specification assume the charset of the whole db.
+
+Solution: isql shouldn't discard charset NONE blindly when extracting metadata. The safe way is to query rdb$database and skip (for being redundant) the fields that use the same charset than the whole db (and only if rdb$database contains no charset specification, the utility can behave as it behaves currently) so the script can rebuild the db as it was originally, without subtle changes. This bug affects not only isql and IBConsole but third party tools, too. (I had forgotten to log this issue.)
+
+C.
+
+----------------------
+User: patrickgriffin
+ISQL has been patched to change the Extract and Show commands to display the character set definition for all fields:
+
+1)  Not using the database default character set
+2)  With an explicit definition for collation.
+
+This patch also changes the ISQL COPY command (only 
+available in development builds) to list every character set definition.
+
+...pat</text></argument><argument name="title"><text>isql always ignores charset NONE in metadata extraction</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_227473</text></argument><argument name="resources"><set/></argument></extension>

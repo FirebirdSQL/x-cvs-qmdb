@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>795537</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : opher
+Assigned to  : nobody
+----------------------
+Platform: Windows 2000 Server SP3, FB 1.5 RC5
+aliases.conf: EduGateII = D:\Projects\EduGateII.fdb
+
+When doing a backup with GBAK (with -se option) 
+aliases are handled well &amp; all is fine.
+Backup command-line:
+================
+gbak -b -t -v -user USER -pas password -se 
+NTSUPPORT:service_mgr EduGateII 
+\\NTSUPPORT\PROJECTS\EDUGATEIITEST.FBK
+
+On the other hand, the comparable restore operation 
+fails: 1) An error is reported in the log but GBAK returns 
+exit code 0
+2) Database is created as C:\WINNT\SYSTEM32
+\EduGateII instead of D:\Projects\EduGateII.fdb
+Backup command-line:
+================
+gbak -r -v -user USER -pas password -se 
+NTSUPPORT:service_mgr 
+\\NTSUPPORT\PROJECTS\EDUGATEIITEST.FBK EduGateII
+Output:
+=====
+gbak: opened file 
+\\NTSUPPORT\PROJECTS\EDUGATEIITEST.FBK
+gbak: transportable backup -- data in XDR format
+gbak: 		backup file is compressed
+gbak: created database EduGateII, page_size 4096 bytes
+gbak: started transaction
+[snip]
+gbak: finishing, closing, and going home
+gbak: ERROR: unassigned code
+gbak: Exiting before completion due to errors
+
+This restore command works fine (actual path used 
+instead of alias):
+gbak -r -v -user USER -pas password -se 
+NTSUPPORT:service_mgr 
+\\NTSUPPORT\PROJECTS\EDUGATEIITEST.FBK 
+D:\Projects\EduGateII.fdb
+
+----------------------
+User: opher
+Logged In: YES 
+user_id=846402
+
+Also, this command fails (not using -se option):
+1) An error is reported in the log AND GBAK returns 
+exit code 1 - OK behaviour.
+2) Database is created as C:\WINNT\SYSTEM32
+\EduGateII instead of D:\Projects\EduGateII.fdb
+Backup command-line:
+================
+gbak -r -v -user USER -pas password 
+C:\TEMP\EDUGATEIITEST.FBK NTSUPPORT:EduGateII
+Output:
+=====
+gbak: opened file C:\Temp\EDUGATEIITEST.FBK
+gbak: transportable backup -- data in XDR format
+gbak: 		backup file is compressed
+gbak: created database NTSUPPORT:EduGateII, page_size 
+4096 bytes
+gbak: started transaction
+[snip]
+gbak: finishing, closing, and going home
+gbak: ERROR: I/O error for file &quot;D:\Projects\EduGateII.fdb&quot;
+gbak: ERROR:     Error while trying to open file
+gbak: ERROR:     The system cannot find the file specified.
+
+gbak: Exiting before completion due to errors
+</text></argument><argument name="title"><text>Restore doesn't handle server-side aliases</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_795537</text></argument><argument name="resources"><set/></argument></extension>

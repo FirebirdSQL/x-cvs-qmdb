@@ -1,0 +1,165 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>484627</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : mgast
+Assigned to  : nobody
+----------------------
+When i try to use an existing UDF i get the error message:
+
+function &lt;FUNCTION_NAME&gt; is not defined.
+
+The UDF library and all UDF definitions are working
+fine with prior Firebird releases except RC1.
+
+My Firebird installation is running under Suse Linux 7.1.
+----------------------
+User: fabianobonin
+Logged In: YES 
+user_id=346895
+
+udflib functions are now working with Firebird RC2 for me.
+----------------------
+User: fabianobonin
+Logged In: YES 
+user_id=346895
+
+My system:
+Linux Redhat 7.1
+Firebird 1.0 RC1 (superserver)
+UDF library: udflib (from MERS)
+UDF path and name: /opt/interbase/UDF/udflib
+permissions: u=rwx,g=rx,o=rx
+
+I'm declaring just one function:
+
+DECLARE EXTERNAL FUNCTION vcharadd
+	CSTRING(255), CSTRING(255)
+	RETURNS CSTRING(255)
+	ENTRY_POINT 'fn_strcat' MODULE_NAME 'udflib';
+
+---
+select vcharadd('a', 'a') from rdb$database;
+
+function &lt;FUNCTION_NAME&gt; is not defined.
+
+But i know this function is there, because it works fine 
+with Interbase 6.0.1.
+
+I tried to rename the file 'udflib' to 'test' and it still 
+doesn't works.
+----------------------
+User: nmcc
+Logged In: YES 
+user_id=37966
+
+Can those reporting a problem specify if they are using 
+classic or super server.
+
+Also can they try a dev/debug build of classic as it will
+give the error message from the dlopen eg:
+
+SQL&gt; select str_len(city) from cities;
+/opt/interbase/UDF/FUNCLIB: undefined symbol: __setjmp
+Statement failed, SQLCODE = -104
+
+invalid request BLR at offset 60
+-function STR_LEN is not defined
+-module name or entrypoint could not be found
+
+UDF libraries are working on Linux Redhat 6.2 (and Solaris)
+for me from queries.
+
+The backup/restore problem appears to be a duplicate of
+bug 429594
+
+----------------------
+User: fsg
+Logged In: YES 
+user_id=70223
+
+I have tested udflib (dated march 13 2000) 
+returns 1.2 whith &quot;select ver() from ...&quot;
+and it works with LI-T1.0.0.608.
+
+Note that substr is an internal function now and you 
+should replace the substr declaration with mer_substr
+(as has been done with the day, time etc. functions)
+
+try to run udfrem.sql on your db, and redeclare the 
+functions you need.
+
+I don't thimk that this is a bug.
+
+fsg
+----------------------
+User: andreik
+Logged In: YES 
+user_id=62876
+
+I also had similar problem with RC1 build 557. I had a 
+table with calculated field which uses UDF and during 
+restore the error message UDF is not defined appeared.
+
+I think this because FB first tries to restore table 
+and only then restore UDFs from backup.
+
+Just yesterday had downloaded RC1 build 608 and will check 
+this problem against it.
+----------------------
+User: andreik
+Logged In: YES 
+user_id=62876
+
+I also had similar problem with RC1 build 557. I had a 
+table with calculated field which uses UDF and during 
+restore the error message UDF is not defined appeared.
+
+I think this because FB first tries to restore table 
+and only then restore UDFs from backup.
+
+Just yesterday had downloaded RC1 build 608 and will check 
+this problem against it.
+----------------------
+User: fabianobonin
+Logged In: YES 
+user_id=346895
+
+I renamed my udflib (from MERS)  to ib_udf and recreate the 
+functions and it still doesn't works.
+----------------------
+User: fabianobonin
+Logged In: YES 
+user_id=346895
+
+It's happening to me, too.
+My system is a RedHat 7.1
+
+I was expecing to migrate all my clients to FB, but i
+coldn't do it now because of this.
+----------------------
+User: mgast
+Logged In: YES 
+user_id=382978
+
+I try to use the MERS UDF library. The file is named
+'udflib'. There is no prefix and no extension. It is an ELF
+library compiled with GCC(egcs-2.91.66 from 03/14/1999).
+
+I used this library with all former versions of Interbase 6
+and Firebird for the last two years. Only RC1 does not find
+the entry points within the module.
+
+The standard UDF library can be used. As both libraries are
+in the same directory, it cannot ne a problem of the UDF path.
+----------------------
+User: skywalker
+Logged In: YES 
+user_id=57768
+
+The way linux/unix firebird loads ib_util, it will not find
+the library if it has a lib prefix or a .so extension. 
+(This is fixed in fb2).
+
+The next unix install for fb1 will leave it as ib_util.</text></argument><argument name="title"><text>UDF are not longer accessible</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_484627</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,121 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>233124</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : dimitr
+Assigned to  : robocop
+----------------------
+Platform: WinNT, Win2k
+Version: 0.9-3 &amp; 0.9-4
+Tools: IB_WISQL, QuickDesk
+
+If I try to alter domain with a bit wrong syntax like:
+
+alter domain domain_name set type smallint;
+
+where 'set' is illegal, the connection between server and client is lost with the following well-known error:
+
+Unable to complete network request to host &quot;host_name&quot;.
+Error writing data to the connection.
+unknown Win32 error 10054
+
+The problem seems to be the client's one. Maybe it is not very serious bug, but any request should have predictable result, IMHO.
+
+----------------------
+User: silvanomarcelo
+Logged In: YES 
+user_id=757691
+
+Hello,
+
+I possess connective Firebird 1,0 installed in one linux 6,0 
+and 8,0 and presents the error unknown error Win32 10054, 
+what to make????? what to make to fix??? tks!!!. Silvano 
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+That's a NULL pointer, modify_domain() has been fixed in 
+ddl.c to complain against &quot;unexpected end of command&quot;. The 
+SET keyword is valid when you are specifying a default 
+value for the domain.
+(The problem with the trigger that crashes the server that 
+was added to this issue should be moved to a new bug 
+report, but hopefully with the tables' definitions.)
+
+C.
+
+----------------------
+User: helebor
+No, it wasn't posted as a support issue.  The inquirer has since corrected the syntax and no longer has the problem.  It was posted as evidence that the server sometimes crashes when the compiler encounters bad syntax, that's all...
+
+H.
+----------------------
+User: robocop
+I don't want to convert this thread into support issue, but are you sure that the code is as you posted, Helen? If this is the case, then this is lack of validation that leads to a crash:
+1) INTO tht
+should be INTO :tht
+but according to some people, it doesn't matter and worse and others say the colon is rejected. I always use colon.
+2) You have
+FOR SELECT nws_thread_total, nws_thread_unread
+[snip]
+INTO tht
+so you receive only one field from the two you put in the SELECT part? Is this is the real case, then the compiler (or parser or validator) goes astray when trying to match the fields... maybe it tries to use the cursor as the other destination variable, who knows? As I wrote, assuming the report is not a typo, that's another validation error. You can create a table with no fields among other bizarre constructions; I logged them a lot of weeks ago.
+
+C.
+
+----------------------
+User: helebor
+Here's another example, reported to the Mers list by Marco Schluenss &lt;programming@schluenss.com&gt;:
+my problem is to declare the attached trigger in my news-db. when declaring it, interbase
+crashes immediatly.
+does somebody has any hints?
+
+
+the suspicious trigger:
+
+
+CREATE TRIGGER AH_DELETE_THREAD FOR NWS_ART_HEADER
+BEFORE DELETE 
+AS
+DECLARE VARIABLE tht INTEGER;
+BEGIN
+  FOR SELECT nws_thread_total, nws_thread_unread
+  FROM nws_thread
+  WHERE nws_thread_idx = OLD.nws_art_thread_id
+  FOR UPDATE OF nws_thread_total, nws_thread_unread
+  INTO tht AS CURSOR thcrs
+  DO
+     IF (tht &gt; 1) THEN
+       IF (old.nws_art_read like 'T%') THEN
+         UPDATE nws_thread
+         SET nws_thread_total = nws_thread_total -1
+         WHERE CURRENT OF thcrs;
+       ELSE
+         UPDATE nws_thread
+         SET 
+           nws_thread_total = nws_thread_total -1,
+           nws_thread_unread = nws_thread_unread -1
+         WHERE CURRENT OF thcrs;
+     ELSE
+       DELETE FROM nws_thread
+       WHERE CURRENT OF thcrs;
+  
+END
+-- 
+
+----------------------
+User: robocop
+This is a fatal bug in the server. The server itself dies with a memory error. The construction
+alter domain domain_name set type smallint;
+kills it immediately. Thanks for reporting it. I couldn't find another combination that causes the same effect.
+
+C.
+
+----------------------
+User: nobody
+Oops, I was wrong. The problem is defenitely the server's one because *all* active client connections become broken. So for now, it is very easy way to forcibly disconnect all users that are currently attached to the server without crashing or restarting the one.
+
+Dmitry</text></argument><argument name="title"><text>Connection lost during the bad SQL code execution</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_233124</text></argument><argument name="resources"><set/></argument></extension>

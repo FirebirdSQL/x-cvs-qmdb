@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>662652</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Linux ports
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : bchughes
+Assigned to  : skywalker
+----------------------
+Roles &amp; users no longer editable in v.1.0.2. Message 
+is &quot;Unrecognized parameter block; unable to open 
+database&quot;.  Can open isc4.gdb as normal database w/o 
+an error; error affects 3rd party tools IB/Firebird 
+workbench, IBConsole, not gsec.  Is a firebird bug, not 
+tools.  If possible please see discussion in ib-
+support@yahoo-groups (~1/1/2003) for detailed 
+messages issued when compiling FB on Linux platform.</text></argument><argument name="title"><text>Linux port v1.0.2 security database broken</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_662652</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>446208</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : UDF/Built-In Functions
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : seanleyne
+Assigned to  : robocop
+----------------------
+It is sometimes necessary to determine whether a 
+values passed to a UDF is NULL.  The current approach 
+which passes parameters by value prohibits this test --
+ a NULL is passed as an empty value, which can't be 
+distinguish from a 'real' empty/zero value.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+From Claudio:  I implemented DESCRIPTORS as UDF parameters.
+The verb &quot;implement&quot; is misleading there: I only uncovered 
+the feature previously available only to GDML definitions 
+and added DESCRIPTORS as a return mechanism. This small 
+addition is only for writing UDFs in a slightly
+simpler way (IMHO, of course), it doesn't mean you can 
+change the type of the return parameter as set in the UDF 
+declaration (or definition).
+
+The reason I couldn't change normal BY REFERENCE parameters 
+to be the null pointer (or nil) when the parameter is NULL 
+is because there are a lot of UDFs written already and they 
+don't expect a null pointer but zero or empty string, so I 
+would have broken all of them. But when working with
+descriptors, the engine already passed a null pointer to 
+signal NULL, before I touched it.
+
+In fact, the [almost silently] posted FBUDF relies on 
+descriptors and seems to work well. I intended it to be 
+pushed into a subdir of the extlib one but since the WinCVS 
+client is not very intuitive and inconsistent (but better 
+than nothing or having to remember 10 command-line params 
+for me), the files appeared in the same extlib directory.</text></argument><argument name="title"><text>Passing values by descriptor to UDFs</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_446208 </text></argument><argument name="resources"><set/></argument></extension>

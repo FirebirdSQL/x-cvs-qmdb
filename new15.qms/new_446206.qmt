@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>446206</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Data Types/On-Disk Struc(ODS)
+Group        : Feature v1.5
+Status       : Open
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : dimitr
+----------------------
+It is a common request/question for new users -- how 
+do I create INT64 datatypes.  Accordingly, we should 
+create an alias INT64 which would equate to NUMERIC
+(18,0).</text></argument><argument name="title"><text>INT64 datatype alias for Numeric(18,0)</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_446206</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>781610</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : malte_s
+Assigned to  : nobody
+----------------------
+With 1.5 RC4 (didn't check others) the following scripts 
+containing one-line comments (&quot;comment&quot; below) 
+produce errors when they shouldn't:
+
+set doesn't work after a comment:
+/* BEGIN */
+-- I am a comment
+set term!!;
+/* END */
+
+Dynamic SQL Error
+SQL error code = -104
+Token unknown - line 2, char 5
+term
+Statement: -- I am a comment
+set term!!
+
+' in a comment isn't ignored
+/* BEGIN */
+-- I'm a comment
+select * from rdb$database;
+/* END */
+
+SQL Parse Error:
+
+EOF in string detected
+Statement: -- I'm a comment
+select * from rdb$database
+
+If the comment ends in the terminator (plus optional 
+whitespace):
+/* BEGIN */
+-- I am a comment;
+select * from rdb$database;
+/* END */
+
+Dynamic SQL Error
+SQL error code = -104
+Unexpected end of command
+Statement: -- I am a comment
+----------------------
+User: malte_s
+Logged In: YES 
+user_id=157969
+
+I first encountered the last case (comment ending in 
+terminator) with ISQL. The other cases and error messages 
+were encountered with ibconsole (from ib 6).
+I've now tried to reproduce them with plain isql and indeed 
+most of the cases don't occur there.
+The problem with -- This comment ends in the terminator;
+remains, but not always.
+i.e. I have a set of scripts that I preprocess with BCC's C 
+preprocessor, which prefixes all lines with /* file line */.
+In such a preprocessed script, lines as the following trigger 
+the error, but when I remove the /* ... */ prefix, it only 
+occurs sometimes, I failed to figure a pattern by now. 
+Example failing test scriptlet:
+
+/* contacts.psql 217: */--SELECT * FROM &quot;Person&quot;;
+/* contacts.psql 218: */UPDATE &quot;Person&quot; 
+SET &quot;FormattedName&quot; = 'Dad' WHERE &quot;FirstName&quot; = 'Malte';
+
+HTH,
+-Malte
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Did you use ISQL or another tool for processing the script?
+
+If you used another tool, be aware that most tools have their 
+own pre-processor, so you may be seeing a 'false-positive' 
+error from the pre-processor.</text></argument><argument name="title"><text>One-line comments (--) failures</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_781610</text></argument><argument name="resources"><set/></argument></extension>

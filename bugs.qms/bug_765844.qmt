@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>765844</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : dimitr
+Assigned to  : nobody
+----------------------
+The DDL statement like the following:
+ALTER TABLE DROP COL1, ADD COL2 INT;
+may fail because of &quot;found dependancies&quot;, if database 
+was just restored from a backup.
+
+The reason is simple. The engine executes parts of this 
+statement in order of declaration, i.e. firstly COL1 will be 
+dropped and then COL2 will be created. But restore 
+initializes all system generators with zero, so when a 
+system domain for COL2 is being created, there's a 
+chance that it will have exactly the same name as just 
+removed domain for COL1 had (first unused position from 
+RDB$0).
+
+So we have (for example):
+1) domain RDB$17 is deleted for COL1
+2) domain RDB$17 is inserted for COL2
+3) DFW manager checks for dependencies on RDB$17 
+and... we're in trouble, because such a dependency 
+already exists.
+
+A current workaround is changing the order of 
+modifications in ALTER TABLE clause, placing ADD 
+commands before DROP ones, e.g:
+ALTER TABLE ADD COL2 INT, DROP COL1;
+</text></argument><argument name="title"><text>ALTER TABLE - DROP/ADD columns in a single statement</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_765844</text></argument><argument name="resources"><set/></argument></extension>

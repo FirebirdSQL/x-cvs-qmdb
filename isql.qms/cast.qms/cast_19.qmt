@@ -1,5 +1,10 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CAST TIME -&gt; VARCHAR
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+
+SELECT CAST(CAST('13:28:45' AS TIME) AS VARCHAR(32)) FROM rdb$Database;
+
+DROP DATABASE;
+</text></argument><argument name="description"><text>CAST TIME -&gt; VARCHAR
 Be carefual about date/time format on FB server !
 Universal format is not defined or not documented.
 
@@ -7,13 +12,8 @@ Dependencies:
 CREATE DATABASE
 CAST CHAR -&gt; TIME
 Basic SELECT
-</text></argument><argument name="stdout"><text>CAST
+</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>CAST
 ================================
 
 13:28:45.0000
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
-
-SELECT CAST(CAST('13:28:45' AS TIME) AS VARCHAR(32)) FROM rdb$Database;
-
-DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CAST TIME -&gt; VARCHAR</text></argument><argument name="test_id"><text>skopalik_0075</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CAST TIME -&gt; VARCHAR</text></argument><argument name="test_id"><text>skopalik_0075</text></argument><argument name="target_group"><text>.*</text></argument></extension>

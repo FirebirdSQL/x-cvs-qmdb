@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>496784</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : skopalik
+Assigned to  : skidder
+----------------------
+When optimizer find indexies for Left Join,
+work like Inner Join.
+There is sql example:
+
+CREATE DATABASE &quot;localhost:d:\ibdata\test.gdb&quot;  
+USER &quot;sysdba&quot; PASSWORD &quot;masterkey&quot;;
+
+Create table Operace  (
+	idProducts integer NOT NULL,
+	idNextDev Smallint,
+ Primary Key (idProducts)
+);
+
+Create table Devices  (
+	id Smallint NOT NULL,
+ Primary Key (id)
+);
+
+Create table Products  (
+	id integer NOT NULL,
+ Primary Key (id)
+);
+
+Alter table Operace add  foreign key (idProducts) 
+references Products (id)  on update  no action  on 
+delete  no action ;
+
+insert into devices(id) values(0);
+insert into devices(id) values(1);
+insert into products values(0);
+insert into products values(1);
+insert into operace values(0,1);
+insert into operace values(1,1);
+
+/* This query is correct */
+select *
+from OPERACE O
+ join PRODUCTS P on P.ID=O.IDPRODUCTS
+ left join DEVICES D on D.ID=O.IDNEXTDEV+0 and D.ID=0;
+
+/* This query failed */
+select *
+from OPERACE O
+ join PRODUCTS P on P.ID=O.IDPRODUCTS
+ left join DEVICES D on D.ID=O.IDNEXTDEV and D.ID=0;</text></argument><argument name="title"><text>RC1 - Left Join work like Inner Join</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_496784</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,105 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>233025</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : helebor
+Assigned to  : awharrison
+----------------------
+When executing a SP inside a loop that accepts input parameters, the server hangs on the second iteration if the statement is not unprepared and re-prepared between iterations.  This is an old bug which goes back to v. 5.x as well.
+
+Note that, if you add a SUSPEND statement at the end of the SP and return a dummy parameter, you can multi-call the SP with SELECT instead of EXECUTE without the need to do the unprepare/prepare when passing subsequent sets of inputs.
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Ann posted a temporary fix that stops the confusion in the 
+DSQL layer regarding the correct statement to be executed 
+with the &quot;immed&quot; API calls.
+
+----------------------
+User: nobody
+Logged In: NO 
+
+pbarnouin@hotmail.com provided the following testcase
+for this bug in 9nmhq1$buk$1@news.atkin.com
+
+
+Hi,
+
+We have a test case that reproduces the following bug :
+http://sourceforge.net/tracker/index.php?
+func=detail&amp;aid=233025&amp;group_id=902
+8&amp;atid=109028
+there is the descritpion of a bug of priority 9 :
+&quot;This is an old bug which goes back to v. 5.x as well&quot;
+
+We have a gdb, a program written in C and another in delphi 
+that reproduces
+the bug:
+
+For this, you can downlad the gdb sample on :
+http://www.vienneinfo.org/delphi/zip/3.gdbIBBug.zip
+(50 Ko)
+and the source of the sample in C :
+http://www.vienneinfo.org/delphi/zip/tstc.cpp
+(8 Ko)
+This is a translation of my Delphi sample that uses IBX 
+4.62 :
+http://www.vienneinfo.org/delphi/zip/bugib.zip
+(52 Ko : Delphi 5 source + gdb sample)
+
+
+What we know today :
+
+in 3.gdb, there are two stored procedures: SP 002 and SP 011
+
+if we start with SP 002 it works since the last input 
+parameter is an
+integer.
+if we start with SP 011 where there is only one VARCHAR 
+input parameter,
+then we alternate with SP 002 then SP 011 again =&gt; crash.
+if we only run SP 011 N times : it works well...
+
+with IB local (without TCP/IP) : no trouble in all cases
+
+with IB Server AND Client on the same computer, with TCP/IP 
+=&gt; trouble
+The C Sample has got the same trouble on Windows or Linux...
+
+More strange :
+
+With one computer as Server (under Windows) and another 
+computer as Client
+(under Linux) : No trouble ! :-(
+It also works with Linux as server and Windows as client.
+
+Summarry :
+
+client    server   protocol  result
+---------------------------------------
+windows   windows   tcp/ip      crash
+linux     linux     tpc/ip      crash
+windows   linux     tcp/ip      ok
+linux     windows   tcp/ip      ok
+windows   windows   local       ok
+linux     linux     local       ok
+
+
+if you need more information, you can contact me on 
+pbarnouin@hotmail.com
+
+
+kloo
+
+
+Jean Lacoste, the author of the C sample comments :
+When debugging in Linux, when the error happens, the 
+debugger displays an
+error of
+typesegmentation fault at line 61 of memcopy.c (found in 
+sysdeps/generic).
+It seems that memcpy
+is called with its 2nd parameter, sources, set to NULL.</text></argument><argument name="title"><text>Server hangs when executing Stored Proc more than once</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_233025</text></argument><argument name="resources"><set/></argument></extension>

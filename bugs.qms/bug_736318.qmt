@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>736318</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : Fixed
+Submitted By : askln
+Assigned to  : dimitr
+----------------------
+(Tested on Firebird 1.5 RC2 Windows SS)
+
+Requests like these look bizzare at first, but they are 
+useful for a number of applications (esecially in the 
+absence of CONNECTED BY), and the workaround 
+shown below obviously leads to a performance hit.
+
+If index is either not defined or manually excluded from 
+plan, the results are correct. Else it seems that only the 
+rows having field equal to a value are returned. 
+
+This code
+
+RECREATE TABLE t (
+  id INTEGER NOT NULL PRIMARY KEY,
+  s VARCHAR(50)
+);
+CREATE INDEX idx ON t(s);
+
+INSERT INTO t VALUES (1, 'ab');
+INSERT INTO t VALUES (2, 'aa');
+INSERT INTO t VALUES (3, 'aaa');
+
+SELECT id FROM t WHERE 'aaa' STARTING WITH s;
+SELECT id FROM t WHERE 'aaa' STARTING WITH s 
+PLAN (t NATURAL);
+
+gives
+
+          ID
+============
+           3
+
+          ID
+============
+           2
+           3
+
+this is possibly related with bug #735720
+
+----------------------
+User: dimitr
+Logged In: YES 
+user_id=61270
+
+Helen, I think you're wrong here. The correct syntax 
+is &lt;value&gt; LIKE &lt;value&gt; or &lt;value&gt; STARTING WITH 
+&lt;value&gt;, when &lt;value&gt; may be a column (but it's 
+not necessary). But for both mentioned clauses the 
+optimizer sucks if their normal form is reverted, i.e. 
+an expression is compared with a column. This 
+incorrect behaviour takes place only when some 
+index is available and can be used for a column.
+
+
+So it's definitely a bug (although I was sure it was 
+already logged in our tracker).
+
+----------------------
+User: askln
+Logged In: YES 
+user_id=757561
+
+No! I *DO* understand the difference between
+SELECT id FROM t WHERE s STARTING WITH 'aaa' 
+and
+SELECT id FROM t WHERE 'aaa'  STARTING WITH s
+and I explicitly wanted the latter, that is, to select all rows 
+where the value of s is the prefix of the string 'aaa'.
+I have anticipated possible confusion -- hence the second 
+paragraph of my report ;) Sorry if I was not clear enough, but 
+IS a bug -- in any case, the query result shoult NOT depend 
+on the usage of the index.
+If this syntax is to be disallowed -- well, so be it, though it will 
+be a pity. As I have already stated it is quite useful on some 
+occasions.
+----------------------
+User: helebor
+Logged In: YES 
+user_id=60469
+
+Of course!  Your clause asks the engine to find any row 
+whose value of s starts with 'aaa'.  Only one row matches.  I 
+think you're quite lucky to get this much from wrong syntax.
+
+You wouldn't have this problem if you used the STARTING 
+WITH syntax *properly*, i.e.
+where &lt;col_ref&gt; starting with &lt;constant string&gt;
+
+So your search should be:
+SELECT id FROM t WHERE s STARTING WITH 'aaa' ;
+
+Please don't use the tracker for things that aren't bugs.</text></argument><argument name="title"><text>&quot;value STARTING WITH field&quot; fails when using indices</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_736318</text></argument><argument name="resources"><set/></argument></extension>

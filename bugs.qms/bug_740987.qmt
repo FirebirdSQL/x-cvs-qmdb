@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>740987</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Fixed v1.5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : donmaddin
+Assigned to  : nobody
+----------------------
+If I make a backup of my database without the property 
+transportable format: 
+
+gbak: ERROR: database file appears corrupt (invalid 
+BLOB ID (200)) 
+gbak: ERROR: gds_$receive failed 
+gbak: Exiting before completion due to errors 
+
+With RC1 or FB1.02 there isn't anything like this. 
+With the property transportable, I can backup and 
+restore the database. 
+
+After I changed the blobtype to binary (Type 0) I haven't 
+any problems! So I think the is bug at the blobtype.
+
+I talk with Paul Beach at this Firebird Conference in 
+Fulda about this.
+
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+This error was fixed in the RC3 release.
+----------------------
+User: danielrail
+Logged In: YES 
+user_id=238419
+
+You're not the only one with the error.  I already submitted 
+this error to the Firebird-Devel group.  And, I think you might 
+be onto something.  I'm getting the error while dealing with 
+stored procedures, which uses blob type text for some of it's 
+fields in the system table.  I think Alex Peshkov would be 
+interested in this finding, since he's looking into this problem 
+very seriously.</text></argument><argument name="title"><text>FB1.5 RC2 - Problems with Blobtype 1 (TEXT)</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_740987</text></argument><argument name="resources"><set/></argument></extension>

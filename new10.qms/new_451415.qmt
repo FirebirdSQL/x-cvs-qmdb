@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>451415</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Linux ports
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : fsg
+----------------------
+Disabling the TCP/IP Nagle Algorithm typically 
+improves speed on slow networks.
+
+The Nagle TCP/IP algorithm was designed to avoid 
+problems with small packets, called tinygrams, on slow 
+networks. The algorithm says that a TCP/IP connection 
+can have only one outstanding small segment that has 
+not yet been acknowledged. The definition of &quot;small&quot; 
+varies but usually it is defined as &quot;less than the 
+segment size&quot; which on ethernet is about 1500 bytes.
+
+By default, the socket library will use an internal 
+algorithm known as Nagle's algorithm for buffering 
+bytes on write before actually sending the data in 
+order to minimise actual physical writes.
+
+The presence of the new switch on Linux allows 
+developers to determine, for themselves, the possible 
+pro's and con's of using this alternate packet 
+handling approach.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+A correction, not a compile switch but a new config option.</text></argument><argument name="title"><text>New TCP_NO_NAGLE option in IBConfig/ISCConfig</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_451415</text></argument><argument name="resources"><set/></argument></extension>

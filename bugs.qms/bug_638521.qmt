@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>638521</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : wolfgangreder
+Assigned to  : nobody
+----------------------
+when you enter then ddl
+create domain rdb$user char(31) character set unicode_fss;
+dsql gives no error messages !!
+
+if you want to restore a backup from this db you will
+receive an error.
+
+ISQL Version: LI-V1.0.0.796 Firebird 1.0
+Firebird/linux Intel (access method), version
+&quot;LI-V6.2.796 Firebird 1.0&quot;
+Firebird/linux Intel (remote server), version
+&quot;LI-V6.2.796 Firebird 1.0/tcp (wolfi)/P10&quot;
+Firebird/linux Integ (remote interface), version
+&quot;LI-V6.2.796 Friebird 1.0/tcp (wolfi)/P10&quot;
+on disk structure version 10.0</text></argument><argument name="title"><text>dsql allows creation of rdb$user</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_638521</text></argument><argument name="resources"><set/></argument></extension>

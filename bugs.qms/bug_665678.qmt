@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>665678</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Installation - Server
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : mataricos
+Assigned to  : skywalker
+----------------------
+I have installed FirebirdSS-1.0.0.796-0 and It works fine
+
+I have upgraded to FirebirdSS-1.0.2.908 and It seems to
+work
+fine, but when I try to get the user list to add users
+or modify them I get the error
+that It cant get the user list, bad block parameter.
+
+I get this error using ibconsole and isql in the linux
+console.
+
+It also doesn't work the script to change the passsword
+of de sysdba and doesn't work the gsec command.
+
+I haver downgraded to the previous version and all
+works fine.
+
+----------------------
+User: mataricos
+Logged In: YES 
+user_id=670150
+
+I use Suse 8.0 with kernel 2.4.18-4GB
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+What OS are you running?</text></argument><argument name="title"><text>problems getting user list</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_665678</text></argument><argument name="resources"><set/></argument></extension>

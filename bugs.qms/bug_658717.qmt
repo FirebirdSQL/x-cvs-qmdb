@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>658717</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Fixed v1.5
+Status       : Open
+Resolution   : Fixed
+Submitted By : alexpeshkoff
+Assigned to  : dimitr
+----------------------
+Alter Table can't expand varchar column.
+This bug is specific for firebird 1.5 - in firebird 1.0 this 
+works fine.
+OS - Windows 2000
+FIrebird 1.5 Alpha 5 (CVS date - 22-dec-2002)
+
+For example:
+Table TableName contains field ColName Varchar(40). 
+SQL operator:
+
+ALTER TABLE TableName ALTER COLUMN ColName 
+TYPE VARCHAR(60)
+
+fails with the following message:
+
+Unsuccessful metadata update
+New size specified for column X must be at least 40 
+characters
+Statement: alter table tn alter column x type varchar(60)</text></argument><argument name="title"><text>Alter Table can't expand varchar column</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_658717</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>447380</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Feature v1.0
+Status       : Closed
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : robocop
+----------------------
+The RECREATE TABLE has EXACTLY the same syntax as 
+CREATE TABLE.
+
+The only difference is that the latter will drop the 
+table if it already exists before creating the new 
+one. If there's no previous table, it simply behaves 
+exactly as CREATE. RECREATE will only complain if (of 
+course) there's some dependency on the table being 
+redefined or the table is being used currently.
+
+RECREATE is a workaround for the problem of dropping a 
+table before you can create it again. The problem is 
+that dropping it can produce several errors, for 
+example, table in use, table has dependencies and 
+table doesn't exist.</text></argument><argument name="title"><text>Recreate Table syntax</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_447380</text></argument><argument name="resources"><set/></argument></extension>

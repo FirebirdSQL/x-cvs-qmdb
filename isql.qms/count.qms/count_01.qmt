@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>COUNT - Select from empty table
-
-Dependencies:
-CREATE DATABASE
-CREATE TABLE
-Basic SELECT</text></argument><argument name="stdout"><text>       COUNT
-============
-
-           0
-</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 CREATE TABLE test( id INTEGER);
 
 SELECT COUNT(*) FROM test;
 
 DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>COUNT - empty</text></argument><argument name="test_id"><text>skopalik_0081</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="description"><text>COUNT - Select from empty table
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+Basic SELECT</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>       COUNT
+============
+
+           0
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>COUNT - empty</text></argument><argument name="test_id"><text>skopalik_0081</text></argument><argument name="target_group"><text>.*</text></argument></extension>

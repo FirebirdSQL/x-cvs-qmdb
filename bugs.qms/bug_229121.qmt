@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>229121</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9-4
+Status       : Closed
+Resolution   : Fixed
+Submitted By : issush
+Assigned to  : nobody
+----------------------
+This has started to happen since moving from Interbase 6 to firebird 0.94-1 on Linux.  Same hardware, same data, same application.
+
+There are no visible files in the /tmp direcory, but this is the output you get from lsof:
+
+COMMAND     PID      USER   FD   TYPE DEVICE     SIZE NODE NAME
+gds_inet_ 16911 interbase    5u   REG    8,8  4160000   14 /tmp/gds_sort__0ckHHn (deleted)
+
+etc....
+
+We have 40 consecutive users and the Delphi BDE application complains about a full /tmp directory in about 2 hours.
+
+The only solution I have at the moment is to randomly kill processes which are holding a lot of files open (!)
+
+Please let me know if you need more information.
+
+----------------------
+User: fsg
+Usage of mkstemp instead of mktemp caused this bug.
+I reverted my changes to jrd/misc.h to use mktemp again.
+
+FSG
+----------------------
+User: kdv
+I can confirm this as a high priority bug. I've asked some people, and they
+tested this problem on SlackWare and BlackCat. glibc is the newest in both cases.
+Classis and SuperServer have this bug. In Classic temp files are deleted on client disconnect,
+in SuperServer temp files are deleted only after ibmgr -shut command.
+
+situation can be reproduced this way:
+1. connect to employee.gdb
+
+2. execute query
+SELECT * FROM EMPLOYEE, EMPLOYEE, EMPLOYEE
+ORDER BY FIRST_NAME
+this will produce temporary file ~33Mb size
+
+3. execute query again. prev temp file will remain on disk as deleted. For example:
+(i've deleted some lines from output).
+lsof | grep ibserver | grep tmp
+
+ibserver  403 root  cwd    DIR        3,7     4096   176353 /tmp
+ibserver  403 root    7u   REG        1,1 33740256       12
+/opt/interbase/tmp/gds_sort__VuS1K4 (deleted)
+ibserver  404 root    7u   REG        1,1 33740256       12
+/opt/interbase/tmp/gds_sort__VuS1K4 (deleted)
+ibserver  407 root    7u   REG        1,1 33740256       12
+/opt/interbase/tmp/gds_sort__VuS1K4 (deleted)
+
+this was tested on FB 0.9.4.
+Windows version does not have this problem (tested too).
+----------------------
+User: issush
+Forgot to say that the /tmp directory is 1Gb
+
+The situation is hopeless at the moment so I've gone back to the latest Interbase release (17/1/2001) - this doesn't have the same problem which is good news but I'd be keen to use the Firebird release if this can be fixed.</text></argument><argument name="title"><text>TEMP directory filling up</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_229121</text></argument><argument name="resources"><set/></argument></extension>

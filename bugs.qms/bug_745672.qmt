@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>745672</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : DSQL
+Group        : Initial Bug
+Status       : Deleted
+Resolution   : None
+Submitted By : caligulaemperor
+Assigned to  : nobody
+----------------------
+When you call a query with empty parameter, strange 
+thing could happen in
+FireBird-win32 1.5.0.3233-RC1.
+
+
+create table (M integer primary key, L integer);
+insert into T(M, L) values(-1, -1);
+insert into T(M, L) values( 0,  0);
+insert into T(M, L) values( 1,  1);
+
+Now you call the following queries always with empty P.
+
+select * from T where M &lt;= :P;
+You get empty set, correct.
+
+select * from T where M &lt;= :P or M &lt;= :P;
+You get:
+  M   L
+--- ---
+ -1  -1
+  0   0
+
+INCORRECT. Note, M is a primary key.
+
+But
+select * from T where L &lt;= :P or L &lt;= :P;
+yields empty set, correct. 
+Here L is not a primary key.
+----------------------
+User: seanleyne
+Logged In: YES 
+user_id=71163
+
+Please re-test using RC3 release and report back if error still 
+exists.
+
+Further, please note that &quot;empty&quot; is ambiguous. Also, since 
+parameters are assigned a client tools and not the server, the 
+error may be with the client tools/software and not the 
+engine.</text></argument><argument name="title"><text>empty parameter and the primary key</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_745672</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>448613</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : ISQL
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : rfm
+Assigned to  : rfm
+----------------------
+Simple ISQL commands, such as
+SQL&gt; create database &quot;c:\home\bar.gdb&quot; user &quot;builder&quot; password &quot;builder&quot;;
+
+cause the debug build to GPF in gds__free on the win32 platfrom.
+This seems to be caused by corruption of the client memory pool.
+
+There is a small chance that this is a client library bug.
+
+I have not seen it in non-debug builds, but that does not mean
+that it is not there.
+----------------------
+User: rfm
+Logged In: YES 
+user_id=59610
+
+The problem was in isql.e copy_str, where an off by one error would leave us pointing
+one character father then we should. Although it only seemed to crash under win32 debug,
+it was present in all builds/versions.</text></argument><argument name="title"><text>ISQL corrupts memory</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_448613</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>527667</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : seanleyne
+Assigned to  : robocop
+----------------------
+Nando Dessena has reported that multi-file backups was 
+broken in RC2.</text></argument><argument name="title"><text>Multi-file backups is broken</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_527667</text></argument><argument name="resources"><set/></argument></extension>

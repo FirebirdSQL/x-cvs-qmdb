@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>555895</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : ded
+Assigned to  : nobody
+----------------------
+  If UDF(Select) is used in Where clause, optimizer 
+generates wrong Plan - table used in this subselect is 
+reported twice in the plan.
+
+Create Table Test(
+Id     Integer Not Null,
+Amount Integer,
+Constraint Test_PK Primary Key (Id));
+
+Set Plan;
+
+Select *
+From Test T
+Where T.ID&gt;0
+And ABS ((Select T1.Amount
+        From Test T1
+        Where T1.Id&gt;0))&gt;0
+
+PLAN (T1 INDEX (RDB$PRIMARY387))
+PLAN (T1 INDEX (RDB$PRIMARY387))
+PLAN (T INDEX (RDB$PRIMARY387))
+
+Attempt to use explicit plan in such subselect raises 
+exception 282 &quot;table T1 is referenced more than once in 
+plan; use aliases to distinguish&quot;. It is not dependent 
+on UDF - I've got the same with SQRT. Server 
+LI-V6.2.796. 
+
+Alexander V.Nevsky.</text></argument><argument name="title"><text>UDF(Select) in Where clause-wrong Plan</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_555895</text></argument><argument name="resources"><set/></argument></extension>

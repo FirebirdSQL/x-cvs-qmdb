@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>642411</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : ded
+Assigned to  : nobody
+----------------------
+  If the same procedure is altered on Classic FB1 from 
+2 connections, undocumented exception &quot;Procedure in 
+use&quot; is raised or gds_inet crashes. It is depenedent on 
+transactions parameters. How to reproduce:
+
+  Start 2 instances of interactive tool (isql or any 
+GUI tool) and:
+
+1-st instance
+
+ create procedure test
+ as
+ begin
+  exit;
+ end
+
+ Commit
+
+2-nd instance
+
+ alter procedure test
+ as
+ declare variable a int;
+ begin
+  exit;
+ end
+
+ Commit
+
+1-st instance again
+
+ alter procedure test
+ as
+ begin
+  exit;
+ end
+
+ Commit
+
+  At this point (namely Commit):
+
+  if transaction parameters are concurrency wait:
+
+Statement failed, SQLCODE = -902
+Error reading data from the connection.
+
+  in server log:
+Fatal lock manager error: invalid lock id (0) errno: 2
+
+  after it if this connection is restarted alter will 
+be successfull, but if we try alter procedure back in 
+2-nd (living for this time) instance - it's connection 
+will be broken too with the same line in log but errno: 
+4.
+
+   Any other parameters of transactions results in 
+&quot;Procedure in use&quot; message instead of the crash of 
+gds_inet.
+
+Alexander V.Nevsky.</text></argument><argument name="title"><text>CS server crash altering SP in 2 connect</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_642411</text></argument><argument name="resources"><set/></argument></extension>

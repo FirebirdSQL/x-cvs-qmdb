@@ -1,0 +1,139 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>640828</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : prenosil
+Assigned to  : nobody
+----------------------
+Under some conditions, CHECK constraints fire twice -
+once after triggers (as expected), and once _before_ 
+triggers (which prevents triggers to do their usual job,
+i.e. to correct data stored into table).
+(Tested with Firebird 1.0, and also InterBase 5.1)
+
+Here is script to demonstrate the problem:
+
+==========
+CREATE DATABASE 'c:\test.gdb'
+  USER 'SYSDBA'  PASSWORD 'masterkey';
+
+CREATE DOMAIN MY_DOMAIN    AS CHAR(1)
+                              CHECK (Value IN ('A','B'));
+
+CREATE TABLE tab (
+  id     INTEGER,
+  col    MY_DOMAIN
+);
+
+CREATE VIEW v AS
+  SELECT * FROM tab;
+
+SET TERM ^;
+CREATE TRIGGER TR_TAB_I  FOR tab  BEFORE 
+INSERT AS
+BEGIN
+  new.col = UPPER (new.col);
+END^
+
+CREATE TRIGGER TR_TAB_U  FOR tab  BEFORE 
+UPDATE AS
+BEGIN
+  new.col = UPPER (new.col);
+END^
+
+CREATE TRIGGER TR_VIEW_I  FOR v   BEFORE 
+INSERT AS
+BEGIN
+  new.col = new.col;
+END^
+
+CREATE TRIGGER TR_VIEW_U  FOR v   BEFORE 
+UPDATE AS
+BEGIN
+  new.col = new.col;
+END^
+SET TERM ;^
+
+COMMIT;
+
+INSERT INTO V VALUES (11, 'A');
+INSERT INTO V VALUES (12, 'B');
+INSERT INTO V VALUES (13, 'a');
+INSERT INTO V VALUES (14, 'b');
+
+SELECT * FROM TAB;
+
+/* This is (correct) result:
+         ID COL
+=========== ======
+         11 A
+         12 B
+         13 A
+         14 B   */
+
+
+UPDATE V SET col='A' WHERE ID=11;
+UPDATE V SET col='B' WHERE ID=12;
+UPDATE V SET col='a' WHERE ID=13;
+
+/* This Update fails with error:
+Statement failed, SQLCODE = -625 
+validation error for column COL, value &quot;a&quot; */
+
+UPDATE V SET col='b' WHERE ID=14;
+
+/* This Update fails with error:
+Statement failed, SQLCODE = -625 
+validation error for column COL, value &quot;b&quot; */
+
+COMMIT;
+DROP DATABASE;
+==========
+
+1) The most important thing is that CHECK constraint is 
+defined in DOMAIN.
+If we replace the row
+  col  MY_DOMAIN
+with
+  col  CHAR(1) CONSTRAINT c CHECK (col IN ('A','B'))
+everything works o.k.
+(The difference is that check constraint on domain
+is stored in rdb$fields table, whereas check constraint
+on table field is implemented as trigger).
+
+2) Another important thing is that there must be defined 
+BEFORE UPDATE 
+or even just AFTER UPDATE trigger on view.
+
+3) If TR_VIEW_U trigger contains
+  new.col = UPPER(new.col);
+the script works o.k., which means that CHECK 
+constraint is fired
+_after_ view triggers, but _before_ table triggers.
+
+4) If TR_TAB_U trigger contains
+  IF (new.col='B') THEN new.col = 'X';
+we get this result
+====
+UPDATE V SET col='A' WHERE ID=11;
+UPDATE V SET col='B' WHERE ID=12;
+
+Statement failed, SQLCODE = -625 
+validation error for column COL, value &quot;X&quot;
+
+UPDATE V SET col='a' WHERE ID=13;
+
+Statement failed, SQLCODE = -625 
+validation error for column COL, value &quot;a&quot;
+
+UPDATE V SET col='b' WHERE ID=14;
+
+Statement failed, SQLCODE = -625 
+validation error for column COL, value &quot;b&quot;
+====
+which means that CHECK is fired twice
+(and hence triggers can't store wrong values into db)
+
+5) As the script also demonstrates, the problem is only 
+with Updates, not Inserts.</text></argument><argument name="title"><text>CHECK constraints fire twice</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_640828</text></argument><argument name="resources"><set/></argument></extension>

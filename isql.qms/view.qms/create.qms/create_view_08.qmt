@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE VIEW - updateable WITH CHECK OPTION
-
-Dependencies:
-CREATE DATABASE
-CREATE TABLE
-</text></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 CREATE TABLE tb(id INT);
 
 CREATE VIEW test (id) AS SELECT id FROM tb WHERE id&lt;10 WITH CHECK OPTION;
 INSERT INTO test VALUES(10);
 
 DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>Statement failed, SQLCODE = -297
+</text></argument><argument name="description"><text>CREATE VIEW - updateable WITH CHECK OPTION
+
+Dependencies:
+CREATE DATABASE
+CREATE TABLE
+</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdout"><text/></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text>Statement failed, SQLCODE = -297
 
 Operation violates CHECK constraint  on view or table TEST
-</text></argument><argument name="title"><text>CREATE VIEW - updateable WITH CHECK OPTION</text></argument><argument name="test_id"><text>skopalik_0194</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="title"><text>CREATE VIEW - updateable WITH CHECK OPTION</text></argument><argument name="test_id"><text>skopalik_0194</text></argument><argument name="target_group"><text>.*</text></argument></extension>

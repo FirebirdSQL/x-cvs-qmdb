@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223128</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Security Issues
+Group        : Confirmed Bug
+Status       : Open
+Resolution   : None
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+IB doesn't check the user in a GRANT statement probably because the db can be moved to another server where such user is defined, since the information is stored in isc4.gdb only.
+But why would IB allow SYSDBA to grant no existent roles to users? For example, this is accepted:
+grant anything to alice
+However, &quot;anything&quot; doesn't exist in rdb$roles but rdb$user_privileges logs a role granted to alice.
+In contrast, a non-privileged user can't grant a role that doesn't exists. So I wonder is this is a bug or a feature. Why would SYSDBA need to bypass role checking when grating roles to users?
+
+C.</text></argument><argument name="title"><text>SYSDBA can grant non existent roles</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223128</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,146 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>789161</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Charsets/Collations 
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : peter_jacobi
+Assigned to  : nobody
+----------------------
+CHAR columns of character set UNICODE_FSS will
+hold more characters than declared. Seemingly
+data is accepted if it uses up to 3*charlenght
+bytes as UTF-8 string.
+
+Tested with FB 1.5rc4 on Win32 using ISQL
+
+See the session transscript:
+(Note that ASCII chars needs 1 byte in
+UTF-8, umlauts (&lt;international-characters&gt;) need two bytes
+and &lt;international-character&gt; (the Euro sign; U+20AC) needs three
+bytes.
+
+SQL&gt; set names WIN1252;
+SQL&gt; create database '/utf8bug1.fdb' user 'sysdba' 
+password 'masterkey';
+SQL&gt; create table t1 (c1 char(2) character set 
+UNICODE_FSS);
+SQL&gt; insert into t1 (c1) values ('A');
+SQL&gt; insert into t1 (c1) values ('AB');
+SQL&gt; insert into t1 (c1) values ('ABC');
+SQL&gt; insert into t1 (c1) values ('ABCD');
+SQL&gt; insert into t1 (c1) values ('ABCDE');
+SQL&gt; insert into t1 (c1) values ('ABCDEF');
+SQL&gt; insert into t1 (c1) values ('ABCDEFG');
+&lt;international-characters&gt;
+C1     
+====== 
+
+A      
+AB     
+ABC    
+ABCD   
+ABCDE  
+ABCDEF 
+&lt;international-characters&gt;
+
+(end of session transscript)
+
+
+----------------------
+User: peter_jacobi
+Logged In: YES 
+user_id=845149
+
+Responding to akini's comment (and asking
+to followup the 'always UNICODE' part to
+firebird-support)
+
+akini wrote:
+&gt; It's a shame if we must wait for FB2 until unicode support is 
+&gt; properly implemented in Firebird. 
+You don'thave to, wait, you can help evolving FB's
+UNICODE support, as this is an open source project.
+
+&gt; [...} (always stating that create new db 
+&gt; with unicode_fss as default charset). It would make 
+&gt; international-aware database life easier. 
+[...]
+&gt; And maybe it should use 
+&gt; unicode format as implicit default charset for &quot;create 
+&gt; database&quot; command. 
+Always using UNICODE has performance and data
+integrity downsides. Requirements vary, so I can't
+agree on that one.
+
+I'll move this discussion to the firebird-support
+mailing list.
+
+&gt; And maybe support for real UTF16BE/LE format where chars 
+&gt; are 2 bytes long. 
+You are invited to test my fbintl2.dll which implements some
+experimental character set support, including UTF16BE.
+
+Peter Jacobi
+
+----------------------
+User: akini
+Logged In: YES 
+user_id=367429
+
+[this post is more related to jdbc and dotNET drivers 
+connectionstrings]
+
+And I think it's poorly documented how to use UNICODE_FSS 
+properly at client-side and server-side. All examples use a 
+simple connectionstrings without lc_ctype parameter and then 
+clients just dont work properly against unicode databases. 
+
+www.inetsoftware.de has an excellent MSSQL jdbc driver, 
+where they have implemented two different subprotocol 
+variations. I've always found it easier and bulletproof to use 
+unicode in MSSQL server. (note: mssql uses 2-byte unicode 
+format internally where all characters are stored as 2 bytes).
+
+Use unicode format (tables have nchar, nvarchar columns):
+url=jdbc:inetdae7:111.222.333.444:1433
+
+Use old ascii format (tables have char, varchar columns):
+url=jdbc:inetdae7a:111.222.333.444:1433
+
+Similar approach in Jaybird and dotNETProviders might be 
+something to think about. Use a new subprotocol and client 
+will use unicode charset implicitly. 
+
+Or then just document charset parameter better and 
+examples should use it (always stating that create new db 
+with unicode_fss as default charset). It would make 
+international-aware database life easier. 
+
+It's a shame if we must wait for FB2 until unicode support is 
+properly implemented in Firebird. And maybe it should use 
+unicode format as implicit default charset for &quot;create 
+database&quot; command. And change that charset name to a 
+standardized UTF-8.
+
+And maybe support for real UTF16BE/LE format where chars 
+are 2 bytes long. This would minimize the client-server 
+conversions in Java and dotNet environments where 
+characters always are 2-bytes unicodes.
+
+----------------------
+User: akini
+Logged In: YES 
+user_id=367429
+
+Here is my page about the problem with VARCHAR(1) column. 
+Its related to the same identity confling between bytes and 
+characters. If we say VARCHAR(1) then we mean 
+_characters_ from sql schema point of view. 
+
+We dont care whether firebird internally handles it as 3 bytes 
+long inside the engine. That engine should logically handle and 
+display it back to clients as VARCHAR(1) column. 
+
+http://koti.mbnet.fi/akini/ib/
+http://koti.mbnet.fi/akini/ib/unicode.html
+</text></argument><argument name="title"><text>CHAR length not enforced for charset UNICODE_FSS</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_789161</text></argument><argument name="resources"><set/></argument></extension>

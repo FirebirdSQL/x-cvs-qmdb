@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>471674</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : GBAK
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : michlv
+Assigned to  : nobody
+----------------------
+Hello,
+
+I install FireBirdSS 1.0 Beta 2 under Debian GNU/Linux 
+2.2 Potato. When I try backup database files with
+&quot;gbak -B -T -V path_to_file path_to_backup&quot;
+
+command report: 
+ lock manager error
+ inconsistent lock table version number; found 114, 
+expected 14
+
+After reading documentation about Security on CS and SS
+I thing, that SS not support direct file access,
+but why gbak (and other command line utilities)
+report &quot;lock manager error&quot;.
+
+Is posible report some other message such 
+as &quot;FirebirdSS not support direct file acces, use 
+TCP/IP access instead&quot;?
+
+When FirebirdSS start, it does not create IPC 
+semaphores. After execute gbak with direct file access,
+IPC semaphores is created, but not removed.</text></argument><argument name="title"><text>Direct file access with SuperServer</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_471674</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>428605</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Client/GDS32
+Group        : Initial Bug
+Status       : Open
+Resolution   : None
+Submitted By : michlv
+Assigned to  : nobody
+----------------------
+I want use php with interbase extension as module.
+When php interbase extension used as module, it links
+libgds dynamicaly with dlopen and unloads libgds with
+dlclose (dlfcn.h). Because libgds registers in init()
+gds__cleanup with atexit(), when program exits, it 
+calls gds_cleanup, but gds_cleanup is not in program 
+(libgds was freeed by dlclose()). Under Linux problem 
+may be fixed by using _init and _fini functions 
+exported by libgds. Example is appended. Function 
+_init is called, when shared library is loaded (by 
+dlopen or when library is linked with compiler when 
+linking) and function _fini is called when shared 
+library is unloaded (as _init). By exporting and using 
+this functions, libgds needs not use atexit to 
+register gds__cleanup.
+
+This interface works in Linux and Solaris.
+
+Under windows may be used dllmain function for 
+similarily functionality. 
+
+DllMain (HANDLE hInst,                            
+ULONG ul_reason_for_call,
+LPVOID lpReserved);
+
+ul_reason_for_call may be:
+ DLL_PROCESS_ATTACH:
+ DLL_THREAD_ATTACH:
+ DLL_THREAD_DETACH:
+ DLL_PROCESS_DETACH:
+
+but I don't know what is shared by all process when 
+linking the same library.</text></argument><argument name="title"><text>Cannot dlopen libgds under Linux</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_428605</text></argument><argument name="resources"><set/></argument></extension>

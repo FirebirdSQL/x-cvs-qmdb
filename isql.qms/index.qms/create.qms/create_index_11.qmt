@@ -1,5 +1,12 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>BUG: Should fail (two identical index has not any effect)
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
+CREATE TABLE t( a INTEGER);
+CREATE INDEX test ON t(a);
+
+CREATE INDEX test2 ON t(a);
+
+DROP DATABASE;
+</text></argument><argument name="description"><text>BUG: Should fail (two identical index has not any effect)
 like this:ORA-01408: such column list already indexed
 SF 616562
 
@@ -9,12 +16,5 @@ Dependencies:
 CREATE DATABASE
 CREATE TABLE
 CREATE INDEX
-</text></argument><argument name="stdout"><text/></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
-CREATE TABLE t( a INTEGER);
-CREATE INDEX test ON t(a);
-
-CREATE INDEX test2 ON t(a);
-
-DROP DATABASE;
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
-</text></argument><argument name="title"><text>CREATE INDEX - create two indentycal index with diferent names</text></argument><argument name="test_id"><text>skopalik_0153</text></argument><argument name="resources"><set/></argument></extension>
+</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Negative</enumeral></argument><argument name="stdout"><text/></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text>Statement failed, SQLCODE = -607
+</text></argument><argument name="title"><text>CREATE INDEX - create two indentycal index with diferent names</text></argument><argument name="test_id"><text>skopalik_0153</text></argument><argument name="target_group"><text>.*</text></argument></extension>

@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>784121</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : tsteinmaurer
+Assigned to  : nobody
+----------------------
+A simple test case.
+
+Two tables:
+
+RECREATE TABLE T1
+(
+                              ID              NUMERIC( 18, 0) NOT
+                             NULL, ID2              NUMERIC( 18, 
+0),
+                           DATE1                 DATE,
+ CONSTRAINT PK_T1 PRIMARY KEY (ID)
+);
+
+RECREATE TABLE T2
+(
+                              ID              NUMERIC( 18, 0) NOT
+                             NULL, ID2              NUMERIC( 18, 
+0),
+                           DATE1                 DATE,
+ CONSTRAINT PK_T2 PRIMARY KEY (ID)
+);
+
+
+ and some records.
+
+INSERT INTO T1(ID, ID2, DATE1) VALUES (1, 
+1, '10/13/2003');
+INSERT INTO T1(ID, ID2, DATE1) VALUES (2, 
+2, '09/13/2003');
+INSERT INTO T2(ID, ID2, DATE1) VALUES (1, 
+1, '09/13/2003');
+
+Executing the following query in isql returns the error
+message &quot;Expression evaluation not supported&quot; after 
+retrieving the
+first row.
+
+select t_1.id2, t_1.date1, t_2.date1
+from t1 t_1 left outer join t2 t_2 on t_1.id2=t_2.id2
+where extract(month from t_1.date1)&lt;&gt;extract(month 
+from t_2.date1);
+
+whereas
+
+select t_1.id2, t_1.date1, t_2.date1
+from t1 t_1 left outer join t2 t_2 on t_1.id2=t_2.id2
+where extract(month from t_1.date1)&lt;&gt;1;
+
+works.
+
+This applies to FB 1.0.x and all FB 1.5 RCs.
+</text></argument><argument name="title"><text>Expression evaluation not supported on LEFT JOIN</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_784121</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>451953</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Feature v1.5
+Status       : Open
+Resolution   : None
+Submitted By : seanleyne
+Assigned to  : dimitr
+----------------------
+Allow for NULL values to be included in the index 
+data, using the syntax CREATE [WITHNULLS] INDEX...
+----------------------
+User: mapopa
+Logged In: YES 
+user_id=85089
+
+It make sense to have nulls in &quot;Unique&quot; Indexes !? 
+Doesn't word unique contradict with many nulls or am i wrong ?
+----------------------
+User: prenosil
+Logged In: YES 
+user_id=89535
+
+NULL values are already indexed.</text></argument><argument name="title"><text>Allow NULLs in Unique Indexes/Columns</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>new_451953</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,137 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>223056</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9-5
+Status       : Closed
+Resolution   : Fixed
+Submitted By : prenosil
+Assigned to  : robocop
+----------------------
+In SP, when you copy record (from/to the same table) by
+  INSERT INTO tab SELECT ... FROM tab WHERE ...;
+or by
+  SELECT ... FROM ... INTO _local_variables_;
+  INSERT INTO tab VALUES (_local_variables_);
+
+and the record contains BLOB, then _sometimes_
+newly created row will not contain its own copy
+of the BLOB, but instead it will use the same
+blob-id as the original record.
+(i.e. single blob is shared among more rows)
+
+This is really severe bug, because it will cause
+data lost - when you delete one of these rows,
+and then try to read the other one, you will get
+&quot;BLOB not found&quot; error !!!
+
+Interestingly, when you execute exactly the same
+command directly, not as part of SP, blob-ids will be o.k.
+
+Here is script to reproduce this bug:
+=====================================
+CREATE DATABASE 'C:\test.gdb' USER 'SYSDBA' PASSWORD 'masterkey';
+
+CREATE TABLE t (
+  i INTEGER,
+  b BLOB );
+
+SET TERM ^;
+
+CREATE PROCEDURE p (x INTEGER) AS
+BEGIN
+  INSERT INTO t (i,b)
+    SELECT i+100, b FROM t WHERE i=:x;
+END^
+
+SET TERM ;^
+
+COMMIT;
+
+/* insert some blob into our test table */
+INSERT INTO t (i,b)
+  SELECT 1, rdb$trigger_blr
+    FROM rdb$triggers
+   WHERE rdb$trigger_name='RDB$TRIGGER_1';
+
+COMMIT;
+
+
+/* now make copy of that row ... */
+/* INSERT INTO t (i,b)
+  SELECT i+100, b FROM t WHERE i=1; */
+INSERT INTO t (i,b)
+  SELECT i+100, b FROM t WHERE i=1;
+INSERT INTO t (i,b)
+  SELECT i+100, b FROM t WHERE i=101;
+INSERT INTO t (i,b)
+  SELECT i+100, b FROM t WHERE i=101;
+
+SET BLOBDISPLAY OFF;
+/* ... and show result; */
+/* all blobs will have different blob-ids */
+SELECT * FROM t;
+
+ROLLBACK;
+
+/* now execute the same insert statements, but wrapped in SP */
+/* EXECUTE PROCEDURE p 1; */
+EXECUTE PROCEDURE p 1;
+EXECUTE PROCEDURE p 101;
+EXECUTE PROCEDURE p 101;
+
+/* here you will see that blob-id is shared ... */
+SELECT * FROM t;
+
+
+/* and here you can see what will happen when one row is deleted ... */
+SET BLOBDISPLAY ALL;
+DELETE FROM t WHERE i=101;
+COMMIT;
+SELECT * FROM t;
+
+
+/************
+One more test - uncomment first of &quot;EXECUTE PROCEDURE p 1&quot; commands
+and run this script again - you will see correct blob-ids,
+i.e. the wrong behaviour is not consistent.
+************/
+
+
+----------------------
+User: robocop
+Logged In: YES 
+user_id=62823
+
+Dirty buffer provided for a new record by VIO was the 
+cause. Thanks to Ann for providing the code that solves the 
+problem. Thanks to Ivan for providing a brief and 
+reproducible test case.
+
+C.
+
+----------------------
+User: nobody
+Logged In: NO 
+
+More observations:
+
+-just adding COMMIT between calling procedures will not 
+change anything (i.e. blob-id will be &quot;reused&quot;)
+
+EXECUTE PROCEDURE p 1; 
+COMMIT;
+EXECUTE PROCEDURE p 101; 
+COMMIT;
+EXECUTE PROCEDURE p 101; 
+
+-adding CONNECT causes that blob-ids will be correct !
+
+EXECUTE PROCEDURE p 1; 
+COMMIT;
+EXECUTE PROCEDURE p 101; 
+COMMIT;
+CREATE DATABASE 'C:\test.gdb' USER 'SYSDBA' PASSWORD 'pwd';
+EXECUTE PROCEDURE p 101; 
+
+In this case first &quot;EXECUTE PROCEDURE p 101&quot; will create
+wrong blob-id, but second one will create correct -
+new blob-id.</text></argument><argument name="title"><text>Blob-IDs are sometimes shared between more rows</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_223056</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>222476</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v0.9
+Status       : Closed
+Resolution   : Fixed
+Submitted By : robocop
+Assigned to  : nobody
+----------------------
+This is already well known, but I want to document it formally here: any tool using dialect 3 (to connect to a dialect 3 db, obviously) will report two unnamed fields in this case:
+
+select avg(1), sum(1) from rdb$database
+
+If we go to dialect 1, things work as expected: the first field is named AVG and the second, SUM.
+
+C.
+
+----------------------
+User: patrickgriffin
+Fixed 'dsql/gen.c'
+Revision : 1.5
+Date : 2000/10/17 5:43:49
+
+
+...pat</text></argument><argument name="title"><text>Avg and sum return empty field names in dialect 3</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_222476</text></argument><argument name="resources"><set/></argument></extension>

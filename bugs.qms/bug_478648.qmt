@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>478648</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : Fixed v1.0
+Status       : Closed
+Resolution   : Fixed
+Submitted By : tonim
+Assigned to  : awharrison
+----------------------
+Unions that work with earlier versions and use same 
+tables usually get this errors  for example 
+(employee.gdb):
+
+SELECT J.PROJ_ID,J.PROJ_NAME,1
+FROM PROJECT J
+UNION
+SELECT J.PROJ_ID,J.PROJ_NAME,2
+FROM PROJECT J
+
+Dynamic SQL Error
+SQL error code = -204
+Ambiguous field name between table/view PROJECT and 
+table/view PROJECT PROJ_ID.
+
+In my opinion there is not ambiguity here because each 
+select is independent and has his aliases or tables, 
+traditionally because this ORDER BY clause in UNION 
+must use numbers instead of field names.
+
+This has caused me to fail a lot of union querys. With 
+Interbase works ok. The correct Firebird syntax is:
+
+SELECT J.PROJ_ID,J.PROJ_NAME,1
+FROM PROJECT J
+UNION
+SELECT K.PROJ_ID,K.PROJ_NAME,2
+FROM PROJECT K
+
+am I wrong?
+Are this fields really ambiguous?
+
+Is this incompatibility really needed?
+I agree incorrect formed querys with ambiguos fields 
+must be give a error, but I think there is no 
+ambiguity here.
+
+Thanks
+----------------------
+User: awharrison
+Logged In: YES 
+user_id=66088
+
+I believe this works correctly in the most recent builds and RC1</text></argument><argument name="title"><text>Ambiguous fields in UNIONS SELECTS</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_478648</text></argument><argument name="resources"><set/></argument></extension>

@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdTestBase" kind="test"><argument name="bug_id"><text>597769</text></argument><argument name="prerequisites"><set/></argument><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Category     : Core Engine
+Group        : None
+Status       : Open
+Resolution   : None
+Submitted By : skidder
+Assigned to  : nobody
+----------------------
+I use Firebird-1.0.0.796 CS on Linux.
+
+I hope this bug will not be ignored as my previous ones.
+
+Parameter introduced in the select list come after all other 
+params in dynamic SQL.
+Example query:
+---
+select (select 'ok' from RDB$DATABASE where :test=1)
+from RDB$DATABASE where :test2=2
+---
+When we set
+:test=1
+:test2=2
+we get null result.
+
+When we set
+:test=2
+:test2=1
+we get 'ok' result
+
+We reproduced this bug on using InterClient, JCA and IBX, 
+so it seems to be in the core engine.</text></argument><argument name="title"><text>Parameter order is wrong</text></argument><argument name="author"><text>pcisar</text></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="test_id"><text>bug_597769</text></argument><argument name="resources"><set/></argument></extension>
