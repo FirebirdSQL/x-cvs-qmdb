@@ -5,8 +5,8 @@ First, you'll need next packages installed:
 1) Python 2.3 (http://www.python.org/download)
 2) Python Win32 Extensions (http://starship.python.net/crew/mhammond/win32/Downloads.html)
 3) eGenix.com mx Extensions for Python (http://www.egenix.com/files/python/eGenix-mx-Extensions.html#Download-mxBASE)
-4) Kinterbasdb for Python 2.2 from (http://sf.net/projects/kinterbasdb)
-5) QMTest for Python 2.2 and above (http://www.codesourcery.com)
+4) Kinterbasdb for Python 2.3 from (http://sf.net/projects/kinterbasdb)
+5) QMTest for Python 2.3 and above (http://www.codesourcery.com)
 
 Please, take a look at sample-context.win file. You'll need to create your own context file with adjusted paths etc.
 
