@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN JOIN (F NATURAL,C INDEX (PK_COLORS))
+FLOWERNAME                     COLORNAME            
+============================== ==================== 
+
+Rose                           Red                  
+Tulip                          Yellow               
+Gerbera                        Not defined          
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>LEFT OUTER JOIN with full match and reference in WHERE clause</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>TableX LEFT OUTER JOIN TableY with full match. 
+ON clause contains (1 = 1) and WHERE clause contains relation between TableX and TableY. The WHERE comparison should be distributed to TableY. Thus TableY should use the index.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>left_join.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Colors (
+  ColorID INTEGER NOT NULL,
+  ColorName VARCHAR(20)
+);
+
+CREATE TABLE Flowers (
+  FlowerID INTEGER NOT NULL,
+  FlowerName VARCHAR(30),
+  ColorID INTEGER
+);
+
+COMMIT;
+
+/* Value 0 represents -no value- */
+INSERT INTO Colors (ColorID, ColorName) VALUES (0, 'Not defined');
+INSERT INTO Colors (ColorID, ColorName) VALUES (1, 'Red');
+INSERT INTO Colors (ColorID, ColorName) VALUES (2, 'Yellow');
+
+/* insert some data with references */
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (1, 'Rose', 1);
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (2, 'Tulip', 2);
+INSERT INTO Flowers (FlowerID, FlowerName, ColorID) VALUES (3, 'Gerbera', 0);
+
+/* Normally these indexes are created by the primary/foreign keys,
+   but we don't want to rely on them for this test */
+CREATE UNIQUE ASC INDEX PK_Colors ON Colors (ColorID);
+CREATE UNIQUE ASC INDEX PK_Flowers ON Flowers (FlowerID);
+CREATE ASC INDEX FK_Flowers_Colors ON Flowers (ColorID);
+
+COMMIT;
+</text></argument><argument name="source_code"><text>SET PLAN ON;
+/* LEFT JOIN should return a match for every Flowers record */
+SELECT
+  f.FlowerName,
+  c.ColorName
+FROM
+  Flowers f
+  LEFT JOIN Colors c ON (1 = 1)
+WHERE
+  f.ColorID = c.ColorID;</text></argument><argument name="test_id"><text>opt_left_join_03</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
