@@ -1,8 +1,53 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
-CREATE EXCEPTION test 'test exception';
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.1.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.1.2/-//qm/2.1.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>Procedure text:
+=============================================================================
+
+DECLARE VARIABLE p1 SMALLINT;
+BEGIN
+/* Comments */
+  p1=1+1;                           /* assigment */
+  EXCEPTION test;                   /* Exception */
+  EXECUTE PROCEDURE dummy(:p1);    /* Call SP   */
+  EXECUTE PROCEDURE dummy2(:p1) RETURNING_VALUES :p1;
+  EXECUTE PROCEDURE test;         /*recursive call */
+  EXIT;
+  FOR SELECT id FROM tb INTO :p1 DO BEGIN
+    p1=p1+2;
+  END
+  INSERT INTO tb(id) VALUES(:p1);
+  UPDATE tb SET text='new text' WHERE id=:p1;
+  DELETE FROM tb WHERE text=:p1+1;
+  SELECT id FROM tb WHERE text='ggg' INTO :p1;
+  IF(p1 IS NOT NULL)THEN BEGIN
+    p1=NULL;
+  END
+  IF(p1 IS NULL)THEN p1=2;
+    ELSE BEGIN
+    p1=2;
+  END
+  POST_EVENT 'My Event';
+  POST_EVENT p1;
+  WHILE(p1&gt;30)DO BEGIN
+   p1=p1-1;
+  END
+  BEGIN
+    EXCEPTION test;
+    WHEN ANY DO p1=45;
+  END
+END
+=============================================================================
+Parameters:
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>CREATE PROCEDURE - PSQL Stataments</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.0</text></argument><argument name="description"><text>CREATE PROCEDURE - PSQL Stataments
+
+Dependencies:
+CREATE DATABASE
+CREATE EXCEPTION
+CREATE TABLE</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>proc_test.fdb</text></argument><argument name="isql_script"><text>CREATE EXCEPTION test 'test exception';
 CREATE TABLE tb(id INT, text VARCHAR(32));
-SET TERM ^;
+commit;</text></argument><argument name="source_code"><text>SET TERM ^;
 CREATE PROCEDURE dummy (id INT) AS
 BEGIN
   id=id;
@@ -49,54 +94,5 @@ BEGIN
   END
 END ^
 SET TERM ;^
-SHOW PROCEDURE test;
-
-DROP DATABASE;
-</text></argument><argument name="description"><text>BUG in doc: &quot;POST_EVENT event_name | col&quot; should be &quot;POST_EVENT event_name | variable&quot;
-
-CREATE PROCEDURE - PSQL Stataments
-
-Dependencies:
-CREATE DATABASE
-CREATE EXCEPTION
-CREATE TABLE
-</text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>Procedure text:
-=============================================================================
-
-DECLARE VARIABLE p1 SMALLINT;
-BEGIN
-/* Comments */
-  p1=1+1;                           /* assigment */
-  EXCEPTION test;                   /* Exception */
-  EXECUTE PROCEDURE dummy(:p1);    /* Call SP   */
-  EXECUTE PROCEDURE dummy2(:p1) RETURNING_VALUES :p1;
-  EXECUTE PROCEDURE test;         /*recursive call */
-  EXIT;
-  FOR SELECT id FROM tb INTO :p1 DO BEGIN
-    p1=p1+2;
-  END
-  INSERT INTO tb(id) VALUES(:p1);
-  UPDATE tb SET text='new text' WHERE id=:p1;
-  DELETE FROM tb WHERE text=:p1+1;
-  SELECT id FROM tb WHERE text='ggg' INTO :p1;
-  IF(p1 IS NOT NULL)THEN BEGIN
-    p1=NULL;
-  END
-  IF(p1 IS NULL)THEN p1=2;
-    ELSE BEGIN
-    p1=2;
-  END
-  POST_EVENT 'My Event';
-  POST_EVENT p1;
-  WHILE(p1&gt;30)DO BEGIN
-   p1=p1-1;
-  END
-  BEGIN
-    EXCEPTION test;
-    WHEN ANY DO p1=45;
-  END
-END
-=============================================================================
-Parameters:
-
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE PROCEDURE - PSQL Stataments</text></argument><argument name="test_id"><text>skopalik_0160</text></argument><argument name="target_group"><text>.*</text></argument></extension>
+commit;
+SHOW PROCEDURE test;</text></argument><argument name="test_id"><text>pcisar_164</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>pcisar:sskopalik</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>

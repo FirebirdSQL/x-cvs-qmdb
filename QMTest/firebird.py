@@ -1,12 +1,13 @@
 ########################################################################
 #
 # File:   firebird.py
-# Date:   05.06.2003
+# Author: Pavel Cisar
+# Date:   2001-10-12
 #
 # Contents:
 #   Common, Test and Resource classes and function for Firebird QA
 #
-# Contributors: Pavel Cisar
+# Copyright (c) 2002 by Pavel Cisar.  All rights reserved. 
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -34,29 +35,23 @@
 # imports
 ########################################################################
 
-import cPickle
-import errno
-import os
+import os, errno, string, sys, time, re, difflib, kinterbasdb
+
 import qm.common
 import qm.fields
 import qm.test.base
 from   qm.test.result import *
 from   qm.test.test import *
 from   qm.test.resource import *
+import qm.executable
 import qm.web
-import kinterbasdb
-import string
-import sys
 from   threading import *
-import time
-import re
-import difflib
 
 ########################################################################
 # classes
 ########################################################################
 
-class SubstitutionField(qm.fields.TupleField):
+class SubstitutionField(qm.fields.TextField):
     """A rule for performing a text substitution.
 
     A 'SubstitutionField' consists of a regular expression pattern and a
@@ -67,17 +62,110 @@ class SubstitutionField(qm.fields.TupleField):
     The syntax for the regular expression and the substitution string is
     that of the standard Python 're' (regular expression) module."""
 
+    class_name = "qm.test.classes.file.SubstitutionField"
+
+    # The pattern and replacement string are encoded together into a
+    # single string, separated by a semicolon.  Semicolons that occur
+    # within the pattern and replacement string are escaped with a
+    # backslash.
+    #
+    # Use 'SplitValue' to extract the pattern and replacement string
+    # from a value of this field.
+
+
     def __init__(self, name, **properties):
         """Create a new 'SubstitutionField'.
 
         By default, the pattern and replacement string are empty."""
 
         # Initialize the base class.
-        fields = (qm.fields.TextField(name = "pattern",
-                                      title = "Pattern",),
-                  qm.fields.TextField(name = "replacement",
-                                      title = "Replacement"))
-        qm.fields.TupleField.__init__(self, name, fields, **properties)
+        apply(qm.fields.TextField.__init__, (self, name, ";"), properties)
+
+
+    def SplitValue(self, value):
+        """Split a value of this field into the pattern and replacement string.
+
+        'value' -- A value for this field.
+
+        returns -- A pair '(pattern, replacement_string)'."""
+
+        # Be lenient about an empty string.
+        if value == "":
+            return ("", "")
+        # Break it in half.
+        elements = string.split(value, ";", 1)
+        # Unescape semicolons in both halves.
+        elements = map(lambda e: string.replace(e, r"\;", ";"), elements) 
+        return elements
+
+
+    def FormatValueAsHtml(self, server, value, style, name=None):
+        pattern, replacement = self.SplitValue(value)
+        # Since we're generating HTML, escape special characters.
+        pattern = qm.web.escape(pattern)
+        replacement = qm.web.escape(replacement)
+
+        if style in ["new", "edit"]:
+            result = '''
+            <input type="hidden"
+                   name="%(name)s"
+                   value="%(value)s"/>
+            <table border="0" cellpadding="0" cellspacing="4">
+             <tr>
+              <td>Pattern:</td>
+              <td>&nbsp;</td>
+              <td><input type="text"
+                         size="40"
+                         name="pattern"
+                         onchange="update_substitution();"
+                         value="%(pattern)s"/></td>
+             </tr>
+             <tr>
+              <td>Replacement:</td>
+              <td>&nbsp;</td>
+              <td><input type="text"
+                         size="40"
+                         name="substitution"
+                         onchange="update_substitution();"
+                         value="%(replacement)s"/></td>
+             </tr>
+            </table>
+            <script language="JavaScript">
+            function update_substitution()
+            {
+              var pattern = document.form.pattern.value;
+              pattern = pattern.replace(/;/g, "\\;");
+              var substitution = document.form.substitution.value;
+              substitution = substitution.replace(/;/g, "\\;");
+              document.form.%(name)s.value = pattern + ";" + substitution;
+            }
+            </script>
+            ''' % locals()
+            return result
+
+        elif style == "full":
+            return '''
+            <table border="0" cellpadding="2" cellspacing="0">
+             <tr valign="top">
+              <td>Pattern:</td>
+              <td><tt>%s</tt></td>
+             </tr>
+             <tr valign="top">
+              <td>Replacement:</td>
+              <td><tt>%s</tt></td>
+             </tr>
+            </table>
+            ''' % (pattern, replacement)
+
+        else:
+            # For all other styles, use the base class implementation.
+            return qm.fields.TextField.FormatValueAsHtml(
+                self, value, style, name)
+
+
+    def FormatValueAsText(self, value, columns=72):
+        # Don't line-wrap or otherwise futz with the value.
+        return value
 
 
     def GetHelp(self):
@@ -89,61 +177,17 @@ class SubstitutionField(qm.fields.TupleField):
         matched groups in the pattern.
 
         The regular expression and substitution syntax are those of
-        Python's standard "'re' regular expression module"."""
+        Python's standard "'re' regular expression module"
 
-
-class ReadThread(Thread):
-    """An 'ReadThread' is a thread that reads from a file."""
-
-    def __init__(self, f):
-        """Construct a new 'ReadThread'.
-
-        'f' -- The file object from which to read."""
-
-        Thread.__init__(self, None, None, None)
-
-        self.f = f
-        
-            
-    def run(self):
-        """Read the data from the stream."""
-
-        try:
-            self.data = self.f.read()
-        except:
-            self.data = ""
-	self.f.close()
+.. "'re' regular expression module" http://www.python.org/doc/1.5.2p2/lib/module-re.html ."""
 
 
 
-class WriteThread(Thread):
-    """A 'WriteThread' is a thread that writes to a file."""
-
-    def __init__(self, f, data):
-        """Construct a new 'WriteThread'.
-
-        'f' -- The file object to which to write.
-
-        'data' -- The string to be written to the file."""
-
-        Thread.__init__(self, None, None, None)
-
-        self.f = f
-        self.data = data
-        
-
-    def run(self):
-        """Write the data to the stream."""
-        
-        self.f.write(self.data)
-	self.f.close()
-
-        
 class RunServicesBase:
     """A base class for Firebird QA services.
 
     An 'RunServicesBase' runs a program and checks its standard error output,
-    and exit code with expected values.  The program may be provided with 
+    and exit code with expected values.  The program may be provided with
     command-line arguments and/or standard input.
 
     The run passes if the standard error is empty, and exit code is zero."""
@@ -182,224 +226,46 @@ class RunServicesBase:
 
         # Construct the environment.
         environment = self.MakeEnvironment(context)
+        e_stdin = stdin
+        c = {}
+        for pair in context.items():
+            c[pair[0]] = pair[1]
+            for substitution in c.keys():
+                pattern = "$("+substitution.upper()+")"
+                replacement = context[substitution]
+                e_stdin = e_stdin.replace(pattern, replacement)
+        basename   = os.path.split(arguments[0])[-1]
+        qm_exec    = qm.executable.Filter(e_stdin, -2)
 
-        stdin_r = None
-        stdin_w = None
-        stdout_r = None
-        stdout_w = None
-        stderr_r = None
-        stderr_w = None
-        result_r = None
-        result_w = None
-        stdin_f = None
-        stdout_f = None
-        stderr_f = None
-        result_f = None
-        
-	print 'program:',program
-	print 'arguments:',arguments
-
-	# Try block to clean up temporary files and file descriptors in
-        # any eventuality.
         try:
-            # Under Windows, use popen to create the child.  It would be
-            # better to use spawn, but it is not easy to connect the
-            # standard streams for the child that way.
-            if sys.platform == "win32":
-                # Join the program and the arguments into a single
-                # command.
-                command = program + ' ' + string.join(arguments[1:], ' ')
-#                print "Running "+command
-                # Start the command.
-                time.sleep(10)
-                stdin_f, stdout_f, stderr_f = os.popen3(command)
-            # Under UNIX, use fork/exec to create the child.
-            else:
-                # Create pipes for all of the standard streams.
-                stdin_r, stdin_w = os.pipe()
-                stdout_r, stdout_w = os.pipe()
-                stderr_r, stderr_w = os.pipe()
+            exit_status= qm_exec.Run(arguments, environment)
+            stdout = qm_exec.stdout
+            stderr = qm_exec.stderr
+            causes = []
 
-                # Create a pipe for communicating with the child process.
-                # This pipe is used to communicate test results from the
-                # child to the parent in case something goes wrong (for
-                # instance, if the target program cannot be run).
-                #
-                # Only the parent reads from the pipe, and only the child
-                # writes to the pipe.  If the child process runs the target
-                # program successfully, it simply closes the pipe without
-                # writing anything.  If something goes wrong, though, the
-                # child process builds an appropriate test result object,
-                # pickles it, writes it to the pipe, and then closes the
-                # pipe and exits.
-                result_r, result_w = os.pipe()
+            if not (sys.platform == "win32" or os.WIFEXITED(exit_status)):
+                causes.append("exit_code")
+                result["RunProgram.exit_code"] = str(exit_status)
 
-                # Fork a new process.
-                child_pid = os.fork()
-
-                if child_pid == 0:
-                    # This is the child process.
-                    try:
-                        # Close the pipe ends we do not need.
-                        os.close(stdin_w)
-                        os.close(stdout_r)
-                        os.close(stderr_r)
-                        os.close(result_r)
-                        # Redirect stdin from the standard input file.
-                        os.dup2(stdin_r, sys.stdin.fileno())
-                        # Redirect stdout to the standard output file.
-                        os.dup2(stdout_w, sys.stdout.fileno())
-                        # Redirect stderr to the standard error file.
-                        os.dup2(stderr_w, sys.stderr.fileno())
-                        # Execute the program.
-                        os.execvpe(program, arguments, environment)
-                    except:
-                        # Perhaps something went wrong while setting up
-                        # the standard stream files, or we were unable
-                        # to execute the program.
-                        exc_info = sys.exc_info()
-                        result = (Result.ERROR,
-                                  { Result.CAUSE : "Could not execute program",
-                                    Result.EXCEPTION : "%s: %s" % exc_info[:2],
-                                    Result.TRACEBACK :
-                                      qm.format_traceback(exc_info) })
-                        cPickle.dump(result, os.fdopen(result_w, "w"))
-                        # Exit.
-                        os._exit(1)
-                    else:
-                        # We should never get here.  If the call to
-                        # execve fails, an exception will be thrown.
-                        assert 0
-
-                # This is the parent process.  Close file descriptors
-                # we do not need.
-                os.close(stdin_r)
-                stdin_r = None
-                os.close(stdout_w)
-                stdout_w = None
-                os.close(stderr_w)
-                stderr_w = None
-                os.close(result_w)
-                result_w = None
-
-                # Create the file objects.
-                stdin_f = os.fdopen(stdin_w, "w")
-                stdin_w = None
-                stdout_f = os.fdopen(stdout_r)
-                stdout_r = None
-                stderr_f = os.fdopen(stderr_r)
-                stderr_r = None
-                
-            # Create a thread to write to the child's standard input
-            # stream.
-            if stdin:
-                stdin_thread = WriteThread(stdin_f, stdin)
-	    stdin_f = None
-            # Create threads to read the child's standard output and
-            # standard error streams.
-            stdout_thread = ReadThread(stdout_f)
-	    stdout_f = None
-            stderr_thread = ReadThread(stderr_f)
-	    stderr_f = None
-
-            # Start the threads.
-            if stdin:
-                stdin_thread.start()
-            stdout_thread.start()
-            stderr_thread.start()
-            
-            # Wait for the child process to complete.
-            if sys.platform == "win32":
-                # On Windows, we have no way of obtaining the exit code.
-                exit_status = 0
-            else:
-                exit_status = os.waitpid(child_pid, 0)[1]
-            # Join the threads, so that the data read is known
-            # to be available.
-            if stdin:
-                stdin_thread.join()
-            stdout_thread.join()
-            stderr_thread.join()
-
-            pickle = None
-            
-            if sys.platform != "win32":
-                # Try to read a pickled result from the result pipe.  If the
-                # child process didn't write one, we'll read zero bytes.
-                result_f = os.fdopen(result_r)
-                result_r = None
-                pickle = result_f.read()
-                # If we read anything, there was a failure.
-                if pickle:
-                    (outcome, annotations) = cPickle.loads(pickle)
-                    result.SetOutcome(outcome)
-                    for k in annotations.keys():                    
-                        result[k] = annotations[k]
-
-            # If there was a pickle, there is nothing more to do.
-            if pickle:
-                pass
-            # If the process terminated normally, check the outputs.
-            elif sys.platform == "win32" or os.WIFEXITED(exit_status):
-                # There are no causes of failure yet.
-                causes = []
-                # The target program terminated normally.  Extract the
-                # exit code, if this test checks it.
-		if sys.platform == "win32":
-		    exit_code = 0
-                else:
-                    exit_code = os.WEXITSTATUS(exit_status)
-                # Get the output generated by the program.
-                stdout = stdout_thread.data
-                stderr = stderr_thread.data
-                # Check to see if the exit code matches.
-                if exit_code != 0:
-                    causes.append("exit_code")
-                    result["RunProgram.expected_exit_code"] \
-                        = str(self.exit_code)
-                    result["RunProgram.exit_code"] = str(exit_code)
-                # Check to see that the standard error matches.
-                if stderr:
-                    causes.append("standard error")
-                    result["RunProgram.stderr"] = "'''" + stderr + "'''"
-                # If anything went wrong, the test failed.
-                if causes:
-                    result.Fail("Unexpected %s." % string.join(causes, ", ")) 
             elif os.WIFSIGNALED(exit_status):
-                # The target program terminated with a signal.  Construe
-                # that as a test failure.
-                signal_number = str(os.WTERMSIG(exit_status))
-                result.Fail("Program terminated by signal.")
-                result["RunProgram.signal_number"] = signal_number
+                self.__cause= "Process %s terminated by signal %d." % (basename, os.WTERMSIG(exit_status))
+
             elif os.WIFSTOPPED(exit_status):
-                # The target program was stopped.  Construe that as a
-                # test failure.
-                signal_number = str(os.WSTOPSIG(exit_status))
-                result.Fail("Program stopped by signal.")
-                result["RunProgram.signal_number"] = signal_number
+                self.__cause= "Process %s stopped by signal %d." % (basename, os.WSTOPSIG(exit_status))
+
             else:
-                # The target program terminated abnormally in some other
-                # manner.  (This shouldn't normally happen...)
-                result.Fail("Program did not terminate normally.")
+                self.__cause= "Process %s terminated abnormally." % basename
+
+            # Check to see that the standard error matches.
+            if stderr:
+                causes.append("standard error")
+                result["RunProgram.stderr"] = "'''" + stderr + "'''"
+            # If anything went wrong, the test failed.
+            if causes:
+                result.Fail("Unexpected %s." % string.join(causes, ", "))
         except:
             result.NoteException()
-            
-        # Make sure all of the file descriptors we opened are closed.
-        for fd in (stdin_r, stdin_w, stdout_r, stdout_w,
-                   stderr_r, stderr_w, result_r, result_w):
-            if fd is not None:
-                try:
-                    os.close(fd)
-                except:
-                    pass
 
-        # Make sure all of the stream objects are closed, too.
-        for f in (stdin_f, stdout_f, stderr_f, result_f):
-            if f is not None:
-                try:
-                    f.close()
-                except:
-                    pass
 
 
 class FirebirdService(RunServicesBase):
@@ -433,7 +299,7 @@ class FirebirdService(RunServicesBase):
         'Result.PASS' or to add annotations."""
 
         self.RunProgram("\""+self.__context["gbak_path"]+"\"",
-			[ self.__context["gbak_path"] ] + [ "-C ", backupfile ] 
+                        [ self.__context["gbak_path"] ] + [ "-C ", backupfile ]
                         + arguments + [ database ],
                         "", self.__context, result)
 
@@ -452,7 +318,7 @@ class FirebirdService(RunServicesBase):
         'Result.PASS' or to add annotations."""
 
         self.RunProgram("\""+self.__context["isql_path"]+"\"",
- 			[ self.__context["isql_path"] ] + [ database ] + arguments, 
+                        [ self.__context["isql_path"] ] + [ database ] + arguments,
                         script, self.__context, result)
 
     def RunGsec(self, script, arguments, result):
@@ -460,7 +326,7 @@ class FirebirdService(RunServicesBase):
 
         'script' -- An (optional) GSEC script.
 
-        'arguments' -- A list of the arguments to the GSEC without ISC4 database location and 
+        'arguments' -- A list of the arguments to the GSEC without ISC4 database location and
         sysdba username and password.
 
         'result' -- A 'Result' object.  The outcome will be
@@ -469,16 +335,13 @@ class FirebirdService(RunServicesBase):
         'Result.PASS' or to add annotations."""
         try:
             self.RunProgram("\""+self.__context["gsec_path"]+"\"",
-                        [ self.__context["gsec_path"] ] + 
-                        [ " ".join(("-database",self.__context["server_location"]+self.__context["isc4_path"],
-                        "-user","SYSDBA","-password","masterkey")) ] +
-                        arguments, 
+                        [ self.__context["gsec_path"], "-database", self.__context["server_location"]+ self.__context["isc4_path"], "-user", "SYSDBA", "-password", "masterkey" ]+arguments,
                         script, self.__context, result)
         except:
            result.NoteException()
-       
 
-        
+
+
 class FirebirdDatabaseResource(Resource):
     """Resource class to manage a Firebird Database.
 
@@ -726,7 +589,7 @@ class FirebirdUserResource(Resource):
         # Create a user.
         self.__FirebirdServices = FirebirdService(context)
         try:
-            self.__FirebirdServices.RunGsec("", [ "-add",self.user_name,"-pw",self.user_password,
+            self.__FirebirdServices.RunGsec("", [ "-add",str(self.user_name),"-pw",str(self.user_password),
             "-uid",str(self.uid),"-gid",str(self.gid) ], 
             result)
 
@@ -893,7 +756,7 @@ class FirebirdISQLTestBase(FirebirdTestBase):
             description="""Regular expression substitutions.
 
             Each substitution will be applied to both the expected and
-            actual stdout of the ISQL.  The comparison will be
+            actual stdout of the ISQl.  The comparison will be
             performed after the substitutions have been performed.
 
             You can use substitutions to ignore insignificant
@@ -924,6 +787,7 @@ class FirebirdISQLTestBase(FirebirdTestBase):
                                assignment=assignment)
         return environment
 
+
     def RunProgram(self, program, arguments, context, result):
         """Run the 'program'.
 
@@ -942,257 +806,76 @@ class FirebirdISQLTestBase(FirebirdTestBase):
 
         # Construct the environment.
         environment = self.MakeEnvironment(context)
-
-        stdin_r = None
-        stdin_w = None
-        stdout_r = None
-        stdout_w = None
-        stderr_r = None
-        stderr_w = None
-        result_r = None
-        result_w = None
-        stdin_f = None
-        stdout_f = None
-        stderr_f = None
-        result_f = None
-        
-        # Try block to clean up temporary files and file descriptors in
-        # any eventuality.
-        try:
-            # Under Windows, use popen to create the child.  It would be
-            # better to use spawn, but it is not easy to connect the
-            # standard streams for the child that way.
-            if sys.platform == "win32":
-                # Join the program and the arguments into a single
-                # command.
-                command = program + ' ' + string.join(arguments[1:], ' ')
-                # Start the command.
-                stdin_f, stdout_f, stderr_f = os.popen3(command)
-            # Under UNIX, use fork/exec to create the child.
-            else:
-                # Create pipes for all of the standard streams.
-                stdin_r, stdin_w = os.pipe()
-                stdout_r, stdout_w = os.pipe()
-                stderr_r, stderr_w = os.pipe()
-
-                # Create a pipe for communicating with the child process.
-                # This pipe is used to communicate test results from the
-                # child to the parent in case something goes wrong (for
-                # instance, if the target program cannot be run).
-                #
-                # Only the parent reads from the pipe, and only the child
-                # writes to the pipe.  If the child process runs the target
-                # program successfully, it simply closes the pipe without
-                # writing anything.  If something goes wrong, though, the
-                # child process builds an appropriate test result object,
-                # pickles it, writes it to the pipe, and then closes the
-                # pipe and exits.
-                result_r, result_w = os.pipe()
-
-                # Fork a new process.
-                child_pid = os.fork()
-
-                if child_pid == 0:
-                    # This is the child process.
-                    try:
-                        # Close the pipe ends we do not need.
-                        os.close(stdin_w)
-                        os.close(stdout_r)
-                        os.close(stderr_r)
-                        os.close(result_r)
-                        # Redirect stdin from the standard input file.
-                        os.dup2(stdin_r, sys.stdin.fileno())
-                        # Redirect stdout to the standard output file.
-                        os.dup2(stdout_w, sys.stdout.fileno())
-                        # Redirect stderr to the standard error file.
-                        os.dup2(stderr_w, sys.stderr.fileno())
-                        # Execute the program.
-                        os.execvpe(program, arguments, environment)
-                    except:
-                        # Perhaps something went wrong while setting up
-                        # the standard stream files, or we were unable
-                        # to execute the program.
-                        exc_info = sys.exc_info()
-                        result = (Result.ERROR,
-                                  { Result.CAUSE : "Could not execute program",
-                                    Result.EXCEPTION : "%s: %s" % exc_info[:2],
-                                    Result.TRACEBACK :
-                                      qm.format_traceback(exc_info) })
-                        cPickle.dump(result, os.fdopen(result_w, "w"))
-                        # Exit.
-                        os._exit(1)
-                    else:
-                        # We should never get here.  If the call to
-                        # execve fails, an exception will be thrown.
-                        assert 0
-
-                # This is the parent process.  Close file descriptors
-                # we do not need.
-                os.close(stdin_r)
-                stdin_r = None
-                os.close(stdout_w)
-                stdout_w = None
-                os.close(stderr_w)
-                stderr_w = None
-                os.close(result_w)
-                result_w = None
-
-                # Create the file objects.
-                stdin_f = os.fdopen(stdin_w, "w")
-                stdin_w = None
-                stdout_f = os.fdopen(stdout_r)
-                stdout_r = None
-                stderr_f = os.fdopen(stderr_r)
-                stderr_r = None
-                
-            # Substitute macros in stdin - if any
-            e_stdin = self.stdin
-	    c = {}
-	    for pair in context.items():
-		c[pair[0]] = pair[1]
+        e_stdin = self.stdin
+        c = {}
+        for pair in context.items():
+            c[pair[0]] = pair[1]
             for substitution in c.keys():
                 pattern = "$("+substitution.upper()+")"
                 replacement = context[substitution]
                 e_stdin = e_stdin.replace(pattern, replacement)
-            # Create a thread to write to the child's standard input
-            # stream.
-            stdin_thread = WriteThread(stdin_f, e_stdin)
-	    stdin_f = None
-            # Create threads to read the child's standard output and
-            # standard error streams.
-            stdout_thread = ReadThread(stdout_f)
-	    stdout_f = None
-            stderr_thread = ReadThread(stderr_f)
-	    stderr_f = None
 
-            # Start the threads.
-            stdin_thread.start()
-            stdout_thread.start()
-            stderr_thread.start()
-            
-            # Wait for the child process to complete.
-            if sys.platform == "win32":
-                # On Windows, we have no way of obtaining the exit code.
-                exit_status = 0
-            else:
-                exit_status = os.waitpid(child_pid, 0)[1]
-            # Join the threads, so that the data read is known
-            # to be available.
-            stdin_thread.join()
-            stdout_thread.join()
-            stderr_thread.join()
+        basename   = os.path.split(arguments[0])[-1]
+        qm_exec    = qm.executable.Filter(e_stdin, -2)
 
-            pickle = None
-            
-            if sys.platform != "win32":
-                # Try to read a pickled result from the result pipe.  If the
-                # child process didn't write one, we'll read zero bytes.
-                result_f = os.fdopen(result_r)
-                result_r = None
-                pickle = result_f.read()
-                # If we read anything, there was a failure.
-                if pickle:
-                    (outcome, annotations) = cPickle.loads(pickle)
-                    result.SetOutcome(outcome)
-                    for k in annotations.keys():                    
-                        result[k] = annotations[k]
+        try:
+            exit_status= qm_exec.Run(arguments, environment)
+            stdout = qm_exec.stdout
+            stderr = qm_exec.stderr
+            causes = []
 
-            # If there was a pickle, there is nothing more to do.
-            if pickle:
-                pass
-            # If the process terminated normally, check the outputs.
-            elif sys.platform == "win32" or os.WIFEXITED(exit_status):
-                # There are no causes of failure yet.
-                causes = []
-                # The target program terminated normally.  Extract the
-                # exit code, if this test checks it.
-                if self.exit_code is None:
-                    exit_code = None
-		elif sys.platform == "win32":
-		    exit_code = 0
-                else:
-                    exit_code = os.WEXITSTATUS(exit_status)
-                # Get the output generated by the program.
-                stdout = stdout_thread.data
-                stderr = stderr_thread.data
-                # Check to see if the exit code matches.
-                if exit_code != self.exit_code:
-                    causes.append("exit_code")
-                    result["ExecTest.expected_exit_code"] \
-                        = str(self.exit_code)
-                    result["ExecTest.exit_code"] = str(exit_code)
-                # Check to see if the standard output matches.
-                # First strip out ISQL junk
-                stdout_stripped = re.sub("Database:.*\n","",stdout)
-                stdout_stripped = re.sub("SQL>\s*","",stdout_stripped)
-                stdout_stripped = re.sub("CON>\s*","",stdout_stripped)
-                stdout_stripped = re.sub("-->\s*","",stdout_stripped)
-                stdout_stripped = self.__PerformSubstitutions(stdout_stripped)
-                stdout_stripped = re.compile("^\s+",re.I+re.M).sub("",stdout_stripped)
-                stdout_stripped = re.compile("\s+$",re.I+re.M).sub("",stdout_stripped)
+            if not (sys.platform == "win32" or os.WIFEXITED(exit_status)):
+                causes.append("exit_code")
+                result["RunProgram.exit_code"] = str(exit_status)
 
-                self.stdout_stripped = re.sub("Database:.*\n","",self.stdout)
-                self.stdout_stripped = re.sub("SQL>\s*","",self.stdout_stripped)
-                self.stdout_stripped = re.sub("CON>\s*","",self.stdout_stripped)
-                self.stdout_stripped = re.sub("-->\s*","",self.stdout_stripped)
-                self.stdout_stripped = self.__PerformSubstitutions(self.stdout_stripped)
-                self.stdout_stripped = re.compile("^\s+",re.I+re.M).sub("",self.stdout_stripped)
-                self.stdout_stripped = re.compile("\s+$",re.I+re.M).sub("",self.stdout_stripped)
-
-                if stdout_stripped != self.stdout_stripped:
-                    causes.append("standard output")
-                    result["ExecTest.stdin"] = "<pre>" + e_stdin + "</pre>"
-                    result["ExecTest.stdout_expected"] = "<pre>" + self.stdout + "</pre>"
-                    result["ExecTest.stdout"] = "<pre>" + stdout + "</pre>"
-                    result["ExecTest.stdout_stripped"] = "<pre>" + stdout_stripped + "</pre>"
-                    result["ExecTest.stdout_stripped_expected"] = "<pre>" + self.stdout_stripped + "</pre>"
-                    result["ExecTest.stripped_diff"] \
-                        = "<pre>"+'\n'.join(difflib.ndiff(stdout_stripped.splitlines(0),self.stdout_stripped.splitlines(0)))+"</pre>"
-                # Check to see that the standard error matches.
-                stderr_stripped = re.sub("Use CONNECT or CREATE DATABASE to specify a database.*\n","",stderr)
-                if stderr_stripped != self.stderr:
-                    causes.append("standard error")
-                    result["ExecTest.stdin"] = "<pre>" + e_stdin + "</pre>"
-                    result["ExecTest.stderr"] = "<pre>" + stderr + "</pre>"
-                    result["ExecTest.expected_stderr"] = "<pre>" + self.stderr + "</pre>"
-                # If anything went wrong, the test failed.
-                if causes:
-                    result.Fail("Unexpected %s." % string.join(causes, ", ")) 
             elif os.WIFSIGNALED(exit_status):
-                # The target program terminated with a signal.  Construe
-                # that as a test failure.
-                signal_number = str(os.WTERMSIG(exit_status))
-                result.Fail("Program terminated by signal.")
-                result["ExecTest.signal_number"] = signal_number
+                self.__cause= "Process %s terminated by signal %d." % (basename, os.WTERMSIG(exit_status))
+
             elif os.WIFSTOPPED(exit_status):
-                # The target program was stopped.  Construe that as a
-                # test failure.
-                signal_number = str(os.WSTOPSIG(exit_status))
-                result.Fail("Program stopped by signal.")
-                result["ExecTest.signal_number"] = signal_number
+                self.__cause= "Process %s stopped by signal %d." % (basename, os.WSTOPSIG(exit_status))
+
             else:
-                # The target program terminated abnormally in some other
-                # manner.  (This shouldn't normally happen...)
-                result.Fail("Program did not terminate normally.")
+                self.__cause= "Process %s terminated abnormally." % basename
+
+            # Check to see if the standard output matches.
+            # First strip out ISQL junk
+            stdout_stripped = re.sub("Database:.*\n","",stdout)
+            stdout_stripped = re.sub("SQL>\s*","",stdout_stripped)
+            stdout_stripped = re.sub("CON>\s*","",stdout_stripped)
+            stdout_stripped = re.sub("-->\s*","",stdout_stripped)
+            stdout_stripped = self.__PerformSubstitutions(stdout_stripped)
+            stdout_stripped = re.compile("^\s+",re.I+re.M).sub("",stdout_stripped)
+            stdout_stripped = re.compile("\s+$",re.I+re.M).sub("",stdout_stripped)
+
+            self.stdout_stripped = re.sub("Database:.*\n","",self.stdout)
+            self.stdout_stripped = re.sub("SQL>\s*","",self.stdout_stripped)
+            self.stdout_stripped = re.sub("CON>\s*","",self.stdout_stripped)
+            self.stdout_stripped = re.sub("-->\s*","",self.stdout_stripped)
+            self.stdout_stripped = self.__PerformSubstitutions(self.stdout_stripped)
+            self.stdout_stripped = re.compile("^\s+",re.I+re.M).sub("",self.stdout_stripped)
+            self.stdout_stripped = re.compile("\s+$",re.I+re.M).sub("",self.stdout_stripped)
+
+            if stdout_stripped != self.stdout_stripped:
+                causes.append("standard output")
+                result["ExecTest.stdin"] = "<pre>" + e_stdin + "</pre>"
+                result["ExecTest.stdout_expected"] = "<pre>" + self.stdout + "</pre>"
+                result["ExecTest.stdout"] = "<pre>" + stdout + "</pre>"
+                result["ExecTest.stdout_stripped"] = "<pre>" + stdout_stripped + "</pre>"
+                result["ExecTest.stdout_stripped_expected"] = "<pre>" + self.stdout_stripped + "</pre>"
+                result["ExecTest.stripped_diff"] = "<pre>"+'\n'.join(difflib.ndiff(stdout_stripped.splitlines(0),self.stdout_stripped.splitlines(0)))+"</pre>"
+            # Check to see that the standard error matches.
+            stderr_stripped = re.sub("Use CONNECT or CREATE DATABASE to specify a database.*\n","",stderr)
+            if stderr_stripped != self.stderr:
+                causes.append("standard error")
+                result["ExecTest.stdin"] = "<pre>" + e_stdin + "</pre>"
+                result["ExecTest.stderr"] = "<pre>" + stderr + "</pre>"
+                result["ExecTest.expected_stderr"] = "<pre>" + self.stderr + "</pre>"
+            # If anything went wrong, the test failed.
+            if causes:
+                result.Fail("Unexpected %s." % string.join(causes, ", "))
         except:
             result.NoteException()
 
-        # Make sure all of the file descriptors we opened are closed.
-        for fd in (stdin_r, stdin_w, stdout_r, stdout_w,
-                   stderr_r, stderr_w, result_r, result_w):
-            if fd is not None:
-                try:
-                    os.close(fd)
-                except:
-                    pass
-
-        # Make sure all of the stream objects are closed, too.
-        for f in (stdin_f, stdout_f, stderr_f, result_f):
-            if f is not None:
-                try:
-                    f.close()
-                except:
-                    pass
 
     def SplitValue(self, value):
         """Split a value of this field into the pattern and replacement string.
@@ -1216,9 +899,9 @@ class FirebirdISQLTestBase(FirebirdTestBase):
         returns -- The string 'text', processed with the substitutions
         configured for this test instance."""
 
-        for pattern, replacement in self.substitutions:
+        for substitution in self.substitutions:
+            pattern, replacement = self.SplitValue(substitution)
             text = re.compile(pattern,re.M).sub(replacement, text)
-#            text = re.sub(pattern, replacement, text)
         return text
         
     

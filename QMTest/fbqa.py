@@ -35,7 +35,7 @@
 # imports
 ########################################################################
 
-import sys, os, string, re, difflib, kinterbasdb
+import sys, os, string, re, difflib, kinterbasdb as kdb
 
 import qm
 import qm.common
@@ -89,7 +89,7 @@ class SubstitutionField(qm.fields.TupleField):
 
 class FirebirdTest(Test):
   """Multipurpose class for performing common Firebird quality assurance procedures"""
-  
+
   arguments = [
    qm.fields.TextField(
         name="test_id",
@@ -98,8 +98,9 @@ class FirebirdTest(Test):
         description="""An unique ID assigned to test.
 
         The ID is usualy constructed as author's name and sequence number.
-        For example: skopalik_0001"""
+        For example: pcisar_001"""
         ),
+
     qm.fields.TextField(
         name="author",
         title="Author",
@@ -107,43 +108,39 @@ class FirebirdTest(Test):
         description="""Author's nickname.
 
         Use the nickname listed in AUTHORS.TXT. For new test authors, don't forget
-        to add appropriate record (nickname and e-mail) in this file!"""
+        to add appropriate record (nickname and e-mail) in this file!
+
+        If test has multiple authors, list their nicknames separated by colon.
+        """
         ),
+
    qm.fields.TextField(
         name="target_version",
         title="Target Engine",
         not_empty_text=1,
-        default_value="2",
-        description="""QA ID for version of engine that this test is designed for.
+        default_value="1.0",
+        description="""Version number for engine that this test is designed for.
 
-        Each Firebird (final) release has an unique Identification Number assigned by QA,
-	that reflects the feature set of given engine version. It's a sort of version number,
-	but it doesn't match the official version numbers assigned to the release, as purpose
-	of this number is to identify the QA target only.
+        Each Firebird (final) release has an unique Version Number assigned by Project.
+        This version number is constructed as a dot-separated release version number, where first number
+        represents major Firebird version, second number represents a minor version, third number
+        represents an update number, and last, fourth number represents a build number.
 
-	This QA version is constructed as a dot-separated release version number, where first number
-	represents major Firebird release (1=1.x, 2=1.5, 3=2.x etc.), and subsequent numbers
-	represents minor releases (branches) from this release (1.1=1.0.1, 1.2=1.0.2, 2.1=1.5.1 etc.).
-	If release is branched from a sub-release, a third QA version number is added, and so on.
-
-	Here is current list of QA IDs:
-
-	1=FB 1.0.0
-
-	1.1=FB 1.0.1
-
-	1.2=FB 1.0.2
-
-	1.3=FB 1.0.3
-
-	2=FB 1.5
-
-	2.1=FB 1.5.1
-
-	3=Vulcan 1.0
-
-	4=reserved for FB 1.6/2.0"""
+        This value is used by qaver.py tool to create test database for given engine version.
+        """
         ),
+
+    qm.fields.TextField(
+        name="target_platform",
+        title="Target Platform",
+        not_empty_text=1,
+        default_value="All",
+        description="""List of target platforms that this test is designed for, separated by colon (default All)
+
+        This value is used by qaver.py tool to create test database for given platform. Use only next
+        values: Windows, Linux, Solaris, HP-UX, FreeBSD, Darwin and Sinix-Z"""
+        ),
+
     qm.fields.TextField(
         name="bug_id",
         title="Bug identifier",
@@ -162,6 +159,7 @@ class FirebirdTest(Test):
         This is a short, descriptive name for test. Should describe what's tested.
         For example: ALTER DATABASE ADD FILE"""
         ),
+
     qm.fields.TextField(
         name="description",
         title="Description",
@@ -172,68 +170,69 @@ class FirebirdTest(Test):
         Please describe how the test is supposed to work, what's tested and how,
         possible points of failure etc."""
         ),
-        
+
     qm.fields.EnumerationField(
         name="create_db_method",
         title="Database Creation Method",
         description="""Connect to existing database, create new database or restore database from backup
-        
+
         If "Create New" is chosen, kinterbasdb will be used to create a database with the given parameters.
         A connection to the database will then be made with kinterbasdb.
-        
+
         if "Connect to existing" is chosen, kinterbasdb will be used to connect to the given database using
         the given parameters.
-        
+
         if "Restore from Backup" is chosen, gbak will be used to restore a database with the given name from
         the given backup file.  If the database already exists, the test will raise an error.""",
         enumerals=["Create New", "Connect To Existing", "Restore From Backup"],
         default_value="Create New"
         ),
-  
+
     qm.fields.TextField(
         name="db_path_property",
         title="Database Path Property Name",
         description="The name of the context property which is set to the path to the database",
-        default_value="database_path"
+        default_value="database_location"
         ),
-        
+
     qm.fields.TextField(
         name="db_name",
         title="Database Name",
-        description="""The Database name. 
+        description="""The Database name.
 
         This value is concatenated with the server and database locations from context file""",
         default_value="database_name"
         ),
-        
+
     qm.fields.TextField(
         name="backup_file_path",
         title="Path to Backup File",
         description="The backup file to be used (if database is to be restored from backup)"
         ),
-            
+
     qm.fields.TextField(
         name="user_name",
         title="User Name",
         description="""The user name to use to access to the database
-        
-        If the database already exists, this will be assumed to be the username granting access 
-        to the database.  If the database is being created, then this fields value will be set as the 
+
+        If the database already exists, this will be assumed to be the username granting access
+        to the database.  If the database is being created, then this fields value will be set as the
         username""",
         default_value="SYSDBA"
         ),
-        
+
     qm.fields.TextField(
         name="user_password",
         title="User Password",
         description="""The password to use to access the database
-        
-        If the database already exists, this will be assumed to be the password granting access 
-        to the database.  If the database is being created, then this fields value will be set as the password""",
-        
+
+        If the database already exists, this will be assumed to be the password granting access
+        to the database.  If the database is being created, then this fields value will be set as the
+        password""",
+
         default_value="masterkey"
         ),
-        
+
     qm.fields.EnumerationField(
         name="character_set",
         title="Character Set",
@@ -244,15 +243,15 @@ class FirebirdTest(Test):
                      "WIN1250","WIN1251","WIN1252","WIN1253","WIN1254","LATIN2"],
         default_value="NONE",
         ),
-        
+
     qm.fields.EnumerationField(
         name="page_size",
         title="Page Size",
         description="Page size for database (if database is being created).  Defaults to 4096",
-        enumerals = ["1024","2048","4096","8192","16384"],
-        default_value="4096",
+        enumerals = ["Default","1024","2048","4096","8192","16384"],
+        default_value="Default",
         ),
-        
+
     qm.fields.EnumerationField(
         name="sql_dialect",
         title="SQL Dialect",
@@ -271,7 +270,7 @@ class FirebirdTest(Test):
         Possible options are "Using SQL Commands", "Using Data Tuple" and "None (manual)".
         
         If "Using SQL Commands" is selected, then the field "SQL Commands" must be defined.
-          The contents of that field will be executed as an SQL script (using ISQL) in the context of the 
+          The contents of that field will be executed as an SQL script (using ISQL) in the context of the
          database associated with this test
          
         If "Using Data Tuple" is selected, then the fields "Data Tuple" and "SQL Insert Statement" must 
@@ -281,7 +280,6 @@ class FirebirdTest(Test):
         default_value="None (manual)"
         ),
             
-
     qm.fields.TextField(
         name="isql_script",
         title="SQL Commands",
@@ -299,7 +297,8 @@ class FirebirdTest(Test):
         title="Data Tuple",
         description="""Data tuple to populate database with (if that option was selected above)
         
-        The data tuple given in this field will be used to provide the parameters to the SQL insert statement.  
+        The data tuple given in this field will be used to provide the parameters to the SQL insert
+        statement.
         This field needs to be a tuple of tuples or a list of lists.
         Example: ( ("Jane", 23), ("Sam", 56) ) or [ ["Sally", 21], ]""",
         multiline="true",
@@ -310,97 +309,117 @@ class FirebirdTest(Test):
         name="insert_statement",
         title="SQL Insert Statement",
         description="""The parameterized SQL insert statement to use with the data tuple (if that option was selected above)
-        
+
         The variable parameters given in this statement will be provided by the data tuple given above.
-        This statement must be parameterized and include the same number of parameters as each tuple in the data tuple.
+        This statement must be parameterized and include the same number of parameters as each tuple
+        in the data tuple.
         Example: "insert into people values (?, ?)" """
         ),
-        
+
     qm.fields.EnumerationField(
         name="statement_type_and_result",
         title="Test Statement Type and Expected Return Type",
         description="""The test statement type (Python/SQL) and expected return type (boolean/string)
-        
-        if "Python: True" or "Python: False" is selected, python source code can be supplied to be executed prior
-        to the evaluation of the test statement.  outside of catching thrown exceptions, no checking is performed
-        on the return value(s) of the source code, Because of this, the test statement is what is being evaluated for truth.
-        
+
+        if "Python: True" or "Python: False" is selected, python source code can be supplied to be
+        executed prior to the evaluation of the test statement.  outside of catching thrown exceptions,
+        no checking is performed on the return value(s) of the source code, Because of this, the test
+        statement is what is being evaluated for truth.
+
         if "Python: String" is selected, the standard output stream (if any) generated by the python
-        source code will be captured and compared against the given string.  if a python test statement is given, then
-        the python source code will be executed but it's output will be ignored, and the output of the test statement
-        will be captured and compared against the given result string.
-        
-        if "SQL: String" is selected, then the given SQL command(s) entered in the source code field will 
-        be executed using ISQL in the context of the database associated with this test, and the output (if any) compared
-        with the given string(s).""",
-        
+        source code will be captured and compared against the given string.  if a python test statement is
+        given, then the python source code will be executed but it's output will be ignored, and the output
+        of the test statement will be captured and compared against the given result string.
+
+        if "SQL: String" is selected, then the given SQL command(s) entered in the source code field will
+        be executed using ISQL in the context of the database associated with this test, and the output
+        (if any) compared with the given string(s).""",
+
         enumerals=["None: None", "Python: True", "Python: False", "Python: String", "SQL: String"],
         default_value="None: None"
         ),
-        
+
     qm.fields.TextField(
         name="source_code",
         title="Python/SQL Source Code",
         description="""The SQL or python test statement(s) to be executed
-        
-        If "Python: True" or "Python: False" was selected as the type/expected return value of the test statement, then the
-        contents of this field are optional, and will be executed before the test statement itself (which is required) is
-        evaluated for truth.  In this case any values or output returned or generated by this code will be ignored
-         (unless any exceptions are thrown).  The active connection to
-          the database associated with this test is available in the namespace of the source code as "db_conn".  The test's
-          context is available as "context" and kinterbasdb is also present.
-         
-        If "Python: String" was selected as the type/expected return value of the test statement, then any output
-         generated by this code will be compared against the given string(s).  The only exception to this rule is if 
-         a test statement is given below.  In that case, this code will be executed but the output of the test statement 
-         (and not this source code) is what will be compared against the given result string.  The active connection to
-          the database associated with this test is available in the namespace of the source code as "db_conn".  The test's
-          context is available as "context" and kinterbasdb is also present.
-         
-        If "SQL: String" was selected as the type/expected return value of the test statement, then the contents
-        of this field will be executed an ISQL script in the context of the database associated with this test.""",
-         
+
+        If "Python: True" or "Python: False" was selected as the type/expected return value of the test
+        statement, then the contents of this field are optional, and will be executed before the test
+        statement itself (which is required) is evaluated for truth.  In this case any values or output
+        returned or generated by this code will be ignored (unless any exceptions are thrown).  The active
+        connection to the database associated with this test is available in the namespace of the source
+        code as "db_conn".  The test's context is available as "context" and kinterbasdb is also present
+        as "kdb".
+
+        If "Python: String" was selected as the type/expected return value of the test statement, then any
+        output generated by this code will be compared against the given string(s).  The only exception to
+        this rule is if a test statement is given below.  In that case, this code will be executed but the
+        output of the test statement (and not this source code) is what will be compared against the given
+        result string.  The active connection to the database associated with this test is available in the
+        namespace of the source code as "db_conn".  The test's context is available as "context" and
+        kinterbasdb is also present as "kdb".
+
+        If "SQL: String" was selected as the type/expected return value of the test statement, then the
+        contents of this field will be executed an ISQL script in the context of the database associated
+        with this test.""",
+
         multiline="true",
         verbatim="true"
         ),
-        
+
     qm.fields.TextField(
         name="test_expr",
         title="Python Expression",
         description="""The python statement to evaluate
-        
-        If "Python: True" or "Python:False" was selected as the type/expected return value of the test statement, then
-        after the python source code is executed (if any was given), the value of this statement will be compared against
-         the selected True/False value
-         
-        If "Python: String" was selected then this field is optional.  If it is given a value, then after the
-        python source code is executed (if any was given), the standard output from this statement will be captured and
-        compared against the given string
-        
-        The active connection to the database associated with this test is available in the namespace of the source code as "db_conn".  
-        The test's context is available as "context" and kinterbasdb is also present.
+
+        If "Python: True" or "Python:False" was selected as the type/expected return value of the test
+        statement, then after the python source code is executed (if any was given), the value of this
+        statement will be compared against the selected True/False value
+
+        If "Python: String" was selected then this field is optional.  If it is given a value, then after
+        the python source code is executed (if any was given), the standard output from this statement will
+        be captured and compared against the given string
+
+        The active connection to the database associated with this test is available in the namespace of the
+        source code as "db_conn".
+        The test's context is available as "context" and kinterbasdb is also present as "kdb".
         """,
         multiline="true",
         verbatim="true"
         ),
-    
 
-        
     qm.fields.TextField(
         name="result_string",
         title="Expected Result String",
         description="""The expected result string for the test statement(s) (if not a boolean)
-        
+
         If "SQL: String" or "Python: String" was selected as the type/expected return value
-        of the test statement, then the output generated by Python or SQL will be compared against the text given here.
-        
-        If any regular expression substitutions are provided below, they will be applied to both the expected and actual
-        outputs of the SQL/python expressions.  if any differences exist between the expected/actual outputs, then a diff
-        will be provided as an annotation to the test results.""",
+        of the test statement, then the output generated by Python or SQL will be compared against the text
+        given here.
+
+        If any regular expression substitutions are provided below, they will be applied to both the
+        expected and actual outputs of the SQL/python expressions.  if any differences exist between the
+        expected/actual outputs, then a diff will be provided as an annotation to the test results.""",
         multiline="true",
         verbatim="true"
         ),
-   
+
+    qm.fields.TextField(
+        name="expected_stderr",
+        title="Expected stderr",
+        description="""The expected Standard Error output for the test statement(s) (if not a boolean)
+
+        If "SQL: String" was selected as the type/expected return value of the test statement, then the
+        error output generated by SQL will be compared against the text given here.
+
+        If any regular expression substitutions are provided below, they will be applied to both the
+        expected and actual error outputs of the SQL expressions.  if any differences exist between the
+        expected/actual outputs, then a diff will be provided as an annotation to the test results.""",
+        multiline="true",
+        verbatim="true"
+        ),
+
     qm.fields.SetField(SubstitutionField(
         name="substitutions",
         title="Substitutions",
@@ -412,21 +431,22 @@ class FirebirdTest(Test):
 
         You can use substitutions to ignore insignificant
         differences between the expected and actual outputs.""")),
-        
+
     qm.fields.BooleanField(
         name="drop_db",
         title="Drop Database?",
         description="""This field determines whether or not the database will be dropped
-        
-        If this field is set to "true", then prior to exiting, the database will be removed.  This is still applicable
-         if the test fails or raises an exception during execution.  If the database cannot be dropped, and the test
-          has already failed or generated an error for some other reason, then the location of the database will 
-         be given as an annotation to the result.  it is important the database is then removed manually as subsequent
-          tests may fail if they attempt to create a database with the same name.""",
+
+        If this field is set to "true", then prior to exiting, the database will be removed.  This is still
+        applicable if the test fails or raises an exception during execution.  If the database cannot be
+        dropped, and the test has already failed or generated an error for some other reason, then the
+        location of the database will be given as an annotation to the result.  it is important the database
+        is then removed manually as subsequent tests may fail if they attempt to create a database with the
+        same name.""",
         default_value="true")
-            
+
   ]
-  
+
   def __MakeEnvironment(self):
     """Construct the environment for executing the target program."""
     environment= os.environ.copy()
@@ -435,36 +455,48 @@ class FirebirdTest(Test):
       if type(value) is str:
         name = "QMV_" + key.replace(".", "__")
         environment[name]= value
-    
+
     return environment
-    
-  def __RunProgram(self, args):
+
+  def __SubstituteMacros(self,text):
+    # Substitute macros for context values
+    f_text = text
+    c = {}
+    for pair in self.__context.items():
+        c[pair[0]] = pair[1]
+    for substitution in c.keys():
+        pattern = "$("+substitution.upper()+")"
+        replacement = self.__context[substitution]
+        f_text = f_text.replace(pattern, replacement)
+    return f_text
+
+  def __RunProgram(self, stdin, args):
     environ= self.__MakeEnvironment()
-    
+
     # PC: fix values so they are strings. Needed for Windows.
     for key in environ.iterkeys():
       environ[key] = str(environ[key])
     # PC: fallback cause
     self.__cause= "Unknown cause"
-    
+
     basename   = os.path.split(args[0])[-1]
-    qm_exec    = qm.executable.Filter("", -2)
+    qm_exec    = qm.executable.Filter(self.__SubstituteMacros(stdin+"\n"), -2)
 
     exit_status= qm_exec.Run(args, environ)
 
     if sys.platform == "win32" or os.WIFEXITED(exit_status):
       return qm_exec.stdout, qm_exec.stderr
-    
-    elif os.WIFSIGNALLED(exit_status):
+
+    elif os.WIFSIGNALED(exit_status):
       self.__cause= "Process %s terminated by signal %d." % (basename, os.WTERMSIG(exit_status))
-      
+
     elif os.WIFSTOPPED(exit_status):
       self.__cause= "Process %s stopped by signal %d." % (basename, os.WSTOPSIG(exit_status))
-      
+
     else:
       self.__cause= "Process %s terminated abnormally." % basename
-      
-    
+
+
   def __KConnectDB(self):
     """Use kinterbasdb to connect to database using given options.  if we
        were instructed to do so, the database will be created first
@@ -472,21 +504,26 @@ class FirebirdTest(Test):
        "self.__context" = test's run-time self.__context (dictionary)
        "result"  = QM result object"""
     if self.create_db_method == "Create New":
-      try:
-        conn= kinterbasdb.create_database(
-          "CREATE DATABASE '%s' USER '%s' PASSWORD '%s' PAGE_SIZE=%d" % (self.__dsn, 
+      if self.page_size == "Default":
+        createCommand = "CREATE DATABASE '%s' USER '%s' PASSWORD '%s'" % (self.__dsn,
+                                                                         self.user_name,
+                                                                         self.user_password)
+      else:
+        createCommand = "CREATE DATABASE '%s' USER '%s' PASSWORD '%s' PAGE_SIZE=%d" % (self.__dsn,
                                                                          self.user_name,
                                                                          self.user_password,
-                                                                         int(self.page_size)), int(self.sql_dialect))
-                                         
+                                                                         int(self.page_size))
+      try:
+        conn= kdb.create_database(createCommand, int(self.sql_dialect))
+
         conn.close()
-      
+
       except:
         self.__result.NoteException(cause="Exception raised while creating database.")
         return
     
     try:
-      conn= kinterbasdb.connect(dsn     = self.__dsn, 
+      conn= kdb.connect(dsn     = self.__dsn,
                                 user    = self.user_name.encode(), 
                                 password= self.user_password.encode(),
                                 charset = self.character_set.encode(),
@@ -520,24 +557,19 @@ class FirebirdTest(Test):
       return script_path
       
   def __ExecISQLCommandsBlind(self):
-    script_path= self.__WriteToFile("script.isql", self.isql_script)
-    
-    if not script_path:
-      return
-      
+
     try:
-      stdout, stderr= self.__RunProgram([self.__context["isql_path"],
+      stdout, stderr= self.__RunProgram(self.isql_script,[self.__context["isql_path"],
                                          self.__dsn,
                                          "-user",     self.user_name,
-                                         "-password", self.user_password,
-                                         "-i",        script_path])
-                                       
+                                         "-password", self.user_password])
+
     except:
       # if __RunProgram couldn't run the program, it will return nothing
       # (raising an exception when we try to assign the return value)
       # whatever went wrong will be stored in "self.__cause"
       self.__result.Fail(cause= self.__cause)
-      
+
     else:
       if stderr:
         self.__AnnotateStream(stderr, "STDERR", "ISQL")
@@ -546,87 +578,73 @@ class FirebirdTest(Test):
                                
                                            
   def __ExecISQLCommands(self):
-    """Execute given ISQL commands.  we can most reliably do this by writing
-       the commands to a file first.  this method needs to have arguments passed
+    """Execute given ISQL commands. This method needs to have arguments passed
        to it because there is more than one field in the test which might
        require execution as an ISQL script.
-       
+
        "commands" = the commands to be executed (string)
        "sub_map"  = the map of regex substitutions to perform (dict)"""
-       
-    script_path= self.__WriteToFile("script.isql", self.source_code)
-    
-    if not script_path:
-      return
-      
-    output_path= self.__context["temp_directory"] + "output.isql"
-    self.__clean_up.append(output_path)
+
     try:
-      stdout, stderr= self.__RunProgram([self.__context["isql_path"],
+      stdout, stderr= self.__RunProgram(self.source_code,[self.__context["isql_path"],
                                          self.__dsn,
                                          "-user",     self.user_name,
-                                         "-password", self.user_password,
-                                         "-i",        script_path,
-                                         "-o",        output_path])
-                                       
+                                         "-password", self.user_password])
+
     except:
       self.__result.Fail(cause= self.__cause)
       exc_info = sys.exc_info()
       self.__result[Result.EXCEPTION]= "%s: %s" % exc_info[:2]
-      
+
     else:
-      if stdout or stderr:
-        self.__AnnotateStreams(stdout, stderr, "ISQL")
+
+      stdout_stripped= self.__StringStrip(stdout) # strip whole stdout
+      stdout_e_stripped= self.__StringStrip(self.result_string) # strip whole expected stdout
+      stderr_stripped= self.__StringStrip(stderr) # strip whole stderr
+      stderr_e_stripped= self.__StringStrip(self.expected_stderr) # strip whole expected stderr
+
+      if stderr_stripped != stderr_e_stripped: # if error outputs do not match
+        self.__AnnotateErrorDiff("ISQL",
+                            self.expected_stderr,
+                            stderr,
+                            stderr_e_stripped,
+                            stderr_stripped)
+      elif stdout_stripped == stdout_e_stripped: # if they match
+        return True # ok
       else:
 
-        try:
-          isql_output= open(output_path, "r")
-        except:
-          cause="Exception raised opening ISQL output file <i>%s</i> for reading." % output_path
-          self.__result.NoteException(cause= cause)
-        else:
-      
-          stdout_e_stripped= self.__StringStrip(self.result_string) # strip whole expected stdout
+        self.__AnnotateDiff("ISQL",
+                            self.result_string,
+                            stdout,
+                            stdout_e_stripped,
+                            stdout_stripped)
 
-          if self.__FileStrSame(isql_output, stdout_e_stripped): # if they match
-            return True # ok
-          else:               
-            stdout_a=          isql_output.read() # read the isql stdout from file
-            stdout_a_stripped= self.__StringStrip( stdout_a )
-      
-            self.__AnnotateDiff("ISQL",
-                                self.result_string,
-                                stdout_a,
-                                stdout_e_stripped,
-                                stdout_a_stripped)
-                       
-        
-        
+
   def __FileStrSame(self, fhandle, mstr, isql=True):
     fhandle.seek(0)
     line_list= mstr.splitlines()
     SAME= True
-    
+
     for line in fhandle.xreadlines(): # read a line
       line= self.__StringStrip(line[:-1], isql= isql)
-  
+
       if not line: # if its a blank, skip it.  we do this because the only
         continue   # real difference between doing the regex subs line by
                    # line (which we have to do to avoid reading the whole
                    # stdout into memory) and on an entire string, is that
                    # when performed on an entire string, there will be no
                    # blank lines
- 
+
       try:
         cmp_line= line_list.pop(0) # remove and store the first remaining
-       
+
       except:                      # line from the line list
         SAME= False
         break                      # if we're out of lines, then the comparison
                                    # fails because we wouldnt still be in this
                                    # loop unless there was at least one pending,
                                    # non-blank line in the file
-                             
+
 
       if line != cmp_line:         # if the lines arent the same, the loop exits
         SAME= False                # and saves the failed status
@@ -637,37 +655,53 @@ class FirebirdTest(Test):
                                    # then the comparison fails.
     fhandle.seek(0)
     return SAME
-    
-    
+
+
+  def __EncloseList(self, alist):
+    # enclose each line into doublequotes to see trailing blanks
+    return '"'+'"\n"'.join(alist.splitlines())+'"'
+
   def __AnnotateDiff(self, desc, stdout_e, stdout_a, stdout_e_strp, stdout_a_strp):
     id_str= "FirebirdTest.%s_" % desc # (i.e. FirebirdTest.ISQL_*)
-    
+
     self.__result[id_str + "stdout_expected"]         = "<pre>\n"+stdout_e+"\n</pre>"
     self.__result[id_str + "stdout_actual"]           = "<pre>\n"+stdout_a+"\n</pre>"
     self.__result[id_str + "stdout_expected_stripped"]= "<pre>\n"+stdout_e_strp+"\n</pre>"
     self.__result[id_str + "stdout_actual_stripped"]  = "<pre>\n"+stdout_a_strp+"\n</pre>"
     self.__result[id_str + "stripped_diff"]= "<pre>\n"+string.join( difflib.ndiff( stdout_e_strp.splitlines(),
                                                                          stdout_a_strp.splitlines() ), "\n")+"\n</pre>"
-                                                                         
+
     self.__result.Fail("Expected standard output from %s does not match actual output." % desc)
-                                                                      
+
+  def __AnnotateErrorDiff(self, desc, stderr_e, stderr_a, stderr_e_strp, stderr_a_strp):
+    id_str= "FirebirdTest.%s_" % desc # (i.e. FirebirdTest.ISQL_*)
+
+    self.__result[id_str + "stderr_expected"]         = "<pre>\n"+stderr_e+"\n</pre>"
+    self.__result[id_str + "stderr_actual"]           = "<pre>\n"+stderr_a+"\n</pre>"
+    self.__result[id_str + "stderr_expected_stripped"]= "<pre>\n"+stderr_e_strp+"\n</pre>"
+    self.__result[id_str + "stderr_actual_stripped"]  = "<pre>\n"+stderr_a_strp+"\n</pre>"
+    self.__result[id_str + "stderr_stripped_diff"]= "<pre>\n"+string.join( difflib.ndiff( stderr_e_strp.splitlines(),
+                                                                         stderr_a_strp.splitlines() ), "\n")+"\n</pre>"
+
+    self.__result.Fail("Expected error output from %s does not match actual error output." % desc)
+
   def __StringStrip(self, string, isql=True):
     """Strip command prompts and superfluous whitespace which might cause
        comparisons to fail on insignificant differences
-       
+
        "string" = string to strip (string)"""
     if not string:
       return string
-    
+
     if isql:
       for regex in self.__isqlsubs:
         string= re.sub(regex, "", string)
-      
+
     for pattern, replacement in self.substitutions:
       string= re.compile(pattern, re.M).sub(replacement, string)
     
     return self.__SpaceStrip(string)
-    
+
   def __SpaceStrip(self, string):
     string= re.sub("(?m)^\s+", "", string)
     return re.sub("(?m)\s+$", "", string)
@@ -716,7 +750,7 @@ class FirebirdTest(Test):
     # self.statement_type_and_result[8:] will be "True" or "False"
     
     try:
-      exec self.source_code in global_ns, local_ns
+      exec self.__SubstituteMacros(self.source_code) in global_ns, local_ns
     
     except:
       self.__result.NoteException(cause="Exception raised while executing python source code.")
@@ -741,58 +775,82 @@ class FirebirdTest(Test):
           
   def __ExecPython(self):
     global_ns, local_ns= self.__MakeNamespaces()
-    
+
     saved_out      = sys.stdout
     py_stdout_fname= self.__context["temp_directory"] + "stdout.python"
     self.__clean_up.append(py_stdout_fname)
     stdout_f       = open (py_stdout_fname, "w")
-    
+
     try:
       if self.test_expr:
-        exec self.source_code in global_ns, local_ns
-        
+        exec self.__SubstituteMacros(self.source_code) in global_ns, local_ns
+
         try:
           sys.stdout= stdout_f
-          exec self.test_expr in global_ns, local_ns
-          
+          exec self.__SubstituteMacros(self.test_expr) in global_ns, local_ns
+
         except:
           result.NoteException(cause="Exception raised while executing python expression.")
           os.remove(py_stdout_fname)
           return
       else:
         sys.stdout= stdout_f
-        exec self.source_code in global_ns, local_ns
-        
+        exec self.__SubstituteMacros(self.source_code) in global_ns, local_ns
+
     except:
       self.__result.NoteException(cause="Exception raised while executing python source code.")
     else:
+      sys.stdout= saved_out
       stdout_e_stripped= self.__StringStrip(self.result_string, isql=False)
       stdout_f.close()
       stdout_f=open(py_stdout_fname, "r")
-      if self.__FileStrSame(stdout_f, stdout_e_stripped, isql=False):
-        os.remove(py_stdout_fname)
+      stdout_a= "".join(stdout_f.readlines())
+      os.remove(py_stdout_fname)
+      stdout_a_stripped= self.__StringStrip(stdout_a, isql=False)
+
+      if stdout_a_stripped == stdout_e_stripped:
         return True
-        
+
       else:
-        stdout_a=          stdout_f.read()
-        stdout_a_stripped= self.__StringStrip(stdout_a)
-      
         self.__AnnotateDiff("python",
                             self.result_string,
                             stdout_a,
                             stdout_e_stripped,
                             stdout_a_stripped)
           
-        
+
+  def __PythonDataPrinter(self,cur):
+    # Print a header.
+    for fieldDesc in cur.description:
+        print fieldDesc[kdb.DESCRIPTION_NAME].ljust(fieldDesc[kdb.DESCRIPTION_DISPLAY_SIZE]) ,
+    print
+    for fieldDesc in cur.description:
+        print "-" * max((len(fieldDesc[kdb.DESCRIPTION_NAME]),fieldDesc[kdb.DESCRIPTION_DISPLAY_SIZE])),
+    print
+
+    # For each row, print the value of each field left-justified within
+    # the maximum possible width of that field.
+    fieldIndices = range(len(cur.description))
+    for row in cur:
+        for fieldIndex in fieldIndices:
+            fieldValue = str(row[fieldIndex])
+            fieldMaxWidth = max((len(cur.description[fieldIndex][kdb.DESCRIPTION_NAME]),cur.description[fieldIndex][kdb.DESCRIPTION_DISPLAY_SIZE]))
+
+            print fieldValue.ljust(fieldMaxWidth) ,
+
+        print
+
   def __MakeNamespaces(self):
-    global_ns={"context"     : self.__context, 
-               "kinterbasdb" : kinterbasdb,
-               "db_conn"     : self.__db_conn}
-               
+    global_ns={"context"        : self.__context,
+               "kdb"            : kdb,
+               "printData"      : self.__PythonDataPrinter,
+               "sys"            : sys,
+               "db_conn"        : self.__db_conn}
+
     local_ns={}
-      
+
     return global_ns, local_ns
-    
+
     
   def __DropDatabase(self):
     try:
@@ -1007,33 +1065,33 @@ class FirebirdTest(Test):
       else:
         self.__CleanUp()
         return
-      
+
     self.__db_conn= self.__KConnectDB()
-    
+
     if not self.__db_conn:
       return
-      
+
     if self.populate_method == "Using SQL Commands":
       retval= self.__ExecISQLCommandsBlind()
-      
+
       if not retval:
         self.__CleanUp()
         return
-        
+
     elif self.populate_method == "Using Data Tuple":
       retval= self.__InsertParam()
-      
+
       if not retval:
         self.__CleanUp()
         return
-        
+
     if self.statement_type_and_result in ["Python: True", "Python: False"]:
       retval= self.__ExecPythonBool()
-      
+
       if not retval:
         self.__CleanUp()
         return
-    
+
     elif self.statement_type_and_result == "Python: String":
       retval= self.__ExecPython()
       

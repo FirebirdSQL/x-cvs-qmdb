@@ -1,11 +1,13 @@
 <?xml version="1.0" ?>
-<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="bug_id"><text/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; LENGTH 200 FILE &quot;$(DATABASE_LOCATION)test.g00&quot; LENGTH 200;
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.1.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.1.2/-//qm/2.1.2/extension//en.dtd'>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="environment"><set/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; LENGTH 200 FILE &quot;$(DATABASE_LOCATION)TEST.G00&quot; LENGTH 200;
 
 SELECT cast(RDB$FILE_NAME as varchar(60)),RDB$FILE_SEQUENCE,RDB$FILE_START,RDB$FILE_LENGTH 
   FROM RDB$FILES;
 
 DROP DATABASE;
-</text></argument><argument name="description"><text/></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>CAST                                                         RDB$FILE_SEQUENCE RDB$FILE_START RDB$FILE_LENGTH
+</text></argument><argument name="author"><text>skopalik</text></argument><argument name="stdout"><text>CAST                                                         RDB$FILE_SEQUENCE RDB$FILE_START RDB$FILE_LENGTH
 ============================================================ ================= ============== ===============
-TEST.G00                                                      1            201             200
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set><text>^.*TEST.G00;TEST.G00</text><text>\s*;</text></set></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE DATABASE - Multi file DB</text></argument><argument name="test_id"><text>skopalik_0091</text></argument><argument name="target_group"><text>.*</text></argument></extension>
+TEST.G00                                                      1            201             200</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="target_group"><text>.*</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set><text>^.*TEST.G00;TEST.G00</text><text>\s*;</text></set></argument><argument name="bug_id"><text/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE DATABASE - Multi file DB</text></argument><argument name="test_id"><text>skopalik_0091</text></argument><argument name="resources"><set/></argument><argument name="description"><text/></argument></extension>
