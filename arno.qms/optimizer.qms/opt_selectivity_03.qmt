@@ -1,0 +1,96 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>INDEX_NAME                                SELECTIVITY 
+=============================== ===================== 
+
+I_F01_ASC                                     0.00100 
+I_F01_DESC                                    0.00100 
+I_F02_ASC                                     0.00200 
+I_F02_DESC                                    0.00200 
+I_F05_ASC                                     0.00498 
+I_F05_DESC                                    0.00498 
+I_F50_ASC                                     0.04762 
+I_F50_DESC                                    0.04762 
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>SELECTIVITY - INDEX INACTIVE / ACTIVE</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>Check if selectivity is calculated correctly.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>full_join.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE SelectivityTest (
+  F1 INTEGER NOT NULL,
+  F2 INTEGER,
+  F5 INTEGER,
+  F50 INTEGER
+);
+
+SET TERM ^^ ;
+CREATE PROCEDURE PR_SelectivityTest
+AS
+DECLARE VARIABLE FillID INTEGER;
+BEGIN
+  FillID = 1;
+  WHILE (FillID &lt;= 1000) DO
+  BEGIN
+    INSERT INTO SelectivityTest 
+      (F1, F2, F5, F50) 
+    VALUES 
+      (:FillID, 
+       (:FILLID / 2) * 2,
+       (:FILLID / 5) * 5,
+       (:FILLID / 50) * 50);
+    FillID = FillID + 1;
+  END
+END
+^^
+SET TERM ; ^^
+
+COMMIT;
+
+/* Create indexes */
+CREATE UNIQUE ASC INDEX I_F01_ASC ON SelectivityTest (F1);
+CREATE UNIQUE DESC INDEX I_F01_DESC ON SelectivityTest (F1);
+CREATE ASC INDEX I_F02_ASC ON SelectivityTest (F2);
+CREATE DESC INDEX I_F02_DESC ON SelectivityTest (F2);
+CREATE ASC INDEX I_F05_ASC ON SelectivityTest (F5);
+CREATE DESC INDEX I_F05_DESC ON SelectivityTest (F5);
+CREATE ASC INDEX I_F50_ASC ON SelectivityTest (F50);
+CREATE DESC INDEX I_F50_DESC ON SelectivityTest (F50);
+
+COMMIT;
+
+/* Deactivate indexes */
+ALTER INDEX I_F01_ASC INACTIVE;
+ALTER INDEX I_F01_DESC INACTIVE;
+ALTER INDEX I_F02_ASC INACTIVE;
+ALTER INDEX I_F02_DESC INACTIVE;
+ALTER INDEX I_F05_ASC INACTIVE;
+ALTER INDEX I_F05_DESC INACTIVE;
+ALTER INDEX I_F50_ASC INACTIVE;
+ALTER INDEX I_F50_DESC INACTIVE;
+
+COMMIT;
+
+/* Fill table with data */
+EXECUTE PROCEDURE PR_SelectivityTest;
+
+COMMIT;
+
+/* Activate indexes */
+ALTER INDEX I_F01_ASC ACTIVE;
+ALTER INDEX I_F01_DESC ACTIVE;
+ALTER INDEX I_F02_ASC ACTIVE;
+ALTER INDEX I_F02_DESC ACTIVE;
+ALTER INDEX I_F05_ASC ACTIVE;
+ALTER INDEX I_F05_DESC ACTIVE;
+ALTER INDEX I_F50_ASC ACTIVE;
+ALTER INDEX I_F50_DESC ACTIVE;
+
+COMMIT;
+</text></argument><argument name="source_code"><text>SET PLAN OFF;
+SELECT
+  RDB$INDEX_NAME AS INDEX_NAME,
+  CAST(RDB$STATISTICS AS NUMERIC(18,5)) AS SELECTIVITY
+FROM
+  RDB$INDICES
+WHERE
+  RDB$RELATION_NAME = 'SELECTIVITYTEST'
+ORDER BY
+  RDB$INDEX_NAME;
+</text></argument><argument name="test_id"><text>opt_selectivity_03</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
