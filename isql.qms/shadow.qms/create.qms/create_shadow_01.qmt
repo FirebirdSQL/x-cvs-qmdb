@@ -21,4 +21,4 @@ Transaction - oldest = 1
 Transaction - oldest active = 2
 Transaction - oldest snapshot = 2
 Transaction - Next = 5
-</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set><text>^.*TEST.SHD;TEST.SHD</text><text>;</text></set></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE SHADOW</text></argument><argument name="test_id"><text>skopalik_0167</text></argument><argument name="target_group"><text>.*</text></argument></extension>
+Default Character set: NONE</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set><text>^.*TEST.SHD;TEST.SHD</text><text>;</text></set></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE SHADOW</text></argument><argument name="test_id"><text>skopalik_0167</text></argument><argument name="target_group"><text>.*</text></argument></extension>

@@ -8,7 +8,8 @@ INSERT INTO test VALUES(6);
 SELECT AVG(id) FROM test;
 
 DROP DATABASE;
-</text></argument><argument name="description"><text>Round up (17/3 = 5.7)
+</text></argument><argument name="description"><text>Round up (17/3 = 5,66666666666667)
+But it's from INTEGER columns, so 5 is expected.
 
 Dependencies:
 CREATE DATABASE
@@ -18,5 +19,5 @@ Basic SELECT
 </text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>                  AVG
 =====================
 
-                    6
+                    5
 </text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>AVG - Test for INTEGER</text></argument><argument name="test_id"><text>skopalik_0051</text></argument><argument name="target_group"><text>.*</text></argument></extension>

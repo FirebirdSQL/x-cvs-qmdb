@@ -4,10 +4,7 @@
 SELECT CAST('1.5001' AS INTEGER) FROM rdb$Database;
 
 DROP DATABASE;
-</text></argument><argument name="description"><text>BUG!
-
-CAST CHAR -&gt; INTEGER
-Round up
+</text></argument><argument name="description"><text>CAST CHAR -&gt; INTEGER
 
 Dependencies:
 CREATE DATABASE
@@ -15,5 +12,5 @@ Basic SELECT
 </text></argument><argument name="author"><text>skopalik</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdout"><text>        CAST
 ============
 
-           2
+           1
 </text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="resources"><set/></argument><argument name="stderr"><text/></argument><argument name="title"><text>CAST CHAR -&gt; INTEGER</text></argument><argument name="test_id"><text>skopalik_0063</text></argument><argument name="target_group"><text>.*</text></argument></extension>
