@@ -35,7 +35,7 @@
 # imports
 ########################################################################
 
-import sys, os, string, re, difflib, kinterbasdb as kdb
+import sys, os, string, re, difflib, kinterbasdb as kdb, struct
 
 import qm
 import qm.common
@@ -47,6 +47,32 @@ from   qm.test.result   import *
 from   qm.test.test     import *
 from   qm.test.resource import *
 import qm.web
+
+# isc_database_info call requests
+# commented out ones were not documented, so they're not supported now
+
+isc_info_page_errors             = 54
+isc_info_record_errors           = 55
+isc_info_bpage_errors            = 56
+isc_info_dpage_errors            = 57
+isc_info_ipage_errors            = 58
+isc_info_ppage_errors            = 59
+isc_info_tpage_errors            = 60
+isc_info_db_sql_dialect          = 62
+isc_info_attachment_id           = 22
+isc_info_set_page_buffers        = 61
+isc_info_db_read_only            = 63
+isc_info_db_size_in_pages        = 64
+#frb_info_att_charset             = 101
+#isc_info_db_class                = 102
+isc_info_firebird_version        = 103
+isc_info_oldest_transaction      = 104
+isc_info_oldest_active           = 105
+isc_info_oldest_snapshot         = 106
+isc_info_next_transaction        = 107
+#isc_info_db_provider             = 108
+#isc_info_active_transactions     = 109
+
 
 ########################################################################
 # classes
@@ -846,11 +872,70 @@ class FirebirdTest(Test):
             print fieldValue.ljust(fieldMaxWidth) ,
 
         print
+        
+  def __ExtractDatabaseInfoCounts(self,buf):
+    # Extract a raw binary sequence of (unsigned short, signed int) pairs into
+    # a corresponding Python list of tuples.
+    uShortSize = struct.calcsize('H')
+    intSize = struct.calcsize('i')
+    pairSize = uShortSize + intSize
+    pairCount = len(buf) / pairSize
+
+    pairs = []
+    for i in range(pairCount):
+        bufForThisPair = buf[i*pairSize:(i+1)*pairSize]
+        relationId = struct.unpack('H', bufForThisPair[           : uShortSize])[0]
+        count      = struct.unpack('i', bufForThisPair[uShortSize :           ])[0]
+        pairs.append( (relationId, count) )
+    return pairs
+
+  def __GetDatabaseInfo(self, con, infoItems):
+    Result = dict()
+    for infoItem in infoItems:
+        if infoItem in [kdb.isc_info_allocation,kdb.isc_info_no_reserve,isc_info_db_sql_dialect,kdb.isc_info_ods_minor_version,kdb.isc_info_ods_version,
+                        kdb.isc_info_page_size,kdb.isc_info_current_memory,kdb.isc_info_forced_writes,kdb.isc_info_max_memory,kdb.isc_info_num_buffers,
+                        kdb.isc_info_sweep_interval,kdb.isc_info_limbo,kdb.isc_info_attachment_id,kdb.isc_info_fetches,kdb.isc_info_marks,kdb.isc_info_reads,
+                        kdb.isc_info_writes,isc_info_oldest_transaction,isc_info_oldest_active,isc_info_oldest_snapshot,isc_info_next_transaction,
+                        isc_info_set_page_buffers,isc_info_db_read_only,isc_info_db_size_in_pages,isc_info_page_errors,isc_info_record_errors,
+                        isc_info_bpage_errors,isc_info_dpage_errors,isc_info_ipage_errors,isc_info_ppage_errors,isc_info_tpage_errors]:
+            intResult = con.database_info(infoItem,"i")
+            Result[infoItem] = intResult
+        elif infoItem == kdb.isc_info_base_level:
+            strResult = con.database_info(infoItem,"s")
+            Result[infoItem] = (struct.unpack("B",strResult[0])[0],struct.unpack("B",strResult[1])[0])
+        elif infoItem == kdb.isc_info_db_id:
+            strResult = con.database_info(infoItem,"s")
+            intNameLen = struct.unpack("B",strResult[1])[0]
+            intSiteLen = struct.unpack("B",strResult[2+intNameLen])[0]
+            Result[infoItem] = (struct.unpack("B",strResult[0])[0],strResult[2:2+intNameLen],strResult[3+intNameLen:3+intNameLen+intSiteLen])
+        elif infoItem == kdb.isc_info_implementation:
+            strResult = con.database_info(infoItem,"s")
+            Result[infoItem] = (struct.unpack("B",strResult[1])[0],struct.unpack("B",strResult[2])[0])
+        elif infoItem in [kdb.isc_info_version,isc_info_firebird_version]:
+            strResult = con.database_info(infoItem,"s")
+            intStrLen = struct.unpack("B",strResult[1])[0]
+            Result[infoItem] = (struct.unpack("B",strResult[0])[0],strResult[2:2+intStrLen])
+        elif infoItem == kdb.isc_info_user_names:
+            strResult = con.database_info(infoItem,"s")
+            pos = 0
+            userNames = list()
+            while pos < len(strResult):
+                nameLen = struct.unpack("B",strResult[pos])[0]
+                pos = pos + 1
+                userNames.append(strResult[pos:pos+nameLen])
+                pos = pos + nameLen + 1
+            Result[infoItem] = userNames
+        elif infoItem in [kdb.isc_info_backout_count,kdb.isc_info_delete_count,kdb.isc_info_expunge_count,kdb.isc_info_insert_count,
+                          kdb.isc_info_purge_count,kdb.isc_info_read_idx_count,kdb.isc_info_read_seq_count,kdb.isc_info_update_count]:
+            binResult = con.database_info(infoItem,"s")
+            Result[infoItem] = self.__ExtractDatabaseInfoCounts(binResult)
+    return Result
 
   def __MakeNamespaces(self):
     global_ns={"context"           : self.__context,
                "kdb"               : kdb,
                "printData"         : self.__PythonDataPrinter,
+               "getDatabaseInfo"   : self.__GetDatabaseInfo,
                "sys"               : sys,
                "dsn"               : self.__dsn,
                "user_name"         : self.user_name,
