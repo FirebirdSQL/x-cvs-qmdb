@@ -45,8 +45,8 @@ To get (or update) your Local Test Repository from main, remote one, follow next
 
    1. Start the qadbm utility.
    2. If you have not started qadbm from directory where your Local Test Repository (should) reside, 
-      use LOCAL command to specify  its directory.
-      For example: local /home/fbqa
+      use REPOSITORY command to specify  its directory.
+      For example: repository /home/fbqa
    3. Use UPDATE command to get all Repository content, that isn't or is different in your Local replica.
       For example: update
 
@@ -71,8 +71,8 @@ To build platform/engine specific test suite, follow next steps:
 
    1. Start the qadbm utility.
    2. If you have not started qadbm from directory where Firebird test database resides, use 
-      LOCAL command to specify main test database directory.
-      For example: db /home/fbqa
+      REPOSITORY command to specify main test database directory.
+      For example: repository /home/fbqa
    3. Set the desired platform with PLATFORM command. Supported values are "Windows, Linux, 
       HP-UX, FreeBSD, Solaris and Sinix-Z".
       For example: platform Windows

@@ -42,7 +42,7 @@ import md5
 import base64
 import StringIO
 import xml.dom
-import xml.dom.minidom
+from xml.dom import minidom
 import shutil
 import xml
 import urllib
@@ -639,7 +639,7 @@ if __name__ == "__main__":
   parser.add_option("-p","--platform",help="FILTER. Target platform. Could be: All, Windows, Linux, HP-UX, FreeBSD, Solaris or Sinix-Z",default="All")
   parser.add_option("-a","--author",help="FILTER. Test author")
   parser.add_option("-l","--local",help="Directory with local test repository, default is current directory",default=os.getcwd())
-  parser.add_option("-r","--remote",help="URL to remote test repository, default is http://firebirdsql.sf.net/qa/",default="http://localhost/fb-local/qa/")
+  parser.add_option("-r","--remote",help="URL to remote test repository, default is http://firebird.sf.net/qa/",default="http://firebird.sf.net/qa/")
   parser.add_option("-d","--display",help="Numeber of lines displayed by LIST command at once",default=20,type="int")
 
   options, args = parser.parse_args()
