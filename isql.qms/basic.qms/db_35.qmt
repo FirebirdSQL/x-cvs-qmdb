@@ -1,0 +1,143 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.1.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.1.2/-//qm/2.1.2/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>
+RDB$COLLATION_NAME              RDB$COLLATION_ID RDB$CHARACTER_SET_ID RDB$COLLATION_ATTRIBUTES RDB$SYSTEM_FLAG   RDB$DESCRIPTION RDB$FUNCTION_NAME               
+=============================== ================ ==================== ======================== =============== ================= =============================== 
+
+NONE                                           0                    0                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+OCTETS                                         0                    1                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ASCII                                          0                    2                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+UNICODE_FSS                                    0                    3                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+SJIS_0208                                      0                    5                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+EUCJ_0208                                      0                    6                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS437                                         0                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PDOX_ASCII                                     1                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PDOX_INTL                                      2                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PDOX_SWEDFIN                                   3                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_DEU437                                      4                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_ESP437                                      5                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_FIN437                                      6                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_FRA437                                      7                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_ITA437                                      8                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_NLD437                                      9                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_SVE437                                     10                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_UK437                                      11                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_US437                                      12                   10                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS850                                         0                   11                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+
+RDB$COLLATION_NAME              RDB$COLLATION_ID RDB$CHARACTER_SET_ID RDB$COLLATION_ATTRIBUTES RDB$SYSTEM_FLAG   RDB$DESCRIPTION RDB$FUNCTION_NAME               
+=============================== ================ ==================== ======================== =============== ================= =============================== 
+DB_FRC850                                      1                   11                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_DEU850                                      2                   11                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_ESP850                                      3                   11                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_FRA850                                      4                   11                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_ITA850                                      5                   11                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_NLD850                                      6                   11                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_PTB850                                      7                   11                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_SVE850                                      8                   11                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_UK850                                       9                   11                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_US850                                      10                   11                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS865                                         0                   12                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PDOX_NORDAN4                                   1                   12                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_DAN865                                      2                   12                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_NOR865                                      3                   12                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ISO8859_1                                      0                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DA_DA                                          1                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DU_NL                                          2                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+FI_FI                                          3                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+FR_FR                                          4                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+FR_CA                                          5                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+
+RDB$COLLATION_NAME              RDB$COLLATION_ID RDB$CHARACTER_SET_ID RDB$COLLATION_ATTRIBUTES RDB$SYSTEM_FLAG   RDB$DESCRIPTION RDB$FUNCTION_NAME               
+=============================== ================ ==================== ======================== =============== ================= =============================== 
+DE_DE                                          6                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+IS_IS                                          7                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+IT_IT                                          8                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+NO_NO                                          9                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ES_ES                                         10                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+SV_SV                                         11                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+EN_UK                                         12                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+EN_US                                         14                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PT_PT                                         15                   21                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ISO8859_2                                      0                   22                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+CS_CZ                                          1                   22                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ISO_HUN                                        2                   22                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ISO8859_3                                      0                   23                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ISO8859_4                                      0                   34                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ISO8859_5                                      0                   35                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ISO8859_6                                      0                   36                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ISO8859_7                                      0                   37                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ISO8859_8                                      0                   38                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ISO8859_9                                      0                   39                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+ISO8859_13                                     0                   40                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+
+RDB$COLLATION_NAME              RDB$COLLATION_ID RDB$CHARACTER_SET_ID RDB$COLLATION_ATTRIBUTES RDB$SYSTEM_FLAG   RDB$DESCRIPTION RDB$FUNCTION_NAME               
+=============================== ================ ==================== ======================== =============== ================= =============================== 
+DOS852                                         0                   45                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_CSY                                         1                   45                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_PLK                                         2                   45                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_SLO                                         4                   45                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PDOX_CSY                                       5                   45                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PDOX_PLK                                       6                   45                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PDOX_HUN                                       7                   45                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PDOX_SLO                                       8                   45                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS857                                         0                   46                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_TRK                                         1                   46                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS860                                         0                   13                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_PTG860                                      1                   13                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS861                                         0                   47                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PDOX_ISL                                       1                   47                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS863                                         0                   14                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_FRC863                                      1                   14                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+CYRL                                           0                   50                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DB_RUS                                         1                   50                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PDOX_CYRL                                      2                   50                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS737                                         0                    9                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+
+RDB$COLLATION_NAME              RDB$COLLATION_ID RDB$CHARACTER_SET_ID RDB$COLLATION_ATTRIBUTES RDB$SYSTEM_FLAG   RDB$DESCRIPTION RDB$FUNCTION_NAME               
+=============================== ================ ==================== ======================== =============== ================= =============================== 
+DOS775                                         0                   15                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS858                                         0                   16                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS862                                         0                   17                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS864                                         0                   18                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS866                                         0                   48                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+DOS869                                         0                   49                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+WIN1250                                        0                   51                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_CSY                                        1                   51                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_HUNDC                                      2                   51                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_PLK                                        3                   51                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_SLOV                                       4                   51                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_HUN                                        5                   51                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+WIN1251                                        0                   52                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_CYRL                                       1                   52                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+WIN1251_UA                                     2                   52                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+WIN1252                                        0                   53                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_INTL                                       1                   53                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_INTL850                                    2                   53                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_NORDAN4                                    3                   53                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_SPAN                                       4                   53                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+
+RDB$COLLATION_NAME              RDB$COLLATION_ID RDB$CHARACTER_SET_ID RDB$COLLATION_ATTRIBUTES RDB$SYSTEM_FLAG   RDB$DESCRIPTION RDB$FUNCTION_NAME               
+=============================== ================ ==================== ======================== =============== ================= =============================== 
+PXW_SWEDFIN                                    5                   53                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+WIN1253                                        0                   54                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_GREEK                                      1                   54                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+WIN1254                                        0                   55                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+PXW_TURK                                       1                   55                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+NEXT                                           0                   19                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+NXT_US                                         1                   19                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+NXT_DEU                                        2                   19                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+NXT_FRA                                        3                   19                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+NXT_ITA                                        4                   19                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+NXT_ESP                                        5                   19                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+WIN1255                                        0                   58                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+WIN1256                                        0                   59                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+WIN1257                                        0                   60                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+KSC_5601                                       0                   44                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+KSC_DICTIONARY                                 1                   44                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+BIG_5                                          0                   56                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+GB_2312                                        0                   57                   &lt;null&gt;               1            &lt;null&gt; &lt;null&gt;                          
+
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>Empty DB - RDB$COLLATIONS</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>Check the correct content of RDB$COLLATIONS on empty DB.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>None (manual)</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>basic_test</text></argument><argument name="isql_script"><text/></argument><argument name="source_code"><text>select * from RDB$COLLATIONS;</text></argument><argument name="test_id"><text>pcisar_012</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>pcisar</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
