@@ -2,14 +2,14 @@
 <!DOCTYPE extension
   PUBLIC '-//QM/2.2/Extension//EN'
   'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
-<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN (T66 ORDER I_TABLE_66_ASC)
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN (T66 NATURAL)
 
-      MIN_ID 
+      MAX_ID 
 ============ 
 
- -2147483648 
-</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>MIN() and DESC index (non-unique)</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>SELECT MIN(FieldX) FROM X
-When a index can be used for sorting, use it.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>sort_by_index.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Table_66 (
+  2147483647 
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>MAX() and ASC index (non-unique)</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>SELECT MAX(FieldX) FROM X
+ASC index cannot be used for MAX() aggregate function.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>sort_by_index.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Table_66 (
   ID INTEGER
 );
 
@@ -44,11 +44,10 @@ EXECUTE PROCEDURE PR_FillTable_66;
 COMMIT;
 
 CREATE ASC INDEX I_Table_66_ASC ON Table_66 (ID);
-CREATE DESC INDEX I_Table_66_DESC ON Table_66 (ID);
 
 COMMIT;
 </text></argument><argument name="source_code"><text>SET PLAN ON;
 SELECT
-  MIN(t66.ID) AS MIN_ID
+  MAX(t66.ID) AS MAX_ID
 FROM
   Table_66 t66;</text></argument><argument name="test_id"><text>opt_sort_by_index_06</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
