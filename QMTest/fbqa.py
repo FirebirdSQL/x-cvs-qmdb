@@ -803,6 +803,8 @@ class FirebirdTest(Test):
 
     except:
       self.__result.NoteException(cause="Exception raised while executing python source code.")
+      stdout_f.close()
+      os.remove(py_stdout_fname)
     else:
       sys.stdout= saved_out
       stdout_e_stripped= self.__StringStrip(self.result_string, isql=False)
