@@ -1,20 +1,10 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
-<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
-<test>
- <class>firebird.FirebirdISQLTest</class>
- <argument name='target_group'>
-  <text>.*</text>
- </argument>
- <argument name='description'>
-  <text>CREATE SHADOW
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE SHADOW
 
 Dependencies:
 CREATE DATABASE
-</text>
- </argument>
- <argument name='stdout'>
-  <text>        Owner: SYSDBA
- Shadow 1: "TEST.SHD" auto
+</text></argument><argument name="stdout"><text>        Owner: SYSDBA
+ Shadow 1: &quot;TEST.SHD&quot; auto
 PAGE_SIZE 4096
 Number of DB pages allocated = 143
 Sweep interval = 20000
@@ -23,13 +13,7 @@ Transaction - oldest = 1
 Transaction - oldest active = 2
 Transaction - oldest snapshot = 2
 Transaction - Next = 5
-</text>
- </argument>
- <argument name='test_type'>
-  <enumeral>Positive</enumeral>
- </argument>
- <argument name='stdin'>
-  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 /*
 Tested command:
 */
@@ -37,29 +21,4 @@ CREATE SHADOW 1 '$(DATABASE_LOCATION)test.shd';
 SHOW DATABASE;
 
 DROP DATABASE;
-</text>
- </argument>
- <argument name='exit_code'>
-  <integer>0</integer>
- </argument>
- <argument name='substitutions'>
-  <set>
-   <text>".*TEST.SHD;"TEST.SHD</text>
-  </set>
- </argument>
- <argument name='environment'>
-  <set/>
- </argument>
- <argument name='author'>
-  <text>skopalik</text>
- </argument>
- <argument name='stderr'>
-  <text/>
- </argument>
- <argument name='title'>
-  <text>CREATE SHADOW</text>
- </argument>
- <argument name='test_id'>
-  <text>skopalik_0167</text>
- </argument>
-</test>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set><text>^.*TEST.SHD;TEST.SHD</text><text>;</text></set></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE SHADOW</text></argument><argument name="test_id"><text>skopalik_0167</text></argument><argument name="resources"><set/></argument></extension>

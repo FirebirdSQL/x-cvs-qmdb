@@ -1,15 +1,5 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
-<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
-<test>
- <class>firebird.FirebirdISQLTest</class>
- <argument name='target_group'>
-  <text>.*</text>
- </argument>
- <argument name='description'>
-  <text/>
- </argument>
- <argument name='stdout'>
-  <text>RDB$FIELD_NAME                  RDB$DEFAULT_SOURCE
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text/></argument><argument name="stdout"><text>RDB$FIELD_NAME                  RDB$DEFAULT_SOURCE
 =============================== ==================
 
 TEST                                        2:119
@@ -17,13 +7,7 @@ TEST                                        2:119
 RDB$DEFAULT_SOURCE:
 DEFAULT 'test string'
 ==============================================================================
-</text>
- </argument>
- <argument name='test_type'>
-  <enumeral>Positive</enumeral>
- </argument>
- <argument name='stdin'>
-  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 CREATE DOMAIN test VARCHAR(63);
 
 ALTER DOMAIN test SET DEFAULT 'test string';
@@ -31,27 +15,4 @@ COMMIT;
 SELECT RDB$FIELD_NAME, RDB$DEFAULT_SOURCE FROM rdb$fields WHERE RDB$FIELD_NAME='TEST';
 
 DROP DATABASE;
-</text>
- </argument>
- <argument name='exit_code'>
-  <integer>0</integer>
- </argument>
- <argument name='substitutions'>
-  <set/>
- </argument>
- <argument name='environment'>
-  <set/>
- </argument>
- <argument name='author'>
-  <text>skopalik</text>
- </argument>
- <argument name='stderr'>
-  <text/>
- </argument>
- <argument name='title'>
-  <text>ALTER DOMAIN - SET DEFAULT</text>
- </argument>
- <argument name='test_id'>
-  <text>skopalik_0004</text>
- </argument>
-</test>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>ALTER DOMAIN - SET DEFAULT</text></argument><argument name="test_id"><text>skopalik_0004</text></argument><argument name="resources"><set/></argument></extension>

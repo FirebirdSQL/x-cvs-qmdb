@@ -1,187 +1,150 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
-<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
-<test>
- <class>firebird.FirebirdISQLTest</class>
- <argument name='target_group'>
-  <text>.*</text>
- </argument>
- <argument name='description'>
-  <text>Check for correct content of RDB$TYPES in empty database.</text>
- </argument>
- <argument name='stdout'>
-  <text>RDB$FIELD_NAME                  RDB$TYPE RDB$TYPE_NAME                     RDB$DESCRIPTION RDB$SYSTEM_FLAG 
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Check for correct content of RDB$TYPES in empty database.</text></argument><argument name="stdout"><text>RDB$FIELD_NAME                  RDB$TYPE RDB$TYPE_NAME                     RDB$DESCRIPTION RDB$SYSTEM_FLAG 
 =============================== ======== =============================== ================= =============== 
 
-RDB$FIELD_TYPE                        14 TEXT                                       &lt;null>               1 
-RDB$FIELD_TYPE                         7 SHORT                                      &lt;null>               1 
-RDB$FIELD_TYPE                         8 LONG                                       &lt;null>               1 
-RDB$FIELD_TYPE                         9 QUAD                                       &lt;null>               1 
-RDB$FIELD_TYPE                        10 FLOAT                                      &lt;null>               1 
-RDB$FIELD_TYPE                        27 DOUBLE                                     &lt;null>               1 
-RDB$FIELD_TYPE                        35 TIMESTAMP                                  &lt;null>               1 
-RDB$FIELD_TYPE                        37 VARYING                                    &lt;null>               1 
-RDB$FIELD_TYPE                       261 BLOB                                       &lt;null>               1 
-RDB$FIELD_TYPE                        40 CSTRING                                    &lt;null>               1 
-RDB$FIELD_TYPE                        45 BLOB_ID                                    &lt;null>               1 
-RDB$FIELD_TYPE                        12 DATE                                       &lt;null>               1 
-RDB$FIELD_TYPE                        13 TIME                                       &lt;null>               1 
-RDB$FIELD_TYPE                        16 INT64                                      &lt;null>               1 
-RDB$FIELD_SUB_TYPE                     1 TEXT                                       &lt;null>               1 
-RDB$FIELD_SUB_TYPE                     2 BLR                                        &lt;null>               1 
-RDB$FIELD_SUB_TYPE                     3 ACL                                        &lt;null>               1 
-RDB$FIELD_SUB_TYPE                     4 RANGES                                     &lt;null>               1 
-RDB$FIELD_SUB_TYPE                     5 SUMMARY                                    &lt;null>               1 
-RDB$FIELD_SUB_TYPE                     6 FORMAT                                     &lt;null>               1 
+RDB$FIELD_TYPE                        14 TEXT                                       &lt;null&gt;               1 
+RDB$FIELD_TYPE                         7 SHORT                                      &lt;null&gt;               1 
+RDB$FIELD_TYPE                         8 LONG                                       &lt;null&gt;               1 
+RDB$FIELD_TYPE                         9 QUAD                                       &lt;null&gt;               1 
+RDB$FIELD_TYPE                        10 FLOAT                                      &lt;null&gt;               1 
+RDB$FIELD_TYPE                        27 DOUBLE                                     &lt;null&gt;               1 
+RDB$FIELD_TYPE                        35 TIMESTAMP                                  &lt;null&gt;               1 
+RDB$FIELD_TYPE                        37 VARYING                                    &lt;null&gt;               1 
+RDB$FIELD_TYPE                       261 BLOB                                       &lt;null&gt;               1 
+RDB$FIELD_TYPE                        40 CSTRING                                    &lt;null&gt;               1 
+RDB$FIELD_TYPE                        45 BLOB_ID                                    &lt;null&gt;               1 
+RDB$FIELD_TYPE                        12 DATE                                       &lt;null&gt;               1 
+RDB$FIELD_TYPE                        13 TIME                                       &lt;null&gt;               1 
+RDB$FIELD_TYPE                        16 INT64                                      &lt;null&gt;               1 
+RDB$FIELD_SUB_TYPE                     1 TEXT                                       &lt;null&gt;               1 
+RDB$FIELD_SUB_TYPE                     2 BLR                                        &lt;null&gt;               1 
+RDB$FIELD_SUB_TYPE                     3 ACL                                        &lt;null&gt;               1 
+RDB$FIELD_SUB_TYPE                     4 RANGES                                     &lt;null&gt;               1 
+RDB$FIELD_SUB_TYPE                     5 SUMMARY                                    &lt;null&gt;               1 
+RDB$FIELD_SUB_TYPE                     6 FORMAT                                     &lt;null&gt;               1 
 
 RDB$FIELD_NAME                  RDB$TYPE RDB$TYPE_NAME                     RDB$DESCRIPTION RDB$SYSTEM_FLAG 
 =============================== ======== =============================== ================= =============== 
-RDB$FIELD_SUB_TYPE                     7 TRANSACTION_DESCRIPTION                    &lt;null>               1 
-RDB$FIELD_SUB_TYPE                     8 EXTERNAL_FILE_DESCRIPTION                  &lt;null>               1 
-RDB$FUNCTION_TYPE                      0 VALUE                                      &lt;null>               1 
-RDB$FUNCTION_TYPE                      1 BOOLEAN                                    &lt;null>               1 
-RDB$MECHANISM                          0 BY_VALUE                                   &lt;null>               1 
-RDB$MECHANISM                          1 BY_REFERENCE                               &lt;null>               1 
-RDB$MECHANISM                          2 BY_VMS_DESCRIPTOR                          &lt;null>               1 
-RDB$MECHANISM                          3 BY_ISC_DESCRIPTOR                          &lt;null>               1 
-RDB$MECHANISM                          4 BY_SCALAR_ARRAY_DESCRIPTOR                 &lt;null>               1 
-RDB$TRIGGER_TYPE                       1 PRE_STORE                                  &lt;null>               1 
-RDB$TRIGGER_TYPE                       2 POST_STORE                                 &lt;null>               1 
-RDB$TRIGGER_TYPE                       3 PRE_MODIFY                                 &lt;null>               1 
-RDB$TRIGGER_TYPE                       4 POST_MODIFY                                &lt;null>               1 
-RDB$TRIGGER_TYPE                       5 PRE_ERASE                                  &lt;null>               1 
-RDB$TRIGGER_TYPE                       6 POST_ERASE                                 &lt;null>               1 
-RDB$OBJECT_TYPE                        0 RELATION                                   &lt;null>               1 
-RDB$OBJECT_TYPE                        1 VIEW                                       &lt;null>               1 
-RDB$OBJECT_TYPE                        2 TRIGGER                                    &lt;null>               1 
-RDB$OBJECT_TYPE                        3 COMPUTED_FIELD                             &lt;null>               1 
-RDB$OBJECT_TYPE                        4 VALIDATION                                 &lt;null>               1 
+RDB$FIELD_SUB_TYPE                     7 TRANSACTION_DESCRIPTION                    &lt;null&gt;               1 
+RDB$FIELD_SUB_TYPE                     8 EXTERNAL_FILE_DESCRIPTION                  &lt;null&gt;               1 
+RDB$FUNCTION_TYPE                      0 VALUE                                      &lt;null&gt;               1 
+RDB$FUNCTION_TYPE                      1 BOOLEAN                                    &lt;null&gt;               1 
+RDB$MECHANISM                          0 BY_VALUE                                   &lt;null&gt;               1 
+RDB$MECHANISM                          1 BY_REFERENCE                               &lt;null&gt;               1 
+RDB$MECHANISM                          2 BY_VMS_DESCRIPTOR                          &lt;null&gt;               1 
+RDB$MECHANISM                          3 BY_ISC_DESCRIPTOR                          &lt;null&gt;               1 
+RDB$MECHANISM                          4 BY_SCALAR_ARRAY_DESCRIPTOR                 &lt;null&gt;               1 
+RDB$TRIGGER_TYPE                       1 PRE_STORE                                  &lt;null&gt;               1 
+RDB$TRIGGER_TYPE                       2 POST_STORE                                 &lt;null&gt;               1 
+RDB$TRIGGER_TYPE                       3 PRE_MODIFY                                 &lt;null&gt;               1 
+RDB$TRIGGER_TYPE                       4 POST_MODIFY                                &lt;null&gt;               1 
+RDB$TRIGGER_TYPE                       5 PRE_ERASE                                  &lt;null&gt;               1 
+RDB$TRIGGER_TYPE                       6 POST_ERASE                                 &lt;null&gt;               1 
+RDB$OBJECT_TYPE                        0 RELATION                                   &lt;null&gt;               1 
+RDB$OBJECT_TYPE                        1 VIEW                                       &lt;null&gt;               1 
+RDB$OBJECT_TYPE                        2 TRIGGER                                    &lt;null&gt;               1 
+RDB$OBJECT_TYPE                        3 COMPUTED_FIELD                             &lt;null&gt;               1 
+RDB$OBJECT_TYPE                        4 VALIDATION                                 &lt;null&gt;               1 
 
 RDB$FIELD_NAME                  RDB$TYPE RDB$TYPE_NAME                     RDB$DESCRIPTION RDB$SYSTEM_FLAG 
 =============================== ======== =============================== ================= =============== 
-RDB$OBJECT_TYPE                        5 PROCEDURE                                  &lt;null>               1 
-RDB$OBJECT_TYPE                        6 EXPRESSION_INDEX                           &lt;null>               1 
-RDB$OBJECT_TYPE                        7 EXCEPTION                                  &lt;null>               1 
-RDB$OBJECT_TYPE                        8 USER                                       &lt;null>               1 
-RDB$OBJECT_TYPE                        9 FIELD                                      &lt;null>               1 
-RDB$OBJECT_TYPE                       10 INDEX                                      &lt;null>               1 
-RDB$OBJECT_TYPE                       11 DEPENDENT_COUNT                            &lt;null>               1 
-RDB$OBJECT_TYPE                       12 USER_GROUP                                 &lt;null>               1 
-RDB$OBJECT_TYPE                       13 ROLE                                       &lt;null>               1 
-RDB$OBJECT_TYPE                       14 GENERATOR                                  &lt;null>               1 
-RDB$OBJECT_TYPE                       15 UDF                                        &lt;null>               1 
-RDB$OBJECT_TYPE                       16 BLOB_FILTER                                &lt;null>               1 
-RDB$TRANSACTION_STATE                  1 LIMBO                                      &lt;null>               1 
-RDB$TRANSACTION_STATE                  2 COMMITTED                                  &lt;null>               1 
-RDB$TRANSACTION_STATE                  3 ROLLED_BACK                                &lt;null>               1 
-RDB$SYSTEM_FLAG                        0 USER                                       &lt;null>               1 
-RDB$SYSTEM_FLAG                        1 SYSTEM                                     &lt;null>               1 
-RDB$SYSTEM_FLAG                        2 QLI                                        &lt;null>               1 
-RDB$SYSTEM_FLAG                        3 CHECK_CONSTRAINT                           &lt;null>               1 
-RDB$SYSTEM_FLAG                        4 REFERENTIAL_CONSTRAINT                     &lt;null>               1 
+RDB$OBJECT_TYPE                        5 PROCEDURE                                  &lt;null&gt;               1 
+RDB$OBJECT_TYPE                        6 EXPRESSION_INDEX                           &lt;null&gt;               1 
+RDB$OBJECT_TYPE                        7 EXCEPTION                                  &lt;null&gt;               1 
+RDB$OBJECT_TYPE                        8 USER                                       &lt;null&gt;               1 
+RDB$OBJECT_TYPE                        9 FIELD                                      &lt;null&gt;               1 
+RDB$OBJECT_TYPE                       10 INDEX                                      &lt;null&gt;               1 
+RDB$OBJECT_TYPE                       11 DEPENDENT_COUNT                            &lt;null&gt;               1 
+RDB$OBJECT_TYPE                       12 USER_GROUP                                 &lt;null&gt;               1 
+RDB$OBJECT_TYPE                       13 ROLE                                       &lt;null&gt;               1 
+RDB$OBJECT_TYPE                       14 GENERATOR                                  &lt;null&gt;               1 
+RDB$OBJECT_TYPE                       15 UDF                                        &lt;null&gt;               1 
+RDB$OBJECT_TYPE                       16 BLOB_FILTER                                &lt;null&gt;               1 
+RDB$TRANSACTION_STATE                  1 LIMBO                                      &lt;null&gt;               1 
+RDB$TRANSACTION_STATE                  2 COMMITTED                                  &lt;null&gt;               1 
+RDB$TRANSACTION_STATE                  3 ROLLED_BACK                                &lt;null&gt;               1 
+RDB$SYSTEM_FLAG                        0 USER                                       &lt;null&gt;               1 
+RDB$SYSTEM_FLAG                        1 SYSTEM                                     &lt;null&gt;               1 
+RDB$SYSTEM_FLAG                        2 QLI                                        &lt;null&gt;               1 
+RDB$SYSTEM_FLAG                        3 CHECK_CONSTRAINT                           &lt;null&gt;               1 
+RDB$SYSTEM_FLAG                        4 REFERENTIAL_CONSTRAINT                     &lt;null&gt;               1 
 
 RDB$FIELD_NAME                  RDB$TYPE RDB$TYPE_NAME                     RDB$DESCRIPTION RDB$SYSTEM_FLAG 
 =============================== ======== =============================== ================= =============== 
-RDB$SYSTEM_FLAG                        5 VIEW_CHECK                                 &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 0 NONE                                       &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 1 OCTETS                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 1 BINARY                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 2 ASCII                                      &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 2 USASCII                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 2 ASCII7                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 3 UNICODE_FSS                                &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 3 UTF_FSS                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 3 SQL_TEXT                                   &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 5 SJIS_0208                                  &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 5 SJIS                                       &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 6 EUCJ_0208                                  &lt;null>               1 
-RDB$CHARACTER_SET_NAME                 6 EUCJ                                       &lt;null>               1 
-RDB$CHARACTER_SET_NAME                10 DOS437                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                10 DOS_437                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                11 DOS850                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                11 DOS_850                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                12 DOS865                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                12 DOS_865                                    &lt;null>               1 
+RDB$SYSTEM_FLAG                        5 VIEW_CHECK                                 &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 0 NONE                                       &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 1 OCTETS                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 1 BINARY                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 2 ASCII                                      &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 2 USASCII                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 2 ASCII7                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 3 UNICODE_FSS                                &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 3 UTF_FSS                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 3 SQL_TEXT                                   &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 5 SJIS_0208                                  &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 5 SJIS                                       &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 6 EUCJ_0208                                  &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                 6 EUCJ                                       &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                10 DOS437                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                10 DOS_437                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                11 DOS850                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                11 DOS_850                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                12 DOS865                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                12 DOS_865                                    &lt;null&gt;               1 
 
 RDB$FIELD_NAME                  RDB$TYPE RDB$TYPE_NAME                     RDB$DESCRIPTION RDB$SYSTEM_FLAG 
 =============================== ======== =============================== ================= =============== 
-RDB$CHARACTER_SET_NAME                21 ISO8859_1                                  &lt;null>               1 
-RDB$CHARACTER_SET_NAME                21 ISO_8859_1                                 &lt;null>               1 
-RDB$CHARACTER_SET_NAME                21 ISO88591                                   &lt;null>               1 
-RDB$CHARACTER_SET_NAME                21 LATIN1                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                21 ANSI                                       &lt;null>               1 
-RDB$CHARACTER_SET_NAME                22 ISO8859_2                                  &lt;null>               1 
-RDB$CHARACTER_SET_NAME                22 ISO_8859_2                                 &lt;null>               1 
-RDB$CHARACTER_SET_NAME                22 ISO88591                                   &lt;null>               1 
-RDB$CHARACTER_SET_NAME                22 LATIN2                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                22 ISO-8859-2                                 &lt;null>               1 
-RDB$CHARACTER_SET_NAME                45 DOS852                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                45 DOS_852                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                46 DOS857                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                46 DOS_857                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                13 DOS860                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                13 DOS_860                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                47 DOS861                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                47 DOS_861                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                14 DOS863                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                14 DOS_863                                    &lt;null>               1 
+RDB$CHARACTER_SET_NAME                21 ISO8859_1                                  &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                21 ISO_8859_1                                 &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                21 ISO88591                                   &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                21 LATIN1                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                21 ANSI                                       &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                22 ISO8859_2                                  &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                22 ISO_8859_2                                 &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                22 ISO88591                                   &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                22 LATIN2                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                22 ISO-8859-2                                 &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                45 DOS852                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                45 DOS_852                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                46 DOS857                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                46 DOS_857                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                13 DOS860                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                13 DOS_860                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                47 DOS861                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                47 DOS_861                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                14 DOS863                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                14 DOS_863                                    &lt;null&gt;               1 
 
 RDB$FIELD_NAME                  RDB$TYPE RDB$TYPE_NAME                     RDB$DESCRIPTION RDB$SYSTEM_FLAG 
 =============================== ======== =============================== ================= =============== 
-RDB$CHARACTER_SET_NAME                50 CYRL                                       &lt;null>               1 
-RDB$CHARACTER_SET_NAME                51 WIN1250                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                51 WIN_1250                                   &lt;null>               1 
-RDB$CHARACTER_SET_NAME                52 WIN1251                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                52 WIN_1251                                   &lt;null>               1 
-RDB$CHARACTER_SET_NAME                53 WIN1252                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                53 WIN_1252                                   &lt;null>               1 
-RDB$CHARACTER_SET_NAME                54 WIN1253                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                54 WIN_1253                                   &lt;null>               1 
-RDB$CHARACTER_SET_NAME                55 WIN1254                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                55 WIN_1254                                   &lt;null>               1 
-RDB$CHARACTER_SET_NAME                19 NEXT                                       &lt;null>               1 
-RDB$CHARACTER_SET_NAME                44 KSC_5601                                   &lt;null>               1 
-RDB$CHARACTER_SET_NAME                44 KSC5601                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                44 DOS_949                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                44 WIN_949                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                56 BIG_5                                      &lt;null>               1 
-RDB$CHARACTER_SET_NAME                56 BIG5                                       &lt;null>               1 
-RDB$CHARACTER_SET_NAME                56 DOS_950                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                56 WIN_950                                    &lt;null>               1 
+RDB$CHARACTER_SET_NAME                50 CYRL                                       &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                51 WIN1250                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                51 WIN_1250                                   &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                52 WIN1251                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                52 WIN_1251                                   &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                53 WIN1252                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                53 WIN_1252                                   &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                54 WIN1253                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                54 WIN_1253                                   &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                55 WIN1254                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                55 WIN_1254                                   &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                19 NEXT                                       &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                44 KSC_5601                                   &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                44 KSC5601                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                44 DOS_949                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                44 WIN_949                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                56 BIG_5                                      &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                56 BIG5                                       &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                56 DOS_950                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                56 WIN_950                                    &lt;null&gt;               1 
 
 RDB$FIELD_NAME                  RDB$TYPE RDB$TYPE_NAME                     RDB$DESCRIPTION RDB$SYSTEM_FLAG 
 =============================== ======== =============================== ================= =============== 
-RDB$CHARACTER_SET_NAME                57 GB_2312                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                57 GB2312                                     &lt;null>               1 
-RDB$CHARACTER_SET_NAME                57 DOS_936                                    &lt;null>               1 
-RDB$CHARACTER_SET_NAME                57 WIN_936                                    &lt;null>               1 
+RDB$CHARACTER_SET_NAME                57 GB_2312                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                57 GB2312                                     &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                57 DOS_936                                    &lt;null&gt;               1 
+RDB$CHARACTER_SET_NAME                57 WIN_936                                    &lt;null&gt;               1 
 
-</text>
- </argument>
- <argument name='test_type'>
-  <enumeral>Positive</enumeral>
- </argument>
- <argument name='stdin'>
-  <text>select * from RDB$TYPES;
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>select * from RDB$TYPES;
 commit;
-</text>
- </argument>
- <argument name='exit_code'>
-  <integer>0</integer>
- </argument>
- <argument name='environment'>
-  <set/>
- </argument>
- <argument name='author'>
-  <text>pcisar</text>
- </argument>
- <argument name='stderr'>
-  <text/>
- </argument>
- <argument name='title'>
-  <text>Empty DB - RDB$TYPES</text>
- </argument>
- <argument name='test_id'>
-  <text>pcisar_0030</text>
- </argument>
- <resource>isql.basic.empty_db</resource>
-</test>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>pcisar</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$TYPES</text></argument><argument name="test_id"><text>pcisar_0030</text></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument></extension>

@@ -1,25 +1,9 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
-<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
-<test>
- <class>firebird.FirebirdISQLTest</class>
- <argument name='target_group'>
-  <text>.*</text>
- </argument>
- <argument name='description'>
-  <text>Adding secondary file with alternate keyword for database.</text>
- </argument>
- <argument name='stdout'>
-  <text>CAST                                               RDB$FILE_SEQUENCE RDB$FILE_START RDB$FILE_LENGTH 
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Adding secondary file with alternate keyword for database.</text></argument><argument name="stdout"><text>CAST                                               RDB$FILE_SEQUENCE RDB$FILE_START RDB$FILE_LENGTH 
 ================================================== ================= ============== =============== 
 
 C:\TEST.G00                                                        1          10000               0 
-</text>
- </argument>
- <argument name='test_type'>
-  <enumeral>Positive</enumeral>
- </argument>
- <argument name='stdin'>
-  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 
 ALTER SCHEMA ADD FILE '$(DATABASE_LOCATION)test.g00' STARTING 10000;
 COMMIT;
@@ -28,30 +12,4 @@ SELECT cast(RDB$FILE_NAME as varchar(50)),RDB$FILE_SEQUENCE,RDB$FILE_START,RDB$F
   FROM RDB$FILES;
 
 DROP DATABASE;
-</text>
- </argument>
- <argument name='exit_code'>
-  <integer>0</integer>
- </argument>
- <argument name='substitutions'>
-  <set>
-   <text>^.*TEST.G;TEST.G</text>
-   <text>\s+;</text>
-  </set>
- </argument>
- <argument name='environment'>
-  <set/>
- </argument>
- <argument name='author'>
-  <text>skopalik</text>
- </argument>
- <argument name='stderr'>
-  <text/>
- </argument>
- <argument name='title'>
-  <text>ALTER SCHEMA ADD FILE</text>
- </argument>
- <argument name='test_id'>
-  <text>skopalik_0002</text>
- </argument>
-</test>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set><text>^.*TEST.G;TEST.G</text><text>\s+;</text></set></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>ALTER SCHEMA ADD FILE</text></argument><argument name="test_id"><text>skopalik_0002</text></argument><argument name="resources"><set/></argument></extension>

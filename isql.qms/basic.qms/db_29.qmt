@@ -1,132 +1,122 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
-<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
-<test>
- <class>firebird.FirebirdISQLTest</class>
- <argument name='target_group'>
-  <text>.*</text>
- </argument>
- <argument name='description'>
-  <text>Check for correct content of RDB$TRIGGERS in empty database.</text>
- </argument>
- <argument name='stdout'>
-  <text>RDB$TRIGGER_NAME                RDB$RELATION_NAME               RDB$TRIGGER_SEQUENCE RDB$TRIGGER_TYPE RDB$TRIGGER_SOURCE   RDB$TRIGGER_BLR   RDB$DESCRIPTION RDB$TRIGGER_INACTIVE RDB$SYSTEM_FLAG RDB$FLAGS 
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Check for correct content of RDB$TRIGGERS in empty database.</text></argument><argument name="stdout"><text>RDB$TRIGGER_NAME                RDB$RELATION_NAME               RDB$TRIGGER_SEQUENCE RDB$TRIGGER_TYPE RDB$TRIGGER_SOURCE   RDB$TRIGGER_BLR   RDB$DESCRIPTION RDB$TRIGGER_INACTIVE RDB$SYSTEM_FLAG RDB$FLAGS 
 =============================== =============================== ==================== ================ ================== ================= ================= ==================== =============== ========= 
 
-RDB$TRIGGER_1                   RDB$USER_PRIVILEGES                                0                3             &lt;null>               c:0            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_1                   RDB$USER_PRIVILEGES                                0                3             &lt;null&gt;               c:0            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_8                   RDB$USER_PRIVILEGES                                0                5             &lt;null>               c:2            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_8                   RDB$USER_PRIVILEGES                                0                5             &lt;null&gt;               c:2            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_9                   RDB$USER_PRIVILEGES                                0                1             &lt;null>               c:4            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_9                   RDB$USER_PRIVILEGES                                0                1             &lt;null&gt;               c:4            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_2                   RDB$TRIGGERS                                       0                3             &lt;null>               c:6            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_2                   RDB$TRIGGERS                                       0                3             &lt;null&gt;               c:6            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_3                   RDB$TRIGGERS                                       0                5             &lt;null>               c:8            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_3                   RDB$TRIGGERS                                       0                5             &lt;null&gt;               c:8            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_4                   RDB$RELATIONS                                      0                1             &lt;null>              c:f0            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_4                   RDB$RELATIONS                                      0                1             &lt;null&gt;              c:f0            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_5                   RDB$RELATIONS                                      0                3             &lt;null>              c:f2            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_5                   RDB$RELATIONS                                      0                3             &lt;null&gt;              c:f2            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_6                   RDB$GENERATORS                                     0                1             &lt;null>              c:f4            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_6                   RDB$GENERATORS                                     0                1             &lt;null&gt;              c:f4            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_26                  RDB$RELATION_CONSTRAINTS                           0                1             &lt;null>              c:f6            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_26                  RDB$RELATION_CONSTRAINTS                           0                1             &lt;null&gt;              c:f6            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_25                  RDB$RELATION_CONSTRAINTS                           0                3             &lt;null>              c:f8            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_25                  RDB$RELATION_CONSTRAINTS                           0                3             &lt;null&gt;              c:f8            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_10                  RDB$RELATION_CONSTRAINTS                           0                5             &lt;null>              c:fa            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_10                  RDB$RELATION_CONSTRAINTS                           0                5             &lt;null&gt;              c:fa            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_11                  RDB$RELATION_CONSTRAINTS                           0                6             &lt;null>              c:fc            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_11                  RDB$RELATION_CONSTRAINTS                           0                6             &lt;null&gt;              c:fc            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_12                  RDB$REF_CONSTRAINTS                                0                1             &lt;null>              c:fe            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_12                  RDB$REF_CONSTRAINTS                                0                1             &lt;null&gt;              c:fe            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_13                  RDB$REF_CONSTRAINTS                                0                3             &lt;null>             c:100            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_13                  RDB$REF_CONSTRAINTS                                0                3             &lt;null&gt;             c:100            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_14                  RDB$CHECK_CONSTRAINTS                              0                3             &lt;null>             c:102            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_14                  RDB$CHECK_CONSTRAINTS                              0                3             &lt;null&gt;             c:102            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_15                  RDB$CHECK_CONSTRAINTS                              0                5             &lt;null>             c:104            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_15                  RDB$CHECK_CONSTRAINTS                              0                5             &lt;null&gt;             c:104            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_16                  RDB$CHECK_CONSTRAINTS                              0                6             &lt;null>             c:1de            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_16                  RDB$CHECK_CONSTRAINTS                              0                6             &lt;null&gt;             c:1de            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_17                  RDB$INDEX_SEGMENTS                                 0                5             &lt;null>             c:1e0            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_17                  RDB$INDEX_SEGMENTS                                 0                5             &lt;null&gt;             c:1e0            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_18                  RDB$INDEX_SEGMENTS                                 0                3             &lt;null>             c:1e2            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_18                  RDB$INDEX_SEGMENTS                                 0                3             &lt;null&gt;             c:1e2            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_19                  RDB$INDICES                                        0                5             &lt;null>             c:1e4            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_19                  RDB$INDICES                                        0                5             &lt;null&gt;             c:1e4            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
@@ -135,118 +125,91 @@ BLOB display set to subtype 1. This BLOB: subtype = 2
 
 RDB$TRIGGER_NAME                RDB$RELATION_NAME               RDB$TRIGGER_SEQUENCE RDB$TRIGGER_TYPE RDB$TRIGGER_SOURCE   RDB$TRIGGER_BLR   RDB$DESCRIPTION RDB$TRIGGER_INACTIVE RDB$SYSTEM_FLAG RDB$FLAGS 
 =============================== =============================== ==================== ================ ================== ================= ================= ==================== =============== ========= 
-RDB$TRIGGER_20                  RDB$INDICES                                        0                3             &lt;null>             c:1e6            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_20                  RDB$INDICES                                        0                3             &lt;null&gt;             c:1e6            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_21                  RDB$TRIGGERS                                       0                5             &lt;null>             c:1e8            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_21                  RDB$TRIGGERS                                       0                5             &lt;null&gt;             c:1e8            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_22                  RDB$TRIGGERS                                       0                3             &lt;null>             c:1ea            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_22                  RDB$TRIGGERS                                       0                3             &lt;null&gt;             c:1ea            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_23                  RDB$RELATION_FIELDS                                0                5             &lt;null>             c:1ec            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_23                  RDB$RELATION_FIELDS                                0                5             &lt;null&gt;             c:1ec            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_24                  RDB$RELATION_FIELDS                                0                3             &lt;null>             c:1ee            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_24                  RDB$RELATION_FIELDS                                0                3             &lt;null&gt;             c:1ee            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_27                  RDB$RELATION_FIELDS                                0                6             &lt;null>             c:1f0            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_27                  RDB$RELATION_FIELDS                                0                6             &lt;null&gt;             c:1f0            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_28                  RDB$PROCEDURES                                     0                1             &lt;null>             c:2ce            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_28                  RDB$PROCEDURES                                     0                1             &lt;null&gt;             c:2ce            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_29                  RDB$PROCEDURES                                     0                3             &lt;null>             c:2d0            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_29                  RDB$PROCEDURES                                     0                3             &lt;null&gt;             c:2d0            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_30                  RDB$EXCEPTIONS                                     0                1             &lt;null>             c:2d2            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_30                  RDB$EXCEPTIONS                                     0                1             &lt;null&gt;             c:2d2            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_31                  RDB$USER_PRIVILEGES                                0                3             &lt;null>             c:2d4            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_31                  RDB$USER_PRIVILEGES                                0                3             &lt;null&gt;             c:2d4            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_32                  RDB$USER_PRIVILEGES                                0                5             &lt;null>             c:2d6            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_32                  RDB$USER_PRIVILEGES                                0                5             &lt;null&gt;             c:2d6            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_33                  RDB$USER_PRIVILEGES                                0                1             &lt;null>             c:2d8            &lt;null>               &lt;null>               1         0 
+RDB$TRIGGER_33                  RDB$USER_PRIVILEGES                                0                1             &lt;null&gt;             c:2d8            &lt;null&gt;               &lt;null&gt;               1         0 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_34                  RDB$RELATION_CONSTRAINTS                           0                6             &lt;null>             c:2da            &lt;null>               &lt;null>               1         2 
+RDB$TRIGGER_34                  RDB$RELATION_CONSTRAINTS                           0                6             &lt;null&gt;             c:2da            &lt;null&gt;               &lt;null&gt;               1         2 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
-RDB$TRIGGER_35                  RDB$CHECK_CONSTRAINTS                              0                6             &lt;null>             c:2dc            &lt;null>               &lt;null>               1         2 
+RDB$TRIGGER_35                  RDB$CHECK_CONSTRAINTS                              0                6             &lt;null&gt;             c:2dc            &lt;null&gt;               &lt;null&gt;               1         2 
 ==============================================================================
 RDB$TRIGGER_BLR:  
 BLOB display set to subtype 1. This BLOB: subtype = 2
 
 ==============================================================================
 
-</text>
- </argument>
- <argument name='test_type'>
-  <enumeral>Positive</enumeral>
- </argument>
- <argument name='stdin'>
-  <text>select * from RDB$TRIGGERS;
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>select * from RDB$TRIGGERS;
 commit;
-</text>
- </argument>
- <argument name='exit_code'>
-  <integer>0</integer>
- </argument>
- <argument name='environment'>
-  <set/>
- </argument>
- <argument name='author'>
-  <text>pcisar</text>
- </argument>
- <argument name='stderr'>
-  <text/>
- </argument>
- <argument name='title'>
-  <text>Empty DB - RDB$TRIGGERS</text>
- </argument>
- <argument name='test_id'>
-  <text>pcisar_0029</text>
- </argument>
- <resource>isql.basic.empty_db</resource>
-</test>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>pcisar</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$TRIGGERS</text></argument><argument name="test_id"><text>pcisar_0029</text></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument></extension>

@@ -1,49 +1,10 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
-<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
-<test>
- <class>firebird.FirebirdISQLTest</class>
- <argument name='target_group'>
-  <text>.*</text>
- </argument>
- <argument name='description'>
-  <text>Array domain creation based TIMESTAMP datatype.</text>
- </argument>
- <argument name='stdout'>
-  <text>TEST                            ARRAY OF [1:1024] 
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Array domain creation based TIMESTAMP datatype.</text></argument><argument name="stdout"><text>TEST                            ARRAY OF [1:1024] 
                                 TIMESTAMP Nullable
-</text>
- </argument>
- <argument name='test_type'>
-  <enumeral>Positive</enumeral>
- </argument>
- <argument name='stdin'>
-  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 
 CREATE DOMAIN test TIMESTAMP [1024];
 SHOW DOMAIN test;
 
 DROP DATABASE;
-</text>
- </argument>
- <argument name='exit_code'>
-  <integer>0</integer>
- </argument>
- <argument name='substitutions'>
-  <set/>
- </argument>
- <argument name='environment'>
-  <set/>
- </argument>
- <argument name='author'>
-  <text>skopalik</text>
- </argument>
- <argument name='stderr'>
-  <text/>
- </argument>
- <argument name='title'>
-  <text>CREATE DOMAIN - TIMESTAMP ARRAY</text>
- </argument>
- <argument name='test_id'>
-  <text>skopalik_0104</text>
- </argument>
-</test>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE DOMAIN - TIMESTAMP ARRAY</text></argument><argument name="test_id"><text>skopalik_0104</text></argument><argument name="resources"><set/></argument></extension>

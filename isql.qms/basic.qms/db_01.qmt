@@ -1,47 +1,10 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
-<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
-<test>
- <class>firebird.FirebirdISQLTest</class>
- <argument name='target_group'>
-  <text>.*</text>
- </argument>
- <argument name='description'>
-  <text>Check the correct content of RDB$DATABASE for freh, empty database.</text>
- </argument>
- <argument name='stdout'>
-  <text>  RDB$DESCRIPTION RDB$RELATION_ID RDB$SECURITY_CLASS              RDB$CHARACTER_SET_NAME          
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>Check the correct content of RDB$DATABASE for freh, empty database.</text></argument><argument name="stdout"><text>  RDB$DESCRIPTION RDB$RELATION_ID RDB$SECURITY_CLASS              RDB$CHARACTER_SET_NAME          
 ================= =============== =============================== =============================== 
 
-           &lt;null>             128 &lt;null>                          NONE                            
+           &lt;null&gt;             128 &lt;null&gt;                          NONE                            
 
-</text>
- </argument>
- <argument name='test_type'>
-  <enumeral>Positive</enumeral>
- </argument>
- <argument name='stdin'>
-  <text>select * from RDB$DATABASE;
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>select * from RDB$DATABASE;
 
 commit;
-</text>
- </argument>
- <argument name='exit_code'>
-  <integer>0</integer>
- </argument>
- <argument name='environment'>
-  <set/>
- </argument>
- <argument name='author'>
-  <text>pcisar</text>
- </argument>
- <argument name='stderr'>
-  <text/>
- </argument>
- <argument name='title'>
-  <text>Empty DB - RDB$DATABASE content</text>
- </argument>
- <argument name='test_id'>
-  <text>pcisar_0001</text>
- </argument>
- <resource>isql.basic.empty_db</resource>
-</test>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>pcisar</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>Empty DB - RDB$DATABASE content</text></argument><argument name="test_id"><text>pcisar_0001</text></argument><argument name="resources"><set><text>isql.basic.empty_db</text></set></argument></extension>

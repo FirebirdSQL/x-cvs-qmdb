@@ -1,19 +1,9 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
-<!DOCTYPE test PUBLIC "-//Software Carpentry//QMTest Test V0.1//EN" "http://www.software-carpentry.com/qm/xml/test.dtd">
-<test>
- <class>firebird.FirebirdISQLTest</class>
- <argument name='target_group'>
-  <text>.*</text>
- </argument>
- <argument name='description'>
-  <text>CREATE TABLE - types
+<?xml version="1.0" ?>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="target_group"><text>.*</text></argument><argument name="description"><text>CREATE TABLE - types
 
 Dependencies:
 CREATE DATABASE
-</text>
- </argument>
- <argument name='stdout'>
-  <text>C1                              SMALLINT Nullable
+</text></argument><argument name="stdout"><text>C1                              SMALLINT Nullable
 C2                              INTEGER Nullable
 C3                              FLOAT Nullable
 C4                              DOUBLE PRECISION Nullable
@@ -36,13 +26,7 @@ C20                             BLOB segment 80, subtype UNKNOWN Nullable
 C21                             BLOB segment 80, subtype TEXT Nullable
 C22                             BLOB segment 512, subtype UNKNOWN Nullable
 C23                             BLOB segment 1024, subtype TEXT Nullable
-</text>
- </argument>
- <argument name='test_type'>
-  <enumeral>Positive</enumeral>
- </argument>
- <argument name='stdin'>
-  <text>CREATE DATABASE "$(DATABASE_LOCATION)test.gdb" ;
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(DATABASE_LOCATION)test.gdb&quot; ;
 
 /*
 Tested command:
@@ -75,27 +59,4 @@ CREATE TABLE test(
 SHOW TABLE test;
 
 DROP DATABASE;
-</text>
- </argument>
- <argument name='exit_code'>
-  <integer>0</integer>
- </argument>
- <argument name='substitutions'>
-  <set/>
- </argument>
- <argument name='environment'>
-  <set/>
- </argument>
- <argument name='author'>
-  <text>skopalik</text>
- </argument>
- <argument name='stderr'>
-  <text/>
- </argument>
- <argument name='title'>
-  <text>CREATE TABLE - types</text>
- </argument>
- <argument name='test_id'>
-  <text>skopalik_0169</text>
- </argument>
-</test>
+</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="environment"><set/></argument><argument name="author"><text>skopalik</text></argument><argument name="stderr"><text/></argument><argument name="title"><text>CREATE TABLE - types</text></argument><argument name="test_id"><text>skopalik_0169</text></argument><argument name="resources"><set/></argument></extension>
