@@ -1,4 +1,4 @@
-########################################################################
+﻿########################################################################
 #
 # File:   fbqa.py
 # Date:   2004-06-10
@@ -35,7 +35,9 @@
 # imports
 ########################################################################
 
-import sys, os, string, re, difflib, kinterbasdb as kdb, struct
+import sys, os, string, re, difflib, kinterbasdb as kdb, struct, cgi
+from StringIO import StringIO
+import pdb
 
 import qm
 import qm.common
@@ -47,6 +49,56 @@ from   qm.test.result   import *
 from   qm.test.test     import *
 from   qm.test.resource import *
 import qm.web
+
+########################################################################
+# globals
+########################################################################
+
+try:
+    import hermann_colorize
+except ImportError:
+    # Python code colorization is just a luxury, not a necessity.
+    hermann_colorize = None
+else:
+    # Reset the colors to a less garish scheme (this relies on underscored
+    # vars, so it might cause trouble as hermann_colorize evolves).
+    hermann_colorize._colors = {
+        hermann_colorize.token.NUMBER:       '#666600',
+        hermann_colorize.token.OP:           '#7D0000',
+        hermann_colorize.token.STRING:       '#8F8C71',
+        hermann_colorize.tokenize.COMMENT:   '#50A550',
+        hermann_colorize.token.NAME:         '#000000',
+        hermann_colorize.token.ERRORTOKEN:   '#FF8080',
+        hermann_colorize._KEYWORD:           '#0D0DBB',
+        hermann_colorize._TEXT:              '#000000',
+      }
+
+# Next code hijacks the method qm.web.DtmlPage.GenerateHtmlHeader, 
+# replacing it with a custom implementation that specifies the character set 
+# of returned pages as UTF-8 rather than QMTest's default of ISO-8859-1.
+# This might be thought of as a "hot fix" to allow better unicode integration
+# while still using the standard distribution of QMTest.
+
+# Establish and hold a reference to the original implementation of
+# GenerateHtmlHeader, lest it be garbage collected when we overwrite its
+# class's reference to it.
+_ORIGINAL_IMPL = qm.web.DtmlPage.GenerateHtmlHeader
+
+def GenerateHtmlHeader(self, description, headers=''):
+    header = _ORIGINAL_IMPL(self, description, headers=headers)
+    header = header.replace('charset=iso-8859-1', 'charset=utf-8')
+    return header
+
+qm.web.DtmlPage.GenerateHtmlHeader = GenerateHtmlHeader
+
+# Python 2.2 and earlier require either ASCII or ISO-8859-1 encoding of source
+# files.
+PYTHON_SUPPORTS_SOURCE_ENCODINGS = sys.version_info >= (2,3)
+_SOURCE_ENCODING_SPEC = u'# -*- coding: UTF8 -*-\n'
+
+_WHITE_BG = '<div style="background-color: white; margin: 0px;">%s</div>'
+_WHITE_BG_U = unicode(_WHITE_BG,'UTF8')
+_PRE_NO_MARGIN = '<pre style="margin: 0px;">%s</pre>'
 
 # isc_database_info call requests
 # commented out ones were not documented, so they're not supported now
@@ -73,6 +125,8 @@ isc_info_next_transaction        = 107
 #isc_info_db_provider             = 108
 #isc_info_active_transactions     = 109
 
+_PRE = '<pre>%s</pre>'
+
 
 ########################################################################
 # classes
@@ -94,9 +148,9 @@ class SubstitutionField(qm.fields.TupleField):
 
        By default, the pattern and replacement string are empty."""
     # Initialize the base class.
-    fields = [qm.fields.TextField(name = "pattern",
+    fields = [UnicodeField(name = "pattern",
                                   title = "Pattern",),
-              qm.fields.TextField(name = "replacement",
+              UnicodeField(name = "replacement",
                                   title = "Replacement")]
     qm.fields.TupleField.__init__(self, name, fields, **properties)
 
@@ -111,6 +165,52 @@ class SubstitutionField(qm.fields.TupleField):
 
         The regular expression and substitution syntax are those of
         Python's standard "'re' regular expression module"."""
+
+class UnicodeField(qm.fields.TextField):
+    """
+      A subclass of 'TextField' that supports Unicode.
+    """
+
+    def FormatValueAsHtml(self, server, value, style, name=None):
+        # $value is typically unicode rather than str.  In any case, we always
+        # encode the returned HTML code in UTF-8.
+        #
+        # qm.fields.TextField.FormatValueAsHtml can't handle Unicode, so
+        # we replace $value with a flag, call the super-method, convert
+        # the resulting HTML str into a unicode object, replace the flag
+        # with the real $value, then encode $value in UTF-8 for
+        # transmission to the client.
+        flag = '_______REPLACE_THIS_FLAG_______'
+        html = qm.fields.TextField.FormatValueAsHtml(self, server, flag, style, name=name)
+        # Next try-except is necessary for QMTest. When test is loaded for edit,
+        # the value content is ok, but if test editing form contains button
+        # (for example to add/remove substitution definition) and this button is
+        # used, the form reload logic goes in different route, and value has encoding
+        # that replace cannot handle. This case is handled by except part.
+        try:
+          html = unicode(html,'UTF8').replace(flag, value)
+        except UnicodeError:
+          html = unicode(html,'UTF8').replace(flag, unicode(value,'UTF8'))
+            
+        return html.encode('UTF8')
+
+
+class PythonCodeField(UnicodeField):
+    """
+      A subclass of 'TextField' that supports Unicode and colorizes its 
+      contents as Python source code.
+    """
+
+    def FormatValueAsHtml(self, server, value, style, name=None):
+        # $value is typically unicode rather than str.  In any case, we always
+        # encode the returned HTML code in UTF-8.
+        if style != 'full':
+            html = UnicodeField.FormatValueAsHtml(self, server, value, style, name=name)
+        else:
+            colorized = _colorizePython(value)
+            html = (_WHITE_BG_U % colorized).encode("UTF8")
+
+        return html
 
 
 class FirebirdTest(Test):
@@ -176,7 +276,7 @@ class FirebirdTest(Test):
         Enter the ID from bug tracker here (usualy a number)."""
         ),
 
-    qm.fields.TextField(
+    UnicodeField(
         name="title",
         title="Title",
         not_empty_text=1,
@@ -186,7 +286,7 @@ class FirebirdTest(Test):
         For example: ALTER DATABASE ADD FILE"""
         ),
 
-    qm.fields.TextField(
+    UnicodeField(
         name="description",
         title="Description",
         verbatim="true",
@@ -320,7 +420,7 @@ class FirebirdTest(Test):
         ),
         
             
-    qm.fields.TextField(
+    UnicodeField(
         name="data_tuple",
         title="Data Tuple",
         description="""Data tuple to populate database with (if that option was selected above)
@@ -367,7 +467,7 @@ class FirebirdTest(Test):
         default_value="None: None"
         ),
 
-    qm.fields.TextField(
+    PythonCodeField(
         name="source_code",
         title="Python/SQL Source Code",
         description="""The SQL or python test statement(s) to be executed
@@ -396,7 +496,7 @@ class FirebirdTest(Test):
         verbatim="true"
         ),
 
-    qm.fields.TextField(
+    PythonCodeField(
         name="test_expr",
         title="Python Expression",
         description="""The python statement to evaluate
@@ -417,7 +517,7 @@ class FirebirdTest(Test):
         verbatim="true"
         ),
 
-    qm.fields.TextField(
+    UnicodeField(
         name="result_string",
         title="Expected Result String",
         description="""The expected result string for the test statement(s) (if not a boolean)
@@ -433,7 +533,7 @@ class FirebirdTest(Test):
         verbatim="true"
         ),
 
-    qm.fields.TextField(
+    UnicodeField(
         name="expected_stderr",
         title="Expected stderr",
         description="""The expected Standard Error output for the test statement(s) (if not a boolean)
@@ -504,8 +604,8 @@ class FirebirdTest(Test):
     # PC: fix values so they are strings. Needed for Windows.
     for key in environ.iterkeys():
       environ[key] = str(environ[key])
-    # PC: fallback cause
-    self.__cause= "Unknown cause"
+
+      self.__cause= "Unknown cause"
 
     basename   = os.path.split(args[0])[-1]
     qm_exec    = qm.executable.Filter(self.__SubstituteMacros(stdin+"\n"), -2)
@@ -693,24 +793,24 @@ class FirebirdTest(Test):
   def __AnnotateDiff(self, desc, stdout_e, stdout_a, stdout_e_strp, stdout_a_strp):
     id_str= "FirebirdTest.%s_" % desc # (i.e. FirebirdTest.ISQL_*)
 
-    self.__result[id_str + "stdout_expected"]         = "<pre>\n"+stdout_e+"\n</pre>"
-    self.__result[id_str + "stdout_actual"]           = "<pre>\n"+stdout_a+"\n</pre>"
-    self.__result[id_str + "stdout_expected_stripped"]= "<pre>\n"+stdout_e_strp+"\n</pre>"
-    self.__result[id_str + "stdout_actual_stripped"]  = "<pre>\n"+stdout_a_strp+"\n</pre>"
-    self.__result[id_str + "stripped_diff"]= "<pre>\n"+string.join( difflib.ndiff( stdout_e_strp.splitlines(),
-                                                                         stdout_a_strp.splitlines() ), "\n")+"\n</pre>"
+    self.__result[id_str + "stdout_expected"]         = _PRE % stdout_e.encode('UTF8')
+    self.__result[id_str + "stdout_actual"]           = _PRE % stdout_a
+    self.__result[id_str + "stdout_expected_stripped"]= _PRE % stdout_e_strp
+    self.__result[id_str + "stdout_actual_stripped"]  = _PRE % stdout_a_strp
+    self.__result[id_str + "stripped_diff"]= _PRE % string.join( difflib.ndiff( stdout_e_strp.splitlines(),
+                                                                         stdout_a_strp.splitlines() ), "\n")
 
     self.__result.Fail("Expected standard output from %s does not match actual output." % desc)
 
   def __AnnotateErrorDiff(self, desc, stderr_e, stderr_a, stderr_e_strp, stderr_a_strp):
     id_str= "FirebirdTest.%s_" % desc # (i.e. FirebirdTest.ISQL_*)
 
-    self.__result[id_str + "stderr_expected"]         = "<pre>\n"+stderr_e+"\n</pre>"
-    self.__result[id_str + "stderr_actual"]           = "<pre>\n"+stderr_a+"\n</pre>"
-    self.__result[id_str + "stderr_expected_stripped"]= "<pre>\n"+stderr_e_strp+"\n</pre>"
-    self.__result[id_str + "stderr_actual_stripped"]  = "<pre>\n"+stderr_a_strp+"\n</pre>"
-    self.__result[id_str + "stderr_stripped_diff"]= "<pre>\n"+string.join( difflib.ndiff( stderr_e_strp.splitlines(),
-                                                                         stderr_a_strp.splitlines() ), "\n")+"\n</pre>"
+    self.__result[id_str + "stderr_expected"]         = _PRE % stderr_e
+    self.__result[id_str + "stderr_actual"]           = _PRE % stderr_a
+    self.__result[id_str + "stderr_expected_stripped"]= _PRE % stderr_e_strp
+    self.__result[id_str + "stderr_actual_stripped"]  = _PRE % stderr_a_strp
+    self.__result[id_str + "stderr_stripped_diff"]= _PRE % string.join( difflib.ndiff( stderr_e_strp.splitlines(),
+                                                                         stderr_a_strp.splitlines() ), "\n")
 
     self.__result.Fail("Expected error output from %s does not match actual error output." % desc)
 
@@ -727,7 +827,7 @@ class FirebirdTest(Test):
         string= re.sub(regex, "", string)
 
     for pattern, replacement in self.substitutions:
-      string= re.compile(pattern, re.M).sub(replacement, string)
+      string= re.compile(pattern.encode('UTF8'), re.M).sub(replacement.encode('UTF8'), string)
     
     return self.__SpaceStrip(string)
 
@@ -779,7 +879,17 @@ class FirebirdTest(Test):
     # self.statement_type_and_result[8:] will be "True" or "False"
     
     try:
-      exec self.__SubstituteMacros(self.source_code) in global_ns, local_ns
+        if self.__context.has_key("debug"):
+          dbgfname = self.__context["temp_directory"] + "debug.python"
+          self.__clean_up.append(dbgfname)
+          dbgfile = open(dbgfname,"w")
+          src = '# -*- coding: UTF8 -*-\n'+self.__SubstituteMacros(self.source_code)+"\n"
+          dbgfile.write(src.encode("utf-8"))
+          dbgfile.close()
+          c = compile(src.encode("utf-8"),dbgfname,"exec")
+          pdb.run(c, global_ns, local_ns)
+        else:
+          exec self.__SubstituteMacros(self.source_code) in global_ns, local_ns
     
     except:
       self.__result.NoteException(cause="Exception raised while executing python source code.")
@@ -787,7 +897,17 @@ class FirebirdTest(Test):
       
     if self.test_expr:
       try:
-        retval_a= eval(self.test_expr, global_ns, local_ns)
+        if self.__context.has_key("debug"):
+          dbgfname = self.__context["temp_directory"] + "debug.python"
+          self.__clean_up.append(dbgfname)
+          dbgfile = open(dbgfname,"w")
+          src = '# -*- coding: UTF8 -*-\n'+self.__SubstituteMacros(self.test_expr)+"\n"
+          dbgfile.write(src.encode("utf-8"))
+          dbgfile.close()
+          c = compile(src.encode("utf-8"),dbgfname,"eval")
+          pdb.runeval(c, global_ns, local_ns)
+        else:
+          retval_a= eval(self.test_expr, global_ns, local_ns)
       
       except:
         self.__result.NoteException(cause="Exception raised while evaluating python expression.")
@@ -806,39 +926,41 @@ class FirebirdTest(Test):
     global_ns, local_ns= self.__MakeNamespaces()
 
     saved_out      = sys.stdout
-    py_stdout_fname= self.__context["temp_directory"] + "stdout.python"
-    self.__clean_up.append(py_stdout_fname)
-    stdout_f       = open (py_stdout_fname, "w")
 
     try:
       if self.test_expr:
         exec self.__SubstituteMacros(self.source_code) in global_ns, local_ns
 
         try:
-          sys.stdout= stdout_f
+          sys.stdout= StringIO()
           exec self.__SubstituteMacros(self.test_expr) in global_ns, local_ns
 
         except:
           result.NoteException(cause="Exception raised while executing python expression.")
-          stdout_f.close()
-          os.remove(py_stdout_fname)
           return
       else:
-        sys.stdout= stdout_f
-        exec self.__SubstituteMacros(self.source_code) in global_ns, local_ns
+        if self.__context.has_key("debug"):
+          dbgfname = self.__context["temp_directory"] + "debug.python"
+          self.__clean_up.append(dbgfname)
+          dbgfile = open(dbgfname,"w")
+          src = '# -*- coding: UTF8 -*-\n'+self.__SubstituteMacros(self.source_code)+"\n"
+          dbgfile.write(src.encode("utf-8"))
+          dbgfile.close()
+          c = compile(src.encode("utf-8"),dbgfname,"exec")
+          pdb.run(c, global_ns, local_ns)
+        else:
+          sys.stdout= StringIO()
+          exec self.__SubstituteMacros(self.source_code) in global_ns, local_ns
 
     except:
       self.__result.NoteException(cause="Exception raised while executing python source code.")
-      stdout_f.close()
-      os.remove(py_stdout_fname)
     else:
+      if not self.__context.has_key("debug"):
+        stdout_a= sys.stdout.getvalue()
+      else:
+        stdout_a = "STDOUT NOT AVAILABLE IN DEBUG MODE"
       sys.stdout= saved_out
-      stdout_e_stripped= self.__StringStrip(self.result_string, isql=False)
-      stdout_f.close()
-      stdout_f=open(py_stdout_fname, "r")
-      stdout_a= "".join(stdout_f.readlines())
-      stdout_f.close()
-      os.remove(py_stdout_fname)
+      stdout_e_stripped= self.__StringStrip(self.result_string.encode('UTF8'), isql=False)
       stdout_a_stripped= self.__StringStrip(stdout_a, isql=False)
 
       if stdout_a_stripped == stdout_e_stripped:
@@ -984,10 +1106,11 @@ class FirebirdTest(Test):
       
     if errors:
       self.__result["FirebirdTest.temp_files_unable_to_remove"]= string.join(errors, ", ")
-          
+
   def Run(self, context, result):
     # database connection placeholder
     self.__db_conn = None
+
     # qm will generate errors if these are missing:
     context["temp_directory"]
     context["server_location"]
@@ -1035,59 +1158,33 @@ class FirebirdTest(Test):
         
     self.__db_path= context[self.db_path_property] + self.db_name
     
+    # check for prerequisities to restore from backup
     if self.create_db_method == "Restore From Backup":
       
       context["gbak_path"]
       
-      if self.isql_script:
-        causes.append("SQL commands not applicable to database population method 'Restore From Backup'")
-        result["FirebirdTest.sql_commands"]= self.isql_script
-        
       if not self.backup_file_path:
         causes.append("No backup file specified")            
-        
       elif not os.access(self.backup_file_path, os.F_OK):
         causes.append("Backup file <i>%s</i> does not exist" % self.backup_file_path)
-        
       if not os.access(context["gbak_path"], os.F_OK):
         causes.append("GBAK path given in context does not exist")
-        
       elif not os.access(context["gbak_path"], os.X_OK):
         causes.append("GBAK path given in context is not executable")
-        
       if os.access(self.__db_path, os.F_OK):
         causes.append("Database <i>%s</i> already exists" % self.__db_path)
       
-    
-    if self.populate_method == "Using SQL Commands":
-      
-      if self.data_tuple:
-        causes.append("Data tuple not applicable for database population method 'Using SQL Commands'")
-        result["FirebirdTest.data_tuple"]=self.data_tuple
-      if self.insert_statement:
-        causes.append("SQL insert statement not applicable for database population method 'Using SQL Commands'")
-        result["FirebirdTest.sql_insert_statement"]= self.insert_statement
-      if self.backup_file_path:
-        causes.append("Back-up file not applicable for database population method 'Using SQL Commands'")
-        result["FirebirdTest.backup_file_path"]= self.backup_file_path
-      
-      if not self.isql_script:
-        causes.append("No SQL commands given")
-      
+    # check for prerequisities to run isql scripts
+    if self.isql_script or self.statement_type_and_result == "SQL: String":
       if not os.access(context["isql_path"], os.F_OK):
         causes.append("ISQL path given in context does not exist")
-        
       elif not os.access(context["isql_path"], os.X_OK):
         causes.append("ISQL path given in context is not executable")
         
-        
-    elif self.populate_method == "Using Data Tuple":
-      if self.isql_script:
-        causes.append("SQL commands not applicable for database population method 'Using Data Tuple'")
-        result["FirebirdTest.sql_commands"]=self.isql_script
-        
+    # check for prerequisities to populate table from tuple
+    if self.insert_statement or self.data_tuple:
+
       if self.data_tuple:
-      
         try:
           insert_tuple= eval(self.data_tuple)
         except:
@@ -1098,13 +1195,13 @@ class FirebirdTest(Test):
             causes.append("Invalid data tuple given (must be tuple of tuples)")
           else:
             self.data_tuple= insert_tuple
-              
       else:
         causes.append("No data tuple given")
         
       if not self.insert_statement:
         causes.append("No SQL insert statement given")
      
+    # check for prerequisities to run actual test
     if self.statement_type_and_result in ["Python: True" or "Python: False"]:
       if not self.test_expr:
         causes.append("No Python test expression given for statement type 'Python'")
@@ -1173,14 +1270,14 @@ class FirebirdTest(Test):
     else:
       self.__KCreateDB()
 
-    if self.populate_method == "Using SQL Commands":
+    if self.isql_script :
       retval= self.__ExecISQLCommandsBlind()
 
       if not retval:
         self.__CleanUp()
         return
 
-    elif self.populate_method == "Using Data Tuple":
+    if self.insert_statement:
       self.__db_conn= self.__KConnectDB()
       if not self.__db_conn:
         return
@@ -1224,3 +1321,15 @@ class FirebirdTest(Test):
       
       self.__CleanUp(drop=False)
       
+def _colorizePython(s):
+    # If the colorizing module is not available, just skip colorizing.
+    if hermann_colorize is None:
+        return _PRE_NO_MARGIN % s
+
+    stream = StringIO()
+    p = hermann_colorize.Parser(s, out=stream)
+    p.format(None, None)
+    colorized = stream.getvalue()
+    return colorized
+
+
