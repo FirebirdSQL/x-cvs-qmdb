@@ -243,18 +243,19 @@ class RunServicesBase:
             stderr = qm_exec.stderr
             causes = []
 
-            if not (sys.platform == "win32" or os.WIFEXITED(exit_status)):
-                causes.append("exit_code")
-                result["RunProgram.exit_code"] = str(exit_status)
+            if sys.platform != "win32":
+                if os.WIFEXITED(exit_status):
+                    if exit_status != self.exit_code:
+                        causes.append("exit_code")
+                        result["RunProgram.exit_code"] = str(exit_status)
+                elif os.WIFSIGNALED(exit_status):
+                    self.__cause= "Process %s terminated by signal %d." % (basename, os.WTERMSIG(exit_status))
 
-            elif os.WIFSIGNALED(exit_status):
-                self.__cause= "Process %s terminated by signal %d." % (basename, os.WTERMSIG(exit_status))
+                elif os.WIFSTOPPED(exit_status):
+                    self.__cause= "Process %s stopped by signal %d." % (basename, os.WSTOPSIG(exit_status))
 
-            elif os.WIFSTOPPED(exit_status):
-                self.__cause= "Process %s stopped by signal %d." % (basename, os.WSTOPSIG(exit_status))
-
-            else:
-                self.__cause= "Process %s terminated abnormally." % basename
+                else:
+                    self.__cause= "Process %s terminated abnormally." % basename
 
             # Check to see that the standard error matches.
             if stderr:
@@ -600,6 +601,7 @@ class FirebirdUserResource(Resource):
         # Drop a user.
         try:
             self.__FirebirdServices.RunGsec("", [ "-delete",self.user_name], result)
+#           print "Delete %s" % self.user_name
         except:
             result.NoteException()
 
