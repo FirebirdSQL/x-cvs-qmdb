@@ -956,7 +956,11 @@ class FirebirdTest(Test):
       self.__result.NoteException(cause="Exception raised while executing python source code.")
     else:
       if not self.__context.has_key("debug"):
-        stdout_a= sys.stdout.getvalue()
+        try:
+          stdout_a= sys.stdout.getvalue()
+          stdout_a= stdout_a.encode('UTF8')
+        except  UnicodeDecodeError:
+          pass
       else:
         stdout_a = "STDOUT NOT AVAILABLE IN DEBUG MODE"
       sys.stdout= saved_out
