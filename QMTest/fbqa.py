@@ -1,7 +1,7 @@
 ########################################################################
 #
 # File:   fbqa.py
-# Date:   30.05.2004
+# Date:   2004-06-10
 #
 # Contents:
 #   Common, Test and Resource classes and function for Firebird QA
@@ -67,7 +67,6 @@ class SubstitutionField(qm.fields.TupleField):
     """Create a new 'SubstitutionField'.
 
        By default, the pattern and replacement string are empty."""
-
     # Initialize the base class.
     fields = [qm.fields.TextField(name = "pattern",
                                   title = "Pattern",),
@@ -430,7 +429,6 @@ class FirebirdTest(Test):
   
   def __MakeEnvironment(self):
     """Construct the environment for executing the target program."""
-    
     environment= os.environ.copy()
 
     for key, value in self.__context.items():
@@ -441,8 +439,11 @@ class FirebirdTest(Test):
     return environment
     
   def __RunProgram(self, args):
-  
     environ= self.__MakeEnvironment()
+    
+    # PC: fix values so they are strings. Needed for Windows.
+    for key in environ.iterkeys():
+      environ[key] = str(environ[key])
     # PC: fallback cause
     self.__cause= "Unknown cause"
     
@@ -470,7 +471,6 @@ class FirebirdTest(Test):
     
        "self.__context" = test's run-time self.__context (dictionary)
        "result"  = QM result object"""
-
     if self.create_db_method == "Create New":
       try:
         conn= kinterbasdb.create_database(
@@ -496,7 +496,7 @@ class FirebirdTest(Test):
     else:
       return conn
       
-  def __InsertParam(self):       
+  def __InsertParam(self):
     try:
       cursor= self.__db_conn.cursor()
       cursor.executemany(self.insert_statement, self.data_tuple)
@@ -554,7 +554,6 @@ class FirebirdTest(Test):
        "commands" = the commands to be executed (string)
        "sub_map"  = the map of regex substitutions to perform (dict)"""
        
-      
     script_path= self.__WriteToFile("script.isql", self.source_code)
     
     if not script_path:
@@ -643,12 +642,12 @@ class FirebirdTest(Test):
   def __AnnotateDiff(self, desc, stdout_e, stdout_a, stdout_e_strp, stdout_a_strp):
     id_str= "FirebirdTest.%s_" % desc # (i.e. FirebirdTest.ISQL_*)
     
-    self.__result[id_str + "stdout_expected"]         = stdout_e
-    self.__result[id_str + "stdout_actual"]           = stdout_a
-    self.__result[id_str + "stdout_expected_stripped"]= stdout_e_strp
-    self.__result[id_str + "stdout_actual_stripped"]  = stdout_a_strp
-    self.__result[id_str + "stripped_diff"]= string.join( difflib.ndiff( stdout_e_strp.splitlines(),
-                                                                         stdout_a_strp.splitlines() ), "\n")
+    self.__result[id_str + "stdout_expected"]         = "<pre>\n"+stdout_e+"\n</pre>"
+    self.__result[id_str + "stdout_actual"]           = "<pre>\n"+stdout_a+"\n</pre>"
+    self.__result[id_str + "stdout_expected_stripped"]= "<pre>\n"+stdout_e_strp+"\n</pre>"
+    self.__result[id_str + "stdout_actual_stripped"]  = "<pre>\n"+stdout_a_strp+"\n</pre>"
+    self.__result[id_str + "stripped_diff"]= "<pre>\n"+string.join( difflib.ndiff( stdout_e_strp.splitlines(),
+                                                                         stdout_a_strp.splitlines() ), "\n")+"\n</pre>"
                                                                          
     self.__result.Fail("Expected standard output from %s does not match actual output." % desc)
                                                                       
@@ -657,7 +656,6 @@ class FirebirdTest(Test):
        comparisons to fail on insignificant differences
        
        "string" = string to strip (string)"""
-       
     if not string:
       return string
     
@@ -827,7 +825,6 @@ class FirebirdTest(Test):
       self.__result["FirebirdTest.temp_files_unable_to_remove"]= string.join(errors, ", ")
           
   def Run(self, context, result):
-                
     # qm will generate errors if these are missing:
     context["temp_directory"]
     context["server_location"]
