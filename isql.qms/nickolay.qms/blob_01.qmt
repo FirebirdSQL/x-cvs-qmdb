@@ -8,6 +8,8 @@ create table test (
   a blob
 );
 
+insert into test values('BLOB String 2');
+
 create view test_view as
 select a from test;
 
