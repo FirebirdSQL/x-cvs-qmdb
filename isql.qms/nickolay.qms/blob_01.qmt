@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="environment"><set/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(SERVER_LOCATION)$(DATABASE_LOCATION)test.gdb&quot; ;
+
+create table test (
+  a blob
+);
+
+create view test_view as
+select a from test;
+
+create view test_view2 as
+select a from test;
+
+set term ^;
+
+create trigger test_view_ins for test_view before insert as
+begin
+  insert into test values(new.A);  
+end
+^
+
+create trigger test_view_ins2 for test_view2 before insert as
+begin
+  insert into test_view values(new.A);  
+  insert into test values(new.A);  
+end
+^
+
+set term ; ^
+
+commit;
+
+insert into test_view2 values('BLOB String');
+
+commit;
+
+set blobdisplay all;
+
+select count(*) from test
+where a = 'BLOB String';
+
+commit;
+
+DROP DATABASE;
+
+</text></argument><argument name="author"><text>skidder</text></argument><argument name="stdout"><text>       COUNT 
+============ 
+
+           2 
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="target_group"><text>.*</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="bug_id"><text/></argument><argument name="stderr"><text/></argument><argument name="title"><text/></argument><argument name="test_id"><text/></argument><argument name="resources"><set/></argument><argument name="description"><text>Test verifies that if you pass temporary BLOB to trigger and it is materialized (assigned to field of table) there no problems appear. This problem was addressed in Firebird 2.0</text></argument></extension>

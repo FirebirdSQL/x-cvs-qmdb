@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="environment"><set/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(SERVER_LOCATION)$(DATABASE_LOCATION)test.gdb&quot; ;
+create table table1 (a integer);
+create table table2 (b integer);
+
+set term ^ ;
+
+create procedure proc1 
+returns (a integer)
+as
+begin
+  for select a from table1 into :a do
+    suspend;
+  for select b from table2 into :a do
+    suspend;
+end
+^
+
+set term ; ^
+
+commit;
+
+set plan on;
+
+select * from proc1;
+
+commit;
+
+DROP DATABASE;
+</text></argument><argument name="author"><text/></argument><argument name="stdout"><text>PLAN (TABLE1 NATURAL)(TABLE2 NATURAL)
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="target_group"><text>.*</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="bug_id"><text/></argument><argument name="stderr"><text/></argument><argument name="title"><text/></argument><argument name="test_id"><text/></argument><argument name="resources"><set/></argument><argument name="description"><text>Verify that PLANs are reported in correct order for procedures</text></argument></extension>

@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="environment"><set/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(SERVER_LOCATION)$(DATABASE_LOCATION)test.gdb&quot;;
+set term ^ ;
+
+create procedure proc1(i integer) 
+returns(o integer)
+as
+begin
+  if (i = -1) then
+  begin
+    /* Do not emit row */
+    for select o from proc1(0) into :o do 
+      suspend;
+    /* Emit row */
+    for select o from proc1(1) into :o do 
+      suspend;
+  end
+  else
+    /* Should return a row if i=1 */
+    if (exists (select 1 from rdb$database where exists (select 1 from rdb$database where :i = 1))) then
+    begin
+      o = 1;
+      suspend;
+    end
+end
+^
+
+set term ; ^
+
+select * from proc1(-1);
+
+commit;
+DROP DATABASE;
+
+ 
+</text></argument><argument name="author"><text>skidder</text></argument><argument name="stdout"><text>         O 
+============ 
+
+           1 
+</text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="target_group"><text>.*</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="bug_id"><text/></argument><argument name="stderr"><text/></argument><argument name="title"><text/></argument><argument name="test_id"><text/></argument><argument name="resources"><set/></argument><argument name="description"><text>Check that cached invariant values do not resist multiple stored procedure calls. This bug was fixed in Firebird 2 and then backported to 1.5.1</text></argument></extension>

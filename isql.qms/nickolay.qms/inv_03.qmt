@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.2/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
+<extension class="firebird.FirebirdISQLTest" kind="test"><argument name="environment"><set/></argument><argument name="stdin"><text>CREATE DATABASE &quot;$(SERVER_LOCATION)$(DATABASE_LOCATION)test.gdb&quot; ;
+
+create table test ( field integer );
+
+commit;
+
+insert into test values(0);
+
+commit;
+
+set term ^ ;
+
+create procedure proc1 
+returns(o integer)
+as
+declare i integer;
+begin
+  /* This procedure should return 2 rows */
+  i = 0;
+  while (i &lt; 2) do
+  begin
+    if (exists (select 1 from rdb$database where (select field from test)=:i)) then
+    begin
+      update test set field = 1;
+      o = i;
+      suspend;
+    end
+    i = i + 1;
+  end
+end
+^
+
+set term ; ^
+
+select * from proc1;
+
+commit;
+
+DROP DATABASE;
+</text></argument><argument name="author"><text>skidder</text></argument><argument name="stdout"><text>         O 
+============ 
+
+           0 
+           1 </text></argument><argument name="prerequisites"><set/></argument><argument name="test_type"><enumeral>Positive</enumeral></argument><argument name="target_group"><text>.*</text></argument><argument name="exit_code"><integer>0</integer></argument><argument name="substitutions"><set/></argument><argument name="bug_id"><text/></argument><argument name="stderr"><text/></argument><argument name="title"><text/></argument><argument name="test_id"><text/></argument><argument name="resources"><set/></argument><argument name="description"><text>Check that invariant are re-read correctly when underlying data changes.</text></argument></extension>
