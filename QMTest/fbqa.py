@@ -791,6 +791,7 @@ class FirebirdTest(Test):
 
         except:
           result.NoteException(cause="Exception raised while executing python expression.")
+          stdout_f.close()
           os.remove(py_stdout_fname)
           return
       else:
@@ -805,6 +806,7 @@ class FirebirdTest(Test):
       stdout_f.close()
       stdout_f=open(py_stdout_fname, "r")
       stdout_a= "".join(stdout_f.readlines())
+      stdout_f.close()
       os.remove(py_stdout_fname)
       stdout_a_stripped= self.__StringStrip(stdout_a, isql=False)
 
