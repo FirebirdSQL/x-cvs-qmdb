@@ -1,4 +1,788 @@
+2005-01-21	pcisar
+	* README win32.txt 1.3:
+	* README.TXT 1.2:
+		General README
+
+	* README.TXT 1.3:
+	* qadbm.py 1.5:
+		fixed minidom import
+
+	* qadbm.py 1.4:
+		many new features, including update from remote repository
+
+2004-11-27	arnobrinkman
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_01.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_02.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_03.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_04.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_05.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_06.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_07.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_08.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_09.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_10.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_11.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_12.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_13.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_aggregate_distribution_14.qmt 1.1:
+		Add aggregate distribution test cases
+
+2004-11-26	pcisar
+	* QMTest/fbqa.py 1.11:
+		fix the broken UNICODE support
+
+2004-11-25	pcisar
+	* qadbm.py 1.3:
+	* qaver.py 1.3:
+		New CLI test database manager QADBM
+		Old one (QAVER) removed
+
+2004-11-02	pcisar
+	* isql.qms/basic.qms/db_41.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_29.qmt 1.1:
+	* qadbm.py 1.2:
+		New test variants for FB 1.5.1/1.5.2
+		qadbm - ignore tests in old format
+
+2004-10-31	pcisar
+	* QMTest/fbqa.py 1.10:
+	* QMTest/hermann_colorize.py 1.1:
+		unicode support
+		debug support
+
+2004-08-26	pcisar
+	* QMTest/fbqa.py 1.9:
+		Added direct Database Info call support for Python-based tests
+
+2004-08-13	arnobrinkman
+	* arno.qms/optimizer.qms/opt_sort_by_index_07.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_08.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_09.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_10.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_11.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_12.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_13.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_14.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_15.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_16.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_17.qmt 1.1:
+		add more sort test cases
+
+2004-08-12	arnobrinkman
+	* arno.qms/optimizer.qms/opt_sort_by_index_01.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_02.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_03.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_04.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_05.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_sort_by_index_06.qmt 1.1:
+		add sort test cases
+
+	* arno.qms/optimizer.qms/opt_inner_join_merge_02.qmt 1.2:
+	* arno.qms/optimizer.qms/opt_inner_join_merge_05.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_merge_06.qmt 1.1:
+		merge test cases
+
+2004-08-11	arnobrinkman
+	* arno.qms/optimizer.qms/opt_inner_join_merge_01.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_merge_02.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_merge_03.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_merge_04.qmt 1.1:
+		add merge test cases
+
+	* arno.qms/optimizer.qms/opt_multi_index_selection_01.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_multi_index_selection_02.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_multi_index_selection_03.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_multi_index_selection_04.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_multi_index_selection_05.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_multi_index_selection_06.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_multi_index_selection_07.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_multi_index_selection_08.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_single_index_selection_01.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_single_index_selection_02.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_single_index_selection_03.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_single_index_selection_04.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_single_index_selection_05.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_single_index_selection_06.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_single_index_selection_07.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_single_index_selection_08.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_single_index_selection_09.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_single_index_selection_10.qmt 1.1:
+		add index selection test cases
+
+	* arno.qms/optimizer.qms/opt_inner_join_01.qmt 1.2:
+	* arno.qms/optimizer.qms/opt_inner_join_02.qmt 1.2:
+	* arno.qms/optimizer.qms/opt_inner_join_03.qmt 1.2:
+	* arno.qms/optimizer.qms/opt_inner_join_04.qmt 1.2:
+	* arno.qms/optimizer.qms/opt_inner_join_05.qmt 1.2:
+	* arno.qms/optimizer.qms/opt_inner_join_06.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_07.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_08.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_09.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_10.qmt 1.1:
+		fix and add inner join test cases
+
+2004-08-09	arnobrinkman
+	* arno.qms/optimizer.qms/opt_selectivity_01.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_selectivity_02.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_selectivity_03.qmt 1.1:
+		Add index selectivity test cases
+
+	* arno.qms/optimizer.qms/opt_inner_join_01.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_02.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_03.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_04.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_inner_join_05.qmt 1.1:
+		Add inner join test cases
+
+2004-08-07	hippoman
+	* QMTest/firebird.py 1.7:
+		WIFSIGNALED macro is not defined on win32.
+
+2004-08-05	arnobrinkman
+	* QMTest/fbqa.py 1.8:
+		fix open file problem by exception
+
+2004-08-04	arnobrinkman
+	* arno.qms/indexes.qms/starting_with_01.qmt 1.1:
+	* arno.qms/indexes.qms/starting_with_02.qmt 1.1:
+	* arno.qms/indexes.qms/timestamps_01.qmt 1.1:
+		add index testcases for "starting with" and dates below julian 
+		date in timestamp
+
+	* arno.qms/optimizer.qms/opt_full_join_01.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_full_join_02.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_full_join_03.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_full_join_04.qmt 1.1:
+		add full join test cases
+
+	* arno.qms/optimizer.qms/opt_left_join_01.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_left_join_02.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_left_join_03.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_left_join_04.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_left_join_05.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_left_join_06.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_left_join_07.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_left_join_08.qmt 1.1:
+	* arno.qms/optimizer.qms/opt_left_join_09.qmt 1.1:
+		add optimizer testcases for LEFT JOIN
+
+2004-08-04	pcisar
+	* QMTest/fbqa.py 1.7:
+	* isql.qms/avg.qms/avg_01.qmt 1.5:
+	* isql.qms/avg.qms/avg_02.qmt 1.5:
+	* isql.qms/avg.qms/avg_03.qmt 1.5:
+	* isql.qms/avg.qms/avg_04.qmt 1.6:
+	* isql.qms/avg.qms/avg_05.qmt 1.5:
+	* isql.qms/avg.qms/avg_06.qmt 1.5:
+	* isql.qms/avg.qms/avg_07.qmt 1.5:
+	* isql.qms/avg.qms/avg_08.qmt 1.5:
+	* isql.qms/avg.qms/avg_09.qmt 1.5:
+	* isql.qms/basic.qms/db_01.qmt 1.5:
+	* isql.qms/basic.qms/db_02.qmt 1.5:
+	* isql.qms/basic.qms/db_03.qmt 1.5:
+	* isql.qms/basic.qms/db_04.qmt 1.5:
+	* isql.qms/basic.qms/db_05.qmt 1.5:
+	* isql.qms/basic.qms/db_06.qmt 1.5:
+	* isql.qms/basic.qms/db_07.qmt 1.5:
+	* isql.qms/basic.qms/db_08.qmt 1.5:
+	* isql.qms/basic.qms/db_09.qmt 1.5:
+	* isql.qms/basic.qms/db_10.qmt 1.5:
+	* isql.qms/basic.qms/db_11.qmt 1.5:
+	* isql.qms/basic.qms/db_12.qmt 1.5:
+	* isql.qms/basic.qms/db_13.qmt 1.5:
+	* isql.qms/basic.qms/db_14.qmt 1.5:
+	* isql.qms/basic.qms/db_15.qmt 1.5:
+	* isql.qms/basic.qms/db_16.qmt 1.5:
+	* isql.qms/basic.qms/db_17.qmt 1.5:
+	* isql.qms/basic.qms/db_18.qmt 1.5:
+	* isql.qms/basic.qms/db_19.qmt 1.5:
+	* isql.qms/basic.qms/db_20.qmt 1.5:
+	* isql.qms/basic.qms/db_21.qmt 1.5:
+	* isql.qms/basic.qms/db_22.qmt 1.5:
+	* isql.qms/basic.qms/db_23.qmt 1.5:
+	* isql.qms/basic.qms/db_24.qmt 1.5:
+	* isql.qms/basic.qms/db_25.qmt 1.5:
+	* isql.qms/basic.qms/db_26.qmt 1.5:
+	* isql.qms/basic.qms/db_27.qmt 1.5:
+	* isql.qms/basic.qms/db_28.qmt 1.5:
+	* isql.qms/basic.qms/db_29.qmt 1.5:
+	* isql.qms/basic.qms/db_30.qmt 1.5:
+	* isql.qms/basic.qms/db_31.qmt 1.5:
+	* isql.qms/basic.qms/db_32.qmt 1.5:
+	* isql.qms/basic.qms/db_33.qmt 1.2:
+	* isql.qms/basic.qms/db_34.qmt 1.2:
+	* isql.qms/basic.qms/db_35.qmt 1.2:
+	* isql.qms/basic.qms/db_36.qmt 1.2:
+	* isql.qms/basic.qms/db_37.qmt 1.2:
+	* isql.qms/basic.qms/db_38.qmt 1.2:
+	* isql.qms/basic.qms/db_39.qmt 1.2:
+	* isql.qms/basic.qms/db_40.qmt 1.2:
+	* isql.qms/basic.qms/isql_01.qmt 1.5:
+	* isql.qms/basic.qms/isql_02.qmt 1.5:
+	* isql.qms/basic.qms/isql_03.qmt 1.2:
+	* isql.qms/basic.qms/isql_04.qmt 1.2:
+	* isql.qms/basic.qms/isql_05.qmt 1.2:
+	* isql.qms/basic.qms/isql_06.qmt 1.2:
+	* isql.qms/basic.qms/isql_07.qmt 1.2:
+	* isql.qms/cast.qms/cast_01.qmt 1.5:
+	* isql.qms/cast.qms/cast_02.qmt 1.4:
+	* isql.qms/cast.qms/cast_03.qmt 1.5:
+	* isql.qms/cast.qms/cast_04.qmt 1.4:
+	* isql.qms/cast.qms/cast_05.qmt 1.4:
+	* isql.qms/cast.qms/cast_06.qmt 1.4:
+	* isql.qms/cast.qms/cast_07.qmt 1.5:
+	* isql.qms/cast.qms/cast_08.qmt 1.4:
+	* isql.qms/cast.qms/cast_09.qmt 1.4:
+	* isql.qms/cast.qms/cast_10.qmt 1.4:
+	* isql.qms/cast.qms/cast_11.qmt 1.4:
+	* isql.qms/cast.qms/cast_12.qmt 1.4:
+	* isql.qms/cast.qms/cast_13.qmt 1.4:
+	* isql.qms/cast.qms/cast_14.qmt 1.4:
+	* isql.qms/cast.qms/cast_15.qmt 1.4:
+	* isql.qms/cast.qms/cast_16.qmt 1.4:
+	* isql.qms/cast.qms/cast_17.qmt 1.4:
+	* isql.qms/cast.qms/cast_18.qmt 1.4:
+	* isql.qms/cast.qms/cast_19.qmt 1.4:
+	* isql.qms/cast.qms/cast_20.qmt 1.5:
+	* isql.qms/cast.qms/cast_21.qmt 1.4:
+	* isql.qms/cast.qms/cast_22.qmt 1.4:
+	* isql.qms/cast.qms/cast_23.qmt 1.4:
+	* isql.qms/count.qms/count_01.qmt 1.5:
+	* isql.qms/count.qms/count_02.qmt 1.5:
+	* isql.qms/database.qms/alter.qms/alter_database_01.qmt 1.5:
+	* isql.qms/database.qms/alter.qms/alter_database_02.qmt 1.5:
+	* isql.qms/database.qms/alter.qms/alter_database_03.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_01.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_02.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_03.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_04.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_05.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_06.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_07.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_08.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_09.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_10.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_11.qmt 1.5:
+	* isql.qms/database.qms/create.qms/create_database_12.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_13.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_14.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_15.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_16.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_17.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_18.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_19.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_20.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_21.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_22.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_23.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_24.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_25.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_26.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_27.qmt 1.2:
+	* isql.qms/database.qms/create.qms/create_database_28.qmt 1.2:
+	* isql.qms/delete.qms/delete_01.qmt 1.4:
+	* isql.qms/delete.qms/delete_02.qmt 1.4:
+	* isql.qms/delete.qms/delete_03.qmt 1.4:
+	* isql.qms/domain.qms/alter.qms/alter_domain_01.qmt 1.5:
+	* isql.qms/domain.qms/alter.qms/alter_domain_02.qmt 1.5:
+	* isql.qms/domain.qms/alter.qms/alter_domain_03.qmt 1.5:
+	* isql.qms/domain.qms/alter.qms/alter_domain_04.qmt 1.5:
+	* isql.qms/domain.qms/alter.qms/alter_domain_05.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_01.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_02.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_03.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_04.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_05.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_06.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_07.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_08.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_09.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_10.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_11.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_12.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_13.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_14.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_15.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_16.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_17.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_18.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_19.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_20.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_21.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_22.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_23.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_24.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_25.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_26.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_27.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_28.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_29.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_30.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_31.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_32.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_33.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_34.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_35.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_36.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_37.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_38.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_39.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_40.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_41.qmt 1.5:
+	* isql.qms/domain.qms/create.qms/create_domain_42.qmt 1.5:
+	* isql.qms/domain.qms/drop.qms/drop_domain_01.qmt 1.4:
+	* isql.qms/domain.qms/drop.qms/drop_domain_02.qmt 1.4:
+	* isql.qms/domain.qms/drop.qms/drop_domain_03.qmt 1.4:
+	* isql.qms/exception.qms/alter.qms/alter_exception_01.qmt 1.5:
+	* isql.qms/exception.qms/create.qms/create_exception_01.qmt 1.5:
+	* isql.qms/exception.qms/create.qms/create_exception_02.qmt 1.5:
+	* isql.qms/exception.qms/create.qms/create_exception_03.qmt 1.4:
+	* isql.qms/exception.qms/drop.qms/drop_exception_01.qmt 1.4:
+	* isql.qms/exception.qms/drop.qms/drop_exception_02.qmt 1.4:
+	* isql.qms/exception.qms/drop.qms/drop_exception_03.qmt 1.4:
+	* isql.qms/generator.qms/create.qms/create_generator_01.qmt 1.5:
+	* isql.qms/generator.qms/create.qms/create_generator_02.qmt 1.5:
+	* isql.qms/generator.qms/drop.qms/drop_generator_01.qmt 1.4:
+	* isql.qms/generator.qms/drop.qms/drop_generator_02.qmt 1.4:
+	* isql.qms/generator.qms/drop.qms/drop_generator_03.qmt 1.4:
+	* isql.qms/index.qms/alter.qms/alter_index_01.qmt 1.5:
+	* isql.qms/index.qms/alter.qms/alter_index_02.qmt 1.4:
+	* isql.qms/index.qms/alter.qms/alter_index_03.qmt 1.4:
+	* isql.qms/index.qms/alter.qms/alter_index_04.qmt 1.4:
+	* isql.qms/index.qms/alter.qms/alter_index_05.qmt 1.4:
+	* isql.qms/index.qms/alter.qms/alter_index_06.qmt 1.2:
+	* isql.qms/index.qms/alter.qms/alter_index_07.qmt 1.1:
+	* isql.qms/index.qms/create.qms/create_index_01.qmt 1.5:
+	* isql.qms/index.qms/create.qms/create_index_02.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_03.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_04.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_05.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_06.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_07.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_08.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_09.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_10.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_11.qmt 1.5:
+	* isql.qms/index.qms/create.qms/create_index_12.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_13.qmt 1.5:
+	* isql.qms/procedure.qms/alter.qms/alter_procedure_01.qmt 1.5:
+	* isql.qms/procedure.qms/alter.qms/alter_procedure_02.qmt 1.5:
+	* isql.qms/procedure.qms/create.qms/create_procedure_01.qmt 1.5:
+	* isql.qms/procedure.qms/create.qms/create_procedure_02.qmt 1.4:
+	* isql.qms/procedure.qms/create.qms/create_procedure_03.qmt 1.4:
+	* isql.qms/procedure.qms/create.qms/create_procedure_04.qmt 1.4:
+	* isql.qms/procedure.qms/create.qms/create_procedure_05.qmt 1.4:
+	* isql.qms/procedure.qms/create.qms/create_procedure_06.qmt 1.4:
+	* isql.qms/procedure.qms/create.qms/create_procedure_07.qmt 1.5:
+	* isql.qms/procedure.qms/create.qms/create_procedure_08.qmt 1.4:
+	* isql.qms/role.qms/create.qms/create_role_01.qmt 1.5:
+	* isql.qms/role.qms/create.qms/create_role_02.qmt 1.4:
+	* isql.qms/shadow.qms/create.qms/create_shadow_01.qmt 1.6:
+	* isql.qms/shadow.qms/create.qms/create_shadow_02.qmt 1.5:
+	* isql.qms/shadow.qms/create.qms/create_shadow_03.qmt 1.2:
+	* isql.qms/shadow.qms/create.qms/create_shadow_04.qmt 1.2:
+	* isql.qms/shadow.qms/create.qms/create_shadow_05.qmt 1.2:
+	* isql.qms/shadow.qms/create.qms/create_shadow_06.qmt 1.2:
+	* isql.qms/table.qms/alter.qms/alter_table_01.qmt 1.5:
+	* isql.qms/table.qms/alter.qms/alter_table_02.qmt 1.4:
+	* isql.qms/table.qms/alter.qms/alter_table_03.qmt 1.4:
+	* isql.qms/table.qms/alter.qms/alter_table_04.qmt 1.4:
+	* isql.qms/table.qms/alter.qms/alter_table_05.qmt 1.4:
+	* isql.qms/table.qms/alter.qms/alter_table_06.qmt 1.4:
+	* isql.qms/table.qms/alter.qms/alter_table_07.qmt 1.4:
+	* isql.qms/table.qms/alter.qms/alter_table_08.qmt 1.4:
+	* isql.qms/table.qms/alter.qms/alter_table_09.qmt 1.4:
+	* isql.qms/table.qms/alter.qms/alter_table_10.qmt 1.4:
+	* isql.qms/table.qms/alter.qms/alter_table_11.qmt 1.4:
+	* isql.qms/table.qms/create.qms/create_table_01.qmt 1.5:
+	* isql.qms/table.qms/create.qms/create_table_02.qmt 1.4:
+	* isql.qms/table.qms/create.qms/create_table_03.qmt 1.4:
+	* isql.qms/table.qms/create.qms/create_table_04.qmt 1.4:
+	* isql.qms/table.qms/create.qms/create_table_05.qmt 1.4:
+	* isql.qms/table.qms/create.qms/create_table_06.qmt 1.4:
+	* isql.qms/table.qms/create.qms/create_table_07.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_01.qmt 1.5:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_02.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_03.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_04.qmt 1.5:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_05.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_06.qmt 1.5:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_07.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_08.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_09.qmt 1.5:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_10.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_11.qmt 1.5:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_12.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_13.qmt 1.4:
+	* isql.qms/trigger.qms/create.qms/create_trigger_01.qmt 1.5:
+	* isql.qms/trigger.qms/create.qms/create_trigger_02.qmt 1.4:
+	* isql.qms/trigger.qms/create.qms/create_trigger_03.qmt 1.4:
+	* isql.qms/trigger.qms/create.qms/create_trigger_04.qmt 1.4:
+	* isql.qms/trigger.qms/create.qms/create_trigger_05.qmt 1.4:
+	* isql.qms/trigger.qms/create.qms/create_trigger_06.qmt 1.4:
+	* isql.qms/trigger.qms/create.qms/create_trigger_07.qmt 1.4:
+	* isql.qms/trigger.qms/create.qms/create_trigger_08.qmt 1.4:
+	* isql.qms/trigger.qms/create.qms/create_trigger_09.qmt 1.4:
+	* isql.qms/trigger.qms/create.qms/create_trigger_10.qmt 1.4:
+	* isql.qms/view.qms/create.qms/create_view_01.qmt 1.4:
+	* isql.qms/view.qms/create.qms/create_view_02.qmt 1.4:
+	* isql.qms/view.qms/create.qms/create_view_03.qmt 1.4:
+	* isql.qms/view.qms/create.qms/create_view_04.qmt 1.4:
+	* isql.qms/view.qms/create.qms/create_view_05.qmt 1.4:
+	* isql.qms/view.qms/create.qms/create_view_06.qmt 1.4:
+	* isql.qms/view.qms/create.qms/create_view_07.qmt 1.4:
+	* isql.qms/view.qms/create.qms/create_view_08.qmt 1.4:
+	* qadbm.py 1.1:
+	* qaver.py 1.2:
+	* resources.qms/test_user.qma 1.1:
+		- broken tests fixed
+		- test names changed
+		- minor test adjustments
+		- new qadbm (QA DataBase Manager) tool
+		all tests in isql suite now work (when run against proper target engine and platform, use qadbm to create list of relevant tests)
+
+2004-08-03	arnobrinkman
+	* sample-context.win 1.3:
+		The paths should end with a slash
+
+2004-08-03	skidder
+	* isql.qms/nickolay.qms/blob_01.qmt 1.2:
+		Add testcase for recent regression
+
+	* README win32.txt 1.2:
+		If you use Python 2.3 everything should be for Python 2.3, 
+		document it
+
+2004-08-02	arnobrinkman
+	* QMTest/fbqa.py 1.6:
+		Fix problems when trying to remove tempfile
+
+2004-07-27	arnobrinkman
+	* README win32.txt 1.1:
+	* sample-context.win 1.2:
+		update usage information
+
+2004-07-26	skidder
+	* isql.qms/nickolay.qms/like_01.qmt 1.2:
+		Modify test to make it cover another problematic situation
+
+2004-07-20	skidder
+	* isql.qms/nickolay.qms/like_01.qmt 1.1:
+		Add test for another LIKE problem in HEAD
+
+	* QMTest/firebird.py 1.6:
+		Let QMDB work on Windows. WIFSIGNALED macro is not defined on 
+		this platform
+
+2004-07-02	pcisar
+	* isql.qms/basic.qms/db_33.qmt 1.1:
+	* isql.qms/basic.qms/db_34.qmt 1.1:
+	* isql.qms/basic.qms/db_35.qmt 1.1:
+	* isql.qms/basic.qms/db_36.qmt 1.1:
+	* isql.qms/basic.qms/db_37.qmt 1.1:
+	* isql.qms/basic.qms/db_38.qmt 1.1:
+	* isql.qms/basic.qms/db_39.qmt 1.1:
+	* isql.qms/basic.qms/db_40.qmt 1.1:
+	* isql.qms/basic.qms/isql_04.qmt 1.1:
+	* isql.qms/basic.qms/isql_05.qmt 1.1:
+	* isql.qms/basic.qms/isql_06.qmt 1.1:
+	* isql.qms/basic.qms/isql_07.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_13.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_14.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_15.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_16.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_17.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_18.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_19.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_20.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_21.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_22.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_23.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_24.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_25.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_26.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_27.qmt 1.1:
+	* isql.qms/database.qms/create.qms/create_database_28.qmt 1.1:
+	* isql.qms/index.qms/alter.qms/alter_index_06.qmt 1.1:
+	* isql.qms/index.qms/create.qms/create_index_13.qmt 1.4:
+	* isql.qms/shadow.qms/create.qms/create_shadow_03.qmt 1.1:
+	* isql.qms/shadow.qms/create.qms/create_shadow_04.qmt 1.1:
+	* isql.qms/shadow.qms/create.qms/create_shadow_05.qmt 1.1:
+	* isql.qms/shadow.qms/create.qms/create_shadow_06.qmt 1.1:
+		New test versions for FB 1.0.3 and FB 1.5
+
+2004-07-01	pcisar
+	* QMTest/fbqa.py 1.5:
+	* QMTest/firebird.py 1.5:
+	* isql.qms/avg.qms/avg_01.qmt 1.4:
+	* isql.qms/avg.qms/avg_02.qmt 1.4:
+	* isql.qms/avg.qms/avg_03.qmt 1.4:
+	* isql.qms/avg.qms/avg_04.qmt 1.5:
+	* isql.qms/avg.qms/avg_05.qmt 1.4:
+	* isql.qms/avg.qms/avg_06.qmt 1.4:
+	* isql.qms/avg.qms/avg_07.qmt 1.4:
+	* isql.qms/avg.qms/avg_08.qmt 1.4:
+	* isql.qms/avg.qms/avg_09.qmt 1.4:
+	* isql.qms/basic.qms/db_01.qmt 1.4:
+	* isql.qms/basic.qms/db_02.qmt 1.4:
+	* isql.qms/basic.qms/db_03.qmt 1.4:
+	* isql.qms/basic.qms/db_04.qmt 1.4:
+	* isql.qms/basic.qms/db_05.qmt 1.4:
+	* isql.qms/basic.qms/db_06.qmt 1.4:
+	* isql.qms/basic.qms/db_07.qmt 1.4:
+	* isql.qms/basic.qms/db_08.qmt 1.4:
+	* isql.qms/basic.qms/db_09.qmt 1.4:
+	* isql.qms/basic.qms/db_10.qmt 1.4:
+	* isql.qms/basic.qms/db_11.qmt 1.4:
+	* isql.qms/basic.qms/db_12.qmt 1.4:
+	* isql.qms/basic.qms/db_13.qmt 1.4:
+	* isql.qms/basic.qms/db_14.qmt 1.4:
+	* isql.qms/basic.qms/db_15.qmt 1.4:
+	* isql.qms/basic.qms/db_16.qmt 1.4:
+	* isql.qms/basic.qms/db_17.qmt 1.4:
+	* isql.qms/basic.qms/db_18.qmt 1.4:
+	* isql.qms/basic.qms/db_19.qmt 1.4:
+	* isql.qms/basic.qms/db_20.qmt 1.4:
+	* isql.qms/basic.qms/db_21.qmt 1.4:
+	* isql.qms/basic.qms/db_22.qmt 1.4:
+	* isql.qms/basic.qms/db_23.qmt 1.4:
+	* isql.qms/basic.qms/db_24.qmt 1.4:
+	* isql.qms/basic.qms/db_25.qmt 1.4:
+	* isql.qms/basic.qms/db_26.qmt 1.4:
+	* isql.qms/basic.qms/db_27.qmt 1.4:
+	* isql.qms/basic.qms/db_28.qmt 1.4:
+	* isql.qms/basic.qms/db_29.qmt 1.4:
+	* isql.qms/basic.qms/db_30.qmt 1.4:
+	* isql.qms/basic.qms/db_31.qmt 1.4:
+	* isql.qms/basic.qms/db_32.qmt 1.4:
+	* isql.qms/basic.qms/isql_01.qmt 1.4:
+	* isql.qms/basic.qms/isql_02.qmt 1.4:
+	* isql.qms/basic.qms/isql_03.qmt 1.1:
+	* isql.qms/cast.qms/cast_01.qmt 1.4:
+	* isql.qms/cast.qms/cast_02.qmt 1.3:
+	* isql.qms/cast.qms/cast_03.qmt 1.4:
+	* isql.qms/cast.qms/cast_04.qmt 1.3:
+	* isql.qms/cast.qms/cast_05.qmt 1.3:
+	* isql.qms/cast.qms/cast_06.qmt 1.3:
+	* isql.qms/cast.qms/cast_07.qmt 1.4:
+	* isql.qms/cast.qms/cast_08.qmt 1.3:
+	* isql.qms/cast.qms/cast_09.qmt 1.3:
+	* isql.qms/cast.qms/cast_10.qmt 1.3:
+	* isql.qms/cast.qms/cast_11.qmt 1.3:
+	* isql.qms/cast.qms/cast_12.qmt 1.3:
+	* isql.qms/cast.qms/cast_13.qmt 1.3:
+	* isql.qms/cast.qms/cast_14.qmt 1.3:
+	* isql.qms/cast.qms/cast_15.qmt 1.3:
+	* isql.qms/cast.qms/cast_16.qmt 1.3:
+	* isql.qms/cast.qms/cast_17.qmt 1.3:
+	* isql.qms/cast.qms/cast_18.qmt 1.3:
+	* isql.qms/cast.qms/cast_19.qmt 1.3:
+	* isql.qms/cast.qms/cast_20.qmt 1.4:
+	* isql.qms/cast.qms/cast_21.qmt 1.3:
+	* isql.qms/cast.qms/cast_22.qmt 1.3:
+	* isql.qms/cast.qms/cast_23.qmt 1.3:
+	* isql.qms/cast.qms/cast_24.qmt 1.3:
+	* isql.qms/count.qms/count_01.qmt 1.4:
+	* isql.qms/count.qms/count_02.qmt 1.4:
+	* isql.qms/database.qms/alter.qms/alter_database_01.qmt 1.4:
+	* isql.qms/database.qms/alter.qms/alter_database_02.qmt 1.4:
+	* isql.qms/database.qms/alter.qms/alter_database_03.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_01.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_02.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_03.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_04.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_05.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_06.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_07.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_08.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_09.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_10.qmt 1.4:
+	* isql.qms/database.qms/create.qms/create_database_11.qmt 1.4:
+	* isql.qms/delete.qms/delete_01.qmt 1.3:
+	* isql.qms/delete.qms/delete_02.qmt 1.3:
+	* isql.qms/delete.qms/delete_03.qmt 1.3:
+	* isql.qms/domain.qms/alter.qms/alter_domain_01.qmt 1.4:
+	* isql.qms/domain.qms/alter.qms/alter_domain_02.qmt 1.4:
+	* isql.qms/domain.qms/alter.qms/alter_domain_03.qmt 1.4:
+	* isql.qms/domain.qms/alter.qms/alter_domain_04.qmt 1.4:
+	* isql.qms/domain.qms/alter.qms/alter_domain_05.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_01.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_02.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_03.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_04.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_05.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_06.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_07.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_08.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_09.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_10.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_11.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_12.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_13.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_14.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_15.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_16.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_17.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_18.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_19.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_20.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_21.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_22.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_23.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_24.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_25.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_26.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_27.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_28.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_29.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_30.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_31.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_32.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_33.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_34.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_35.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_36.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_37.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_38.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_39.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_40.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_41.qmt 1.4:
+	* isql.qms/domain.qms/create.qms/create_domain_42.qmt 1.4:
+	* isql.qms/domain.qms/drop.qms/drop_domain_01.qmt 1.3:
+	* isql.qms/domain.qms/drop.qms/drop_domain_02.qmt 1.3:
+	* isql.qms/domain.qms/drop.qms/drop_domain_03.qmt 1.3:
+	* isql.qms/exception.qms/alter.qms/alter_exception_01.qmt 1.4:
+	* isql.qms/exception.qms/create.qms/create_exception_01.qmt 1.4:
+	* isql.qms/exception.qms/create.qms/create_exception_02.qmt 1.4:
+	* isql.qms/exception.qms/create.qms/create_exception_03.qmt 1.3:
+	* isql.qms/exception.qms/create.qms/create_exception_04.qmt 1.3:
+	* isql.qms/exception.qms/drop.qms/drop_exception_01.qmt 1.3:
+	* isql.qms/exception.qms/drop.qms/drop_exception_02.qmt 1.3:
+	* isql.qms/exception.qms/drop.qms/drop_exception_03.qmt 1.3:
+	* isql.qms/generator.qms/create.qms/create_generator_01.qmt 1.4:
+	* isql.qms/generator.qms/create.qms/create_generator_02.qmt 1.4:
+	* isql.qms/generator.qms/create.qms/create_generator_03.qmt 1.3:
+	* isql.qms/generator.qms/drop.qms/drop_generator_01.qmt 1.3:
+	* isql.qms/generator.qms/drop.qms/drop_generator_02.qmt 1.3:
+	* isql.qms/generator.qms/drop.qms/drop_generator_03.qmt 1.3:
+	* isql.qms/index.qms/alter.qms/alter_index_01.qmt 1.4:
+	* isql.qms/index.qms/alter.qms/alter_index_02.qmt 1.3:
+	* isql.qms/index.qms/alter.qms/alter_index_03.qmt 1.3:
+	* isql.qms/index.qms/alter.qms/alter_index_04.qmt 1.3:
+	* isql.qms/index.qms/alter.qms/alter_index_05.qmt 1.3:
+	* isql.qms/index.qms/create.qms/create_index_01.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_02.qmt 1.3:
+	* isql.qms/index.qms/create.qms/create_index_03.qmt 1.3:
+	* isql.qms/index.qms/create.qms/create_index_04.qmt 1.3:
+	* isql.qms/index.qms/create.qms/create_index_05.qmt 1.3:
+	* isql.qms/index.qms/create.qms/create_index_06.qmt 1.3:
+	* isql.qms/index.qms/create.qms/create_index_07.qmt 1.3:
+	* isql.qms/index.qms/create.qms/create_index_08.qmt 1.3:
+	* isql.qms/index.qms/create.qms/create_index_09.qmt 1.3:
+	* isql.qms/index.qms/create.qms/create_index_10.qmt 1.3:
+	* isql.qms/index.qms/create.qms/create_index_11.qmt 1.4:
+	* isql.qms/index.qms/create.qms/create_index_12.qmt 1.3:
+	* isql.qms/index.qms/create.qms/create_index_13.qmt 1.3:
+	* isql.qms/procedure.qms/alter.qms/alter_procedure_01.qmt 1.4:
+	* isql.qms/procedure.qms/alter.qms/alter_procedure_02.qmt 1.4:
+	* isql.qms/procedure.qms/alter.qms/alter_procedure_03.qmt 1.3:
+	* isql.qms/procedure.qms/create.qms/create_procedure_01.qmt 1.4:
+	* isql.qms/procedure.qms/create.qms/create_procedure_02.qmt 1.3:
+	* isql.qms/procedure.qms/create.qms/create_procedure_03.qmt 1.3:
+	* isql.qms/procedure.qms/create.qms/create_procedure_04.qmt 1.3:
+	* isql.qms/procedure.qms/create.qms/create_procedure_05.qmt 1.3:
+	* isql.qms/procedure.qms/create.qms/create_procedure_06.qmt 1.3:
+	* isql.qms/procedure.qms/create.qms/create_procedure_07.qmt 1.4:
+	* isql.qms/procedure.qms/create.qms/create_procedure_08.qmt 1.3:
+	* isql.qms/procedure.qms/create.qms/create_procedure_09.qmt 1.3:
+	* isql.qms/role.qms/create.qms/create_role_01.qmt 1.4:
+	* isql.qms/role.qms/create.qms/create_role_02.qmt 1.3:
+	* isql.qms/shadow.qms/create.qms/create_shadow_01.qmt 1.5:
+	* isql.qms/shadow.qms/create.qms/create_shadow_02.qmt 1.4:
+	* isql.qms/table.qms/alter.qms/alter_table_01.qmt 1.4:
+	* isql.qms/table.qms/alter.qms/alter_table_02.qmt 1.3:
+	* isql.qms/table.qms/alter.qms/alter_table_03.qmt 1.3:
+	* isql.qms/table.qms/alter.qms/alter_table_04.qmt 1.3:
+	* isql.qms/table.qms/alter.qms/alter_table_05.qmt 1.3:
+	* isql.qms/table.qms/alter.qms/alter_table_06.qmt 1.3:
+	* isql.qms/table.qms/alter.qms/alter_table_07.qmt 1.3:
+	* isql.qms/table.qms/alter.qms/alter_table_08.qmt 1.3:
+	* isql.qms/table.qms/alter.qms/alter_table_09.qmt 1.3:
+	* isql.qms/table.qms/alter.qms/alter_table_10.qmt 1.3:
+	* isql.qms/table.qms/alter.qms/alter_table_11.qmt 1.3:
+	* isql.qms/table.qms/create.qms/create_table_01.qmt 1.4:
+	* isql.qms/table.qms/create.qms/create_table_02.qmt 1.3:
+	* isql.qms/table.qms/create.qms/create_table_03.qmt 1.3:
+	* isql.qms/table.qms/create.qms/create_table_04.qmt 1.3:
+	* isql.qms/table.qms/create.qms/create_table_05.qmt 1.3:
+	* isql.qms/table.qms/create.qms/create_table_06.qmt 1.3:
+	* isql.qms/table.qms/create.qms/create_table_07.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_01.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_02.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_03.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_04.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_05.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_06.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_07.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_08.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_09.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_10.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_11.qmt 1.4:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_12.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_13.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_14.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_15.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_16.qmt 1.3:
+	* isql.qms/trigger.qms/alter.qms/alter_trigger_17.qmt 1.3:
+	* isql.qms/trigger.qms/create.qms/create_trigger_01.qmt 1.4:
+	* isql.qms/trigger.qms/create.qms/create_trigger_02.qmt 1.3:
+	* isql.qms/trigger.qms/create.qms/create_trigger_03.qmt 1.3:
+	* isql.qms/trigger.qms/create.qms/create_trigger_04.qmt 1.3:
+	* isql.qms/trigger.qms/create.qms/create_trigger_05.qmt 1.3:
+	* isql.qms/trigger.qms/create.qms/create_trigger_06.qmt 1.3:
+	* isql.qms/trigger.qms/create.qms/create_trigger_07.qmt 1.3:
+	* isql.qms/trigger.qms/create.qms/create_trigger_08.qmt 1.3:
+	* isql.qms/trigger.qms/create.qms/create_trigger_09.qmt 1.3:
+	* isql.qms/trigger.qms/create.qms/create_trigger_10.qmt 1.3:
+	* isql.qms/view.qms/create.qms/create_view_01.qmt 1.3:
+	* isql.qms/view.qms/create.qms/create_view_02.qmt 1.3:
+	* isql.qms/view.qms/create.qms/create_view_03.qmt 1.3:
+	* isql.qms/view.qms/create.qms/create_view_04.qmt 1.3:
+	* isql.qms/view.qms/create.qms/create_view_05.qmt 1.3:
+	* isql.qms/view.qms/create.qms/create_view_06.qmt 1.3:
+	* isql.qms/view.qms/create.qms/create_view_07.qmt 1.3:
+	* isql.qms/view.qms/create.qms/create_view_08.qmt 1.3:
+		- Many changes in new test class (fyqa.py)
+		- Some improvements and fixes in old extension classes
+		- Tests updated to new extension class (fb 1.0 base)
+
+2004-06-25	skidder
+	* isql.qms/nickolay.qms/blob_01.qmt 1.1:
+	* isql.qms/nickolay.qms/inv_01.qmt 1.1:
+	* isql.qms/nickolay.qms/inv_02.qmt 1.1:
+	* isql.qms/nickolay.qms/inv_03.qmt 1.1:
+	* isql.qms/nickolay.qms/plan_01.qmt 1.1:
+		Testcases for my recent changes
+
+2004-06-16	pcisar
+	* QMTest/fbqa.py 1.3:
+	* QMTest/firebird.py 1.3:
+	* qaver.py 1.1:
+		- Changes to fbqa.py classes needed to address test versioning issue.
+		- New qaver.py tool
+
+	* QMTest/firebird.py 1.4:
+		some fixes
+
+	* QMTest/fbqa.py 1.4:
+		- Fix environment for external programs (needed for Windows)
+		- Reintroduce annotation formatting
+
 2004-06-08	pcisar
+	* QMTest/classes.qmc 1.3:
+	* QMTest/fbqa.py 1.1:
+		New test class created by Moe
+
 	* QMTest/fbqa.py 1.2:
 		* removed obsolete docstrings
 		* added "-m" switch to isql execution call in self.__ExecISQLCommands()
@@ -17,10 +801,6 @@
 		       return
 		
 		for dispatches at the end of Run()
-
-	* QMTest/classes.qmc 1.3:
-	* QMTest/fbqa.py 1.1:
-		New test class created by Moe
 
 2003-09-26	pcisar
 	* isql.qms/avg.qms/avg_04.qmt 1.4:
