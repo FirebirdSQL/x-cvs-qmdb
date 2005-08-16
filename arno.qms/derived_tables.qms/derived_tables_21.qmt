@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension
+  PUBLIC '-//QM/2.3/Extension//EN'
+  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>          ID DESCRIPTION 
+============ =========== 
+           9 nine   </text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>2.0</text></argument><argument name="description"><text>IN predicate uses derived table internally and should ignore column-name checks (Aggregate functions are unnamed by default).</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>derived_tables.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Table_10 (
+  ID INTEGER NOT NULL,
+  DESCRIPTION VARCHAR(10)
+);
+
+COMMIT;
+
+INSERT INTO Table_10 (ID, DESCRIPTION) VALUES (0, NULL);
+INSERT INTO Table_10 (ID, DESCRIPTION) VALUES (1, 'one');
+INSERT INTO Table_10 (ID, DESCRIPTION) VALUES (2, 'two');
+INSERT INTO Table_10 (ID, DESCRIPTION) VALUES (3, 'three');
+INSERT INTO Table_10 (ID, DESCRIPTION) VALUES (4, 'four');
+INSERT INTO Table_10 (ID, DESCRIPTION) VALUES (5, 'five');
+INSERT INTO Table_10 (ID, DESCRIPTION) VALUES (6, 'six');
+INSERT INTO Table_10 (ID, DESCRIPTION) VALUES (7, 'seven');
+INSERT INTO Table_10 (ID, DESCRIPTION) VALUES (8, 'eight');
+INSERT INTO Table_10 (ID, DESCRIPTION) VALUES (9, 'nine');
+
+COMMIT;
+</text></argument><argument name="source_code"><text>SELECT
+  t10.ID,
+  t10.Description
+FROM
+  Table_10 t10
+WHERE
+  t10.ID IN (SELECT MAX(t1.ID) FROM Table_10 t1);</text></argument><argument name="test_id"><text>derived_tables_21</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="title"><text>Implicit derived table by IN predicate</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>
