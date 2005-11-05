@@ -13,7 +13,7 @@ I_F05_ASC                                     0.00498
 I_F05_DESC                                    0.00498 
 I_F50_ASC                                     0.04762 
 I_F50_DESC                                    0.04762 
-</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>SELECTIVITY - CREATE INDEX</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>Check if selectivity is calculated correctly.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>full_join.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE SelectivityTest (
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>SELECTIVITY - CREATE INDEX</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>2.0</text></argument><argument name="description"><text>Check if selectivity is calculated correctly.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>full_join.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE SelectivityTest (
   F1 INTEGER NOT NULL,
   F2 INTEGER,
   F5 INTEGER,
@@ -62,7 +62,7 @@ CREATE DESC INDEX I_F50_DESC ON SelectivityTest (F50);
 COMMIT;
 </text></argument><argument name="source_code"><text>SET PLAN OFF;
 SELECT
-  RDB$INDEX_NAME AS INDEX_NAME,
+  CAST(RDB$INDEX_NAME AS CHAR(31)) AS INDEX_NAME,
   CAST(RDB$STATISTICS AS NUMERIC(18,5)) AS SELECTIVITY
 FROM
   RDB$INDICES

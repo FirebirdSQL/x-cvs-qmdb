@@ -2,13 +2,13 @@
 <!DOCTYPE extension
   PUBLIC '-//QM/2.2/Extension//EN'
   'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
-<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN JOIN (T50 NATURAL,T100 INDEX (PK_TABLE_100),T250 INDEX (I_TABLE_250))
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN JOIN (T50 NATURAL, T100 INDEX (PK_TABLE_100), T250 INDEX (I_TABLE_250))
 
        COUNT 
 ============ 
 
           50 
-</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>INNER JOIN join order</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>With a INNER JOIN the relation with the smallest expected result should be the first one in process order. The next relation should be the next relation with expected smallest result based on previous relation and do on till last relation.
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>INNER JOIN join order</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>2.0</text></argument><argument name="description"><text>With a INNER JOIN the relation with the smallest expected result should be the first one in process order. The next relation should be the next relation with expected smallest result based on previous relation and do on till last relation.
 It is expected that a unique index gives fewer results then non-unique index. Thus non-unique indexes will be at the end by determing join order.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>inner_join.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Table_50 (
   ID INTEGER NOT NULL
 );

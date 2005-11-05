@@ -8,7 +8,7 @@
 ============ 
 
  -2147483648 
-</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>MIN() and DESC index (non-unique)</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>SELECT MIN(FieldX) FROM X
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>MIN() and DESC index (non-unique)</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>2.0</text></argument><argument name="description"><text>SELECT MIN(FieldX) FROM X
 DESC index cannot be used for MIN() aggregate function.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>sort_by_index.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Table_66 (
   ID INTEGER
 );

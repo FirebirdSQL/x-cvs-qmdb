@@ -2,145 +2,115 @@
 <!DOCTYPE extension
   PUBLIC '-//QM/2.2/Extension//EN'
   'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
-<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN JOIN (VB T5 NATURAL,VB T250 INDEX (PK_TABLE_250),VA T100 INDEX (PK_TABLE_100),VA T50 INDEX (PK_TABLE_50))
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN JOIN (VA T1K NATURAL, VB T3K INDEX (PK_TABLE_3K), VA T6K INDEX (PK_TABLE_6K), VB T10K INDEX (PK_TABLE_10K))
+
 
        COUNT 
 ============ 
 
-           5 
-</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>INNER JOIN join order and VIEW</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>With a INNER JOIN the relation with the smallest expected result should be the first one in process order. The next relation should be the next relation with expected smallest result based on previous relation and do on till last relation.
+        1000 
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>INNER JOIN join order and VIEW</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>2.0</text></argument><argument name="description"><text>With a INNER JOIN the relation with the smallest expected result should be the first one in process order. The next relation should be the next relation with expected smallest result based on previous relation and do on till last relation.
 
 Old/Current limitation in Firebird does stop checking order possibilties above 7 relations.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>inner_join.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Table_1 (
   ID INTEGER NOT NULL
 );
 
-CREATE TABLE Table_5 (
+CREATE TABLE Table_1K (
   ID INTEGER NOT NULL
 );
 
-CREATE TABLE Table_10 (
+CREATE TABLE Table_2K (
   ID INTEGER NOT NULL
 );
 
-CREATE TABLE Table_50 (
+CREATE TABLE Table_3K (
   ID INTEGER NOT NULL
 );
 
-CREATE TABLE Table_100 (
+CREATE TABLE Table_4K (
   ID INTEGER NOT NULL
 );
 
-CREATE TABLE Table_250 (
+CREATE TABLE Table_5K (
+  ID INTEGER NOT NULL
+);
+
+CREATE TABLE Table_6K (
+  ID INTEGER NOT NULL
+);
+
+CREATE TABLE Table_8K (
+  ID INTEGER NOT NULL
+);
+
+CREATE TABLE Table_10K (
   ID INTEGER NOT NULL
 );
 
 SET TERM ^^ ;
-CREATE PROCEDURE PR_FillTable_5
+CREATE PROCEDURE PR_FillTable_10K
 AS
 DECLARE VARIABLE FillID INTEGER;
 BEGIN
   FillID = 1;
-  WHILE (FillID &lt;= 5) DO
+  WHILE (FillID &lt;= 10000) DO
   BEGIN
-    INSERT INTO Table_5 (ID) VALUES (:FillID);
-    FillID = FillID + 1;
-  END
-END
-^^
-
-CREATE PROCEDURE PR_FillTable_10
-AS
-DECLARE VARIABLE FillID INTEGER;
-BEGIN
-  FillID = 1;
-  WHILE (FillID &lt;= 10) DO
-  BEGIN
-    INSERT INTO Table_10 (ID) VALUES (:FillID);
-    FillID = FillID + 1;
-  END
-END
-^^
-
-CREATE PROCEDURE PR_FillTable_50
-AS
-DECLARE VARIABLE FillID INTEGER;
-BEGIN
-  FillID = 1;
-  WHILE (FillID &lt;= 50) DO
-  BEGIN
-    INSERT INTO Table_50 (ID) VALUES (:FillID);
-    FillID = FillID + 1;
-  END
-END
-^^
-
-CREATE PROCEDURE PR_FillTable_100
-AS
-DECLARE VARIABLE FillID INTEGER;
-BEGIN
-  FillID = 1;
-  WHILE (FillID &lt;= 100) DO
-  BEGIN
-    INSERT INTO Table_100 (ID) VALUES (:FillID);
-    FillID = FillID + 1;
-  END
-END
-^^
-
-CREATE PROCEDURE PR_FillTable_250
-AS
-DECLARE VARIABLE FillID INTEGER;
-BEGIN
-  FillID = 1;
-  WHILE (FillID &lt;= 250) DO
-  BEGIN
-    INSERT INTO Table_250 (ID) VALUES (:FillID);
+    INSERT INTO Table_10K (ID) VALUES (:FillID);
     FillID = FillID + 1;
   END
 END
 ^^
 SET TERM ; ^^
 
+COMMIT;
 
 CREATE VIEW View_A (
-  ID5,
-  ID100
+  ID1K,
+  ID6K
 ) 
 AS
 SELECT
-  t5.ID,
-  t100.ID
+  t1K.ID,
+  t6K.ID
 FROM
-  Table_100 t100
-  JOIN Table_5 t5 ON (t5.ID = t100.ID);
+  Table_6K t6K
+  JOIN Table_1K t1K ON (t1K.ID = t6K.ID);
 
 CREATE VIEW View_B (
-  ID50,
-  ID250
+  ID3K,
+  ID10K
 ) 
 AS
 SELECT
-  t50.ID,
-  t250.ID
+  t3K.ID,
+  t10K.ID
 FROM
-  Table_50 t50
-  JOIN Table_250 t250 ON (t250.ID = t50.ID);
+  Table_3K t3K
+  JOIN Table_10K t10K ON (t10K.ID = t3K.ID);
 
 COMMIT;
 
 INSERT INTO Table_1 (ID) VALUES (1);
-EXECUTE PROCEDURE PR_FillTable_5;
-EXECUTE PROCEDURE PR_FillTable_10;
-EXECUTE PROCEDURE PR_FillTable_50;
-EXECUTE PROCEDURE PR_FillTable_100;
-EXECUTE PROCEDURE PR_FillTable_250;
+EXECUTE PROCEDURE PR_FillTable_10K;
+INSERT INTO Table_1K (ID) SELECT ID FROM Table_10K WHERE ID &lt;= 1000;
+INSERT INTO Table_2K (ID) SELECT ID FROM Table_10K WHERE ID &lt;= 2000;
+INSERT INTO Table_3K (ID) SELECT ID FROM Table_10K WHERE ID &lt;= 3000;
+INSERT INTO Table_4K (ID) SELECT ID FROM Table_10K WHERE ID &lt;= 4000;
+INSERT INTO Table_5K (ID) SELECT ID FROM Table_10K WHERE ID &lt;= 5000;
+INSERT INTO Table_6K (ID) SELECT ID FROM Table_10K WHERE ID &lt;= 6000;
+INSERT INTO Table_8K (ID) SELECT ID FROM Table_10K WHERE ID &lt;= 8000;
+
+COMMIT;
 
 CREATE UNIQUE ASC INDEX PK_Table_1 ON Table_1 (ID);
-CREATE UNIQUE ASC INDEX PK_Table_5 ON Table_5 (ID);
-CREATE UNIQUE ASC INDEX PK_Table_10 ON Table_10 (ID);
-CREATE UNIQUE ASC INDEX PK_Table_50 ON Table_50 (ID);
-CREATE UNIQUE ASC INDEX PK_Table_100 ON Table_100 (ID);
-CREATE UNIQUE ASC INDEX PK_Table_250 ON Table_250 (ID);
+CREATE UNIQUE ASC INDEX PK_Table_1K ON Table_1K (ID);
+CREATE UNIQUE ASC INDEX PK_Table_2K ON Table_2K (ID);
+CREATE UNIQUE ASC INDEX PK_Table_3K ON Table_3K (ID);
+CREATE UNIQUE ASC INDEX PK_Table_4K ON Table_4K (ID);
+CREATE UNIQUE ASC INDEX PK_Table_5K ON Table_5K (ID);
+CREATE UNIQUE ASC INDEX PK_Table_6K ON Table_6K (ID);
+CREATE UNIQUE ASC INDEX PK_Table_8K ON Table_8K (ID);
+CREATE UNIQUE ASC INDEX PK_Table_10K ON Table_10K (ID);
 
 COMMIT;
 </text></argument><argument name="source_code"><text>SET PLAN ON;
@@ -148,5 +118,5 @@ SELECT
   Count(*)
 FROM
   View_B vb
-  JOIN View_A va ON (va.ID5 = vb.ID250);
+  JOIN View_A va ON (va.ID1K = vb.ID10K);
 </text></argument><argument name="test_id"><text>opt_inner_join_07</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>

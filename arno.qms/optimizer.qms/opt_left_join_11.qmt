@@ -2,13 +2,13 @@
 <!DOCTYPE extension
   PUBLIC '-//QM/2.2/Extension//EN'
   'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
-<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN JOIN (F NATURAL,C INDEX (I_COLORS_NAME,PK_COLORS))
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN JOIN (F NATURAL, C INDEX (I_COLORS_NAME))
 
 FLOWERNAME                     COLORNAME            
 ============================== ==================== 
 
 Rose                           Red                  
-</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>LEFT OUTER JOIN with STARTING WITH in WHERE clause</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>TableX LEFT OUTER JOIN TableY with no match, thus result should contain all NULLs for TableY references. WHERE clause contains STARTING WITH on a field which is also in a single segment index.
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>LEFT OUTER JOIN with STARTING WITH in WHERE clause</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>2.0</text></argument><argument name="description"><text>TableX LEFT OUTER JOIN TableY with no match, thus result should contain all NULLs for TableY references. WHERE clause contains STARTING WITH on a field which is also in a single segment index.
 The WHERE clause should be distributed to the joined table.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>left_join.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Colors (
   ColorID INTEGER NOT NULL,
   ColorName VARCHAR(20)
@@ -41,12 +41,13 @@ CREATE ASC INDEX I_Colors_Name ON Colors (ColorName);
 
 COMMIT;
 </text></argument><argument name="source_code"><text>SET PLAN ON;
-/* LEFT JOIN should return all NULLs */
+/* WHERE clause should be distributed to LEFT JOIN ON clause
+   Avoid using index on c.ColorID with &quot;+ 0&quot; */
 SELECT
   f.FlowerName,
   c.ColorName
 FROM
   Flowers f
-  LEFT JOIN Colors c ON (c.ColorID = f.ColorID)
+  LEFT JOIN Colors c ON (c.ColorID + 0 = f.ColorID)
 WHERE
   c.ColorName STARTING WITH 'R';</text></argument><argument name="test_id"><text>opt_left_join_11</text></argument><argument name="target_platform"><text>All</text></argument><argument name="insert_statement"><text/></argument><argument name="test_expr"><text/></argument><argument name="statement_type_and_result"><enumeral>SQL: String</enumeral></argument><argument name="prerequisites"><set/></argument><argument name="author"><text>arno.brinkman</text></argument><argument name="drop_db"><enumeral>true</enumeral></argument><argument name="db_path_property"><text>database_location</text></argument></extension>

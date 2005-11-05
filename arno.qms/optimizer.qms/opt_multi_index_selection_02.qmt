@@ -8,7 +8,7 @@
 ============ ============ ============ 
 
          150            0          150 
-</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>Best match index selection (multi segment)</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>Check if it will select the indexes which can be used.
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>Best match index selection (multi segment)</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>2.0</text></argument><argument name="description"><text>Check if it will select the indexes which can be used.
 (Indexes with selectivity more than 10x the best are ignored)
 See SELECTIVITY_THRESHOLD_FACTOR in opt.cpp
 

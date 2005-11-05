@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+
 <!DOCTYPE extension
   PUBLIC '-//QM/2.2/Extension//EN'
   'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
@@ -82,7 +82,7 @@
   -536870912 
  -1073741824 
  -2147483648 
-</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>ORDER BY DESC NULLS FIRST using index</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>ORDER BY X DESC NULLS FIRST
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>ORDER BY DESC NULLS FIRST using index</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>2.0</text></argument><argument name="description"><text>ORDER BY X DESC NULLS FIRST
 When a index can be used for sorting, use it.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>sort_by_index.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Table_66 (
   ID INTEGER
 );

@@ -8,7 +8,11 @@
 ============ ============ 
 
           55       &lt;null&gt; 
-</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>Best match index selection (multi segment)</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>Check if it will select the index with the best selectivity and match.
+          55       &lt;null&gt; 
+          55       &lt;null&gt; 
+          55       &lt;null&gt; 
+          55       &lt;null&gt; 
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>Best match index selection (multi segment)</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>2.0</text></argument><argument name="description"><text>Check if it will select the index with the best selectivity and match.
 IS NULL should also be used in compound indexes (Only in new index structure ODS &gt; FB 1.5.1)
 </text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>idx_selection.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE SelectionTest (
   F1 INTEGER NOT NULL,
@@ -35,7 +39,7 @@ BEGIN
     INSERT INTO SelectionTest 
       (F1, F2) 
     VALUES 
-      (:FillID, :FILLF2);
+      ((:FillID / 5) * 5, :FILLF2);
     FillID = FillID + 1;
   END
 END
@@ -50,7 +54,6 @@ EXECUTE PROCEDURE PR_SelectionTest;
 COMMIT;
 
 /* Create indexes */
-CREATE UNIQUE ASC INDEX I_F1_UNIQUE_ASC ON SelectionTest (F1);
 CREATE ASC INDEX I_F1_ASC ON SelectionTest (F1);
 CREATE DESC INDEX I_F1_DESC ON SelectionTest (F1);
 CREATE ASC INDEX I_F2_ASC ON SelectionTest (F2);
