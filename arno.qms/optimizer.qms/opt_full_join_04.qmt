@@ -2,15 +2,15 @@
 <!DOCTYPE extension
   PUBLIC '-//QM/2.2/Extension//EN'
   'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
-<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN JOIN (C INDEX (PK_CATEGORIES),JOIN (RC NATURAL,R NATURAL))
-PLAN JOIN (C NATURAL,JOIN (RC NATURAL,R INDEX (PK_RELATIONS)))
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN JOIN (C INDEX (PK_CATEGORIES), JOIN (RC NATURAL, R NATURAL))
+PLAN JOIN (C NATURAL, JOIN (RC NATURAL, R INDEX (PK_RELATIONS)))
 
 RELATIONNAME                          RELATIONID   CATEGORYID DESCRIPTION          
 =================================== ============ ============ ==================== 
 
 &lt;null&gt;                                    &lt;null&gt;       &lt;null&gt; Newsletter           
 Folding air-hook shop                     &lt;null&gt;       &lt;null&gt; &lt;null&gt;               
-</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>FULL OUTER JOIN,  list all values, but filtered in WHERE clause</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>1.5</text></argument><argument name="description"><text>TableX FULL OUTER JOIN TableY with relation in the ON clause.
+</text></argument><argument name="character_set"><enumeral>NONE</enumeral></argument><argument name="title"><text>FULL OUTER JOIN,  list all values, but filtered in WHERE clause</text></argument><argument name="page_size"><enumeral>Default</enumeral></argument><argument name="substitutions"><set/></argument><argument name="backup_file_path"><text/></argument><argument name="user_name"><text>SYSDBA</text></argument><argument name="resources"><set/></argument><argument name="expected_stderr"><text/></argument><argument name="target_version"><text>2.0</text></argument><argument name="description"><text>TableX FULL OUTER JOIN TableY with relation in the ON clause.
 Three tables are used, where 1 table (RC) holds references to the two other tables (R and C). The two tables R and C contain both 1 value that isn't inside RC.</text></argument><argument name="target_group"><text>.*</text></argument><argument name="populate_method"><enumeral>Using SQL Commands</enumeral></argument><argument name="bug_id"><text/></argument><argument name="data_tuple"><text/></argument><argument name="db_name"><text>full_join.fdb</text></argument><argument name="isql_script"><text>CREATE TABLE Relations (
   RelationID INTEGER,
   RelationName VARCHAR(35)

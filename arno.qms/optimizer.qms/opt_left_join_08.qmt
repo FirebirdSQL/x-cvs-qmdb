@@ -2,7 +2,7 @@
 <!DOCTYPE extension
   PUBLIC '-//QM/2.2/Extension//EN'
   'http://www.codesourcery.com/qm/dtds/2.2/-//qm/2.2/extension//en.dtd'>
-<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN JOIN (F INDEX (FK_FLOWERS_COLORS),C INDEX (PK_COLORS))
+<extension class="fbqa.FirebirdTest" kind="test"><argument name="create_db_method"><enumeral>Create New</enumeral></argument><argument name="user_password"><text>masterkey</text></argument><argument name="sql_dialect"><enumeral>3</enumeral></argument><argument name="result_string"><text>PLAN JOIN (F INDEX (FK_FLOWERS_COLORS), C INDEX (PK_COLORS))
 
      COLORID      COLORID 
 ============ ============ 
